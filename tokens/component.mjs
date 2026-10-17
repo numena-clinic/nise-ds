@@ -50,6 +50,7 @@ export const control = register({
   "--control-padding-x": ref("--space-3"),
   "--control-font-size": ref("--font-size-md"),
   "--control-gap": ref("--space-2"),
+  "--control-label-gap": "2px",
 });
 
 export const button = register({
@@ -95,6 +96,56 @@ export const card = register({
   "--card-border-width": ref("--border-width"),
 });
 
+/** Checkbox and radio share one box. The hit area is padded out to the 40px
+ * control floor in CSS; `--choice-size` is the drawn box itself. */
+export const choice = register({
+  "--choice-size": "18px",
+  "--choice-gap": ref("--space-2"),
+  "--choice-group-gap": ref("--space-3"),
+});
+
+/** A switch is a fixed proportion: the track is twice the knob plus a 3px inset
+ * on each side, so the knob always lands on the token grid. */
+export const toggle = register({
+  "--switch-width": "42px",
+  "--switch-height": "24px",
+  "--switch-knob": "18px",
+  "--switch-inset": "3px",
+});
+
+export const slider = register({
+  "--slider-track-height": "6px",
+  "--slider-thumb-size": "18px",
+  "--slider-gap": ref("--space-4"),
+});
+
+export const tabs = register({
+  "--tabs-gap": ref("--space-1"),
+  "--tab-padding-x": ref("--space-4"),
+  "--tab-height": ref("--control-height-md"),
+});
+
+export const tooltip = register({
+  "--tooltip-padding-x": ref("--space-3"),
+  "--tooltip-padding-y": ref("--space-2"),
+  "--tooltip-font-size": ref("--font-size-xs"),
+  "--tooltip-gap": ref("--space-1"),
+});
+
+export const dialog = register({
+  "--dialog-padding": ref("--space-6"),
+  "--dialog-gap": ref("--space-5"),
+  "--dialog-width": "480px",
+});
+
+export const table = register({
+  "--table-cell-padding-x": ref("--space-4"),
+  "--table-cell-padding-y": ref("--space-3"),
+  "--table-font-size": ref("--font-size-sm"),
+  "--table-header-font-size": ref("--font-size-xs"),
+  "--table-row-gap": ref("--space-1"),
+});
+
 /** Disabled controls keep their role but drop opacity (iconography.md §4). */
 export const state = {
   "--opacity-disabled": "0.55",
@@ -109,6 +160,13 @@ export const componentGroups = [
   { label: "select", tokens: select },
   { label: "badge", tokens: badge },
   { label: "card", tokens: card },
+  { label: "choice", note: "Checkbox and radio box.", tokens: choice },
+  { label: "switch", tokens: toggle },
+  { label: "slider", tokens: slider },
+  { label: "tabs", tokens: tabs },
+  { label: "tooltip", tokens: tooltip },
+  { label: "dialog", tokens: dialog },
+  { label: "table", tokens: table },
   { label: "state", tokens: state },
 ];
 

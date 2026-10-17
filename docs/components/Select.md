@@ -24,6 +24,7 @@ A single-choice control for a short, known list.
 | `placeholder` | `string` | Shown before a choice is made |
 | `hint` / `error` | `ReactNode` | Same behaviour as `TextField` |
 | `disabled`, `required`, `name` | — | Forwarded to the primitive |
+| `portalContainer` | `HTMLElement \| null` | Where to mount the popup. Defaults to `document.body`; pass a container when the Select sits inside a scoped theme so the popup inherits the same CSS custom properties |
 
 ## Why Radix
 

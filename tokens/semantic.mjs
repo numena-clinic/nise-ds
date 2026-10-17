@@ -39,6 +39,7 @@ export const text = {
   "--color-text": inkPlum,
   "--color-text-muted": mix(inkPlum, 68, white),
   "--color-text-inverted": white,
+  "--color-scrim": mix(inkPlum, 40, "transparent"),
 };
 
 /** Borders. `--color-border` is decorative only; `--color-border-strong`

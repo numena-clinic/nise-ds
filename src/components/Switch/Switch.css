@@ -1,0 +1,83 @@
+.nise-switch {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--choice-gap);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  color: var(--color-text);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.nise-switch--disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.nise-switch__control {
+  position: relative;
+  display: inline-flex;
+  padding-block: calc((40px - var(--switch-height)) / 2);
+  padding-inline: 0;
+}
+
+.nise-switch__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: inherit;
+  margin: 0;
+}
+
+.nise-switch__track {
+  position: relative;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  border-radius: var(--radius-full);
+  background-color: var(--color-border-strong);
+  border: var(--border-width-strong) solid transparent;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-switch__knob {
+  position: absolute;
+  top: var(--switch-inset);
+  left: var(--switch-inset);
+  width: var(--switch-knob);
+  height: var(--switch-knob);
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.nise-switch__input:checked + .nise-switch__track {
+  background-color: var(--color-action);
+}
+
+.nise-switch__input:checked + .nise-switch__track .nise-switch__knob {
+  transform: translateX(calc(var(--switch-width) - var(--switch-knob) - 2 * var(--switch-inset)));
+}
+
+.nise-switch__input:focus-visible + .nise-switch__track {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+
+.nise-switch__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--control-label-gap);
+  padding-block: calc((var(--control-height-md) - var(--font-size-sm) * var(--line-height-normal)) / 2);
+}
+
+.nise-switch__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.nise-switch__hint {
+  font-size: var(--field-message-font-size);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-snug);
+}

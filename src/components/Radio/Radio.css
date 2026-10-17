@@ -1,0 +1,84 @@
+.nise-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--choice-gap);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  color: var(--color-text);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.nise-radio--disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.nise-radio__control {
+  position: relative;
+  display: inline-flex;
+  padding-block: calc((40px - var(--choice-size)) / 2);
+  padding-inline: 0;
+}
+
+.nise-radio__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: inherit;
+  margin: 0;
+}
+
+.nise-radio__box {
+  position: relative;
+  width: var(--choice-size);
+  height: var(--choice-size);
+  border: var(--border-width-strong) solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  transition: border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-radio__input:checked + .nise-radio__box {
+  background-color: var(--color-surface);
+  border-color: var(--color-action);
+}
+
+.nise-radio__input:focus-visible + .nise-radio__box {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+
+.nise-radio__box::after {
+  content: "";
+  position: absolute;
+  inset: var(--space-1);
+  border-radius: var(--radius-full);
+  background-color: var(--color-action);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+.nise-radio__input:checked + .nise-radio__box::after {
+  opacity: 1;
+}
+
+.nise-radio__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--control-label-gap);
+  padding-block: calc((var(--control-height-md) - var(--font-size-sm) * var(--line-height-normal)) / 2);
+}
+
+.nise-radio__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.nise-radio__hint {
+  font-size: var(--field-message-font-size);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-snug);
+}

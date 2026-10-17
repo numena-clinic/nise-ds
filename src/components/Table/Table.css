@@ -1,0 +1,50 @@
+.nise-table__container {
+  width: 100%;
+  overflow-x: auto;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.nise-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+}
+
+.nise-table__caption {
+  padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
+  color: var(--color-text-muted);
+  font-size: var(--table-font-size);
+  text-align: left;
+}
+
+.nise-table__row {
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.nise-table__row--header {
+  background-color: var(--color-surface-subtle);
+  border-top: none;
+}
+
+.nise-table__cell {
+  padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
+  font-size: var(--table-font-size);
+  color: var(--color-text);
+  text-align: left;
+  vertical-align: top;
+}
+
+.nise-table__cell--header {
+  font-size: var(--table-header-font-size);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text);
+}
+
+.nise-table__cell--numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

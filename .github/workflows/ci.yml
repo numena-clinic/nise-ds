@@ -22,3 +22,5 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build-storybook
+      # The Theme Explorer is a real build; prove it compiles in CI too.
+      - run: npm run build:explorer

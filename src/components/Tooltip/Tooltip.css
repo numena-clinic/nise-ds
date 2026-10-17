@@ -1,0 +1,13 @@
+.nise-tooltip__content {
+  padding: var(--tooltip-padding-y) var(--tooltip-padding-x);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--tooltip-font-size);
+  line-height: var(--line-height-snug);
+  box-shadow: var(--shadow-sm);
+  max-width: 280px;
+  word-break: break-word;
+}

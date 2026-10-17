@@ -1,0 +1,40 @@
+.nise-tabs__list {
+  display: inline-flex;
+  gap: var(--tabs-gap);
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--tabs-gap);
+  border: var(--border-width) solid var(--color-border);
+}
+
+.nise-tabs__trigger {
+  height: var(--tab-height);
+  padding-inline: var(--tab-padding-x);
+  border-radius: calc(var(--radius-md) - var(--space-1) / 2);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-tabs__trigger[data-state="active"] {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.nise-tabs__trigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+
+.nise-tabs__content {
+  margin-top: var(--space-4);
+  font-family: var(--font-sans);
+  color: var(--color-text);
+}

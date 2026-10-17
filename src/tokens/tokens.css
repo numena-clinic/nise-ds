@@ -104,6 +104,7 @@
   --color-text: var(--ink-plum);
   --color-text-muted: color-mix(in srgb, var(--ink-plum) 68%, var(--white));
   --color-text-inverted: var(--white);
+  --color-scrim: color-mix(in srgb, var(--ink-plum) 40%, transparent);
 
   /* border */
   --color-border: color-mix(in srgb, var(--ink-plum) 16%, var(--white));
@@ -157,6 +158,7 @@
   --control-padding-x: var(--space-3);
   --control-font-size: var(--font-size-md);
   --control-gap: var(--space-2);
+  --control-label-gap: 2px;
 
   /* button */
   --button-height-sm: var(--control-height-sm);
@@ -195,6 +197,46 @@
   --card-padding: var(--space-6);
   --card-gap: var(--space-4);
   --card-border-width: var(--border-width);
+
+  /* choice */
+  /* Checkbox and radio box. */
+  --choice-size: 18px;
+  --choice-gap: var(--space-2);
+  --choice-group-gap: var(--space-3);
+
+  /* switch */
+  --switch-width: 42px;
+  --switch-height: 24px;
+  --switch-knob: 18px;
+  --switch-inset: 3px;
+
+  /* slider */
+  --slider-track-height: 6px;
+  --slider-thumb-size: 18px;
+  --slider-gap: var(--space-4);
+
+  /* tabs */
+  --tabs-gap: var(--space-1);
+  --tab-padding-x: var(--space-4);
+  --tab-height: var(--control-height-md);
+
+  /* tooltip */
+  --tooltip-padding-x: var(--space-3);
+  --tooltip-padding-y: var(--space-2);
+  --tooltip-font-size: var(--font-size-xs);
+  --tooltip-gap: var(--space-1);
+
+  /* dialog */
+  --dialog-padding: var(--space-6);
+  --dialog-gap: var(--space-5);
+  --dialog-width: 480px;
+
+  /* table */
+  --table-cell-padding-x: var(--space-4);
+  --table-cell-padding-y: var(--space-3);
+  --table-font-size: var(--font-size-sm);
+  --table-header-font-size: var(--font-size-xs);
+  --table-row-gap: var(--space-1);
 
   /* state */
   --opacity-disabled: 0.55;

@@ -16,6 +16,7 @@ decisions into things an engineer can import.
 npm install
 npm run tokens:build     # regenerate src/tokens/tokens.css from tokens/*.mjs
 npm run storybook        # browse the components at http://localhost:6006
+npm run dev              # Theme Explorer: bend the tokens, preview live, export
 npm run verify           # the full gate: tokens, usage, lint, types, tests
 ```
 
@@ -32,11 +33,13 @@ src/
   tokens/tokens.css  GENERATED — the artifact the app loads. Do not edit.
   styles/            global baseline, fonts, shared field layout
   icons/             the seed of the icon set (Iconoir grid)
-  components/        Button, TextField, Select, Badge, Card
+  components/        Button, TextField, Select, Checkbox, Radio, Switch,
+                     Badge, Card, Slider, Tabs, Tooltip, Dialog, Table
   compositions/      InformationReview — the reference composition
+  explorer/          Theme Explorer — the standalone token design tool
   index.ts           the public surface
 tests/             behaviour + axe accessibility tests
-docs/              tokens, typography, accessibility, decisions, per-component
+docs/              tokens, typography, accessibility, theme, decisions, components
 ```
 
 ## Tokens
@@ -67,7 +70,25 @@ every promised colour pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/to
 | `npm run test` | Vitest: behaviour + axe |
 | `npm run storybook` | Storybook dev server (docs + a11y panel) |
 | `npm run build-storybook` | Static Storybook build |
+| `npm run dev` | Theme Explorer dev server (Vite) |
+| `npm run build:explorer` | Static Theme Explorer build → `dist/` |
+| `npm run theme:apply -- <file> [--write]` | Promote a theme candidate into the token source |
 | `npm run verify` | All of the above gates in order |
+
+## Theming
+
+The **Theme Explorer** (`npm run dev`) lets a designer change the tokens and see
+real components re-theme live — a tabbed token editor on the left, and a
+**Catalogue** / **Tokens** preview on the right with a Phone / Tablet / Desktop
+toggle — then export a versioned *candidate*. Promotion is a local, explicit,
+reviewable command — `npm run theme:apply` — that edits the token source,
+rebuilds and validates, and rolls back if the contrast promises break. It never
+writes from the browser and never commits. See [`docs/theme.md`](docs/theme.md).
+
+The catalogue previews the **Nise components themselves** — the same ones an
+application ships — so what you see is what the token change will actually
+produce. Every component is plain CSS over tokens (decision D2); there is no
+second library or CSS toolchain behind the preview (D13).
 
 ## Definition of done
 
@@ -81,6 +102,7 @@ A change is done when `npm run verify` is green and:
 
 ## Status
 
-Foundation. See [`docs/decisions.md`](docs/decisions.md) for what is settled,
-what is provisional, and what is deliberately deferred (visual-regression
-tooling, package publishing, a full icon catalogue, theming).
+Foundation, plus the Theme Explorer previewing the full Nise component set. See
+[`docs/decisions.md`](docs/decisions.md) for what is settled, what is
+provisional, and what is deliberately deferred (visual-regression tooling,
+package publishing, a full icon catalogue, dark mode, multi-theme authoring).

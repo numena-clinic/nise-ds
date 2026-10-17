@@ -12,14 +12,21 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "dev": "vite --config vite.config.explorer.ts",
+    "build:explorer": "vite build --config vite.config.explorer.ts",
+    "preview:explorer": "vite preview --config vite.config.explorer.ts",
+    "theme:apply": "node scripts/apply-theme.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "build": "npm run tokens:build && npm run typecheck && npm run build-storybook",
     "verify": "npm run tokens:validate && npm run check:usage && npm run lint && npm run typecheck && npm run test"
   },
   "dependencies": {
-    "@radix-ui/react-label": "^2.1.17",
+    "@radix-ui/react-dialog": "^1.3.1",
     "@radix-ui/react-select": "^2.4.1",
+    "@radix-ui/react-slider": "^1.6.1",
+    "@radix-ui/react-tabs": "^1.2.1",
+    "@radix-ui/react-tooltip": "^1.4.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

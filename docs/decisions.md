@@ -11,9 +11,13 @@ Token and component decisions that the brand leaves open belong here; palette,
 typefaces, icon grid and meaning-rules belong to `numena-brand` and are cited,
 not re-litigated.
 
-**D2 — Plain CSS custom properties. No Tailwind, no CSS-in-JS.**
-Matches the existing house system. Tokens are already CSS variables, so the
-runtime and the source agree, and there is no build transform between them.
+**D2 — Nise components are plain CSS custom properties. No Tailwind, no
+CSS-in-JS.** Matches the existing house system. Tokens are already CSS
+variables, so the runtime and the source agree, and there is no build transform
+between them. This holds for everything under `src/components/` with no
+exception. It was briefly qualified when the Theme Explorer's preview vendored
+shadcn/ui into the tree (D12); that was reversed and the whole layer removed
+(D13).
 
 **D3 — Tokens are authored in `.mjs` and the generated CSS is committed.**
 The source is data (`tokens/*.mjs`); `tokens/build.mjs` renders
@@ -33,10 +37,16 @@ The brand states the palette establishes no colours for system statuses
 icon and a heavier boundary; badges and accents are categorical, never verdicts.
 
 **D6 — Radix for the ARIA-heavy pattern, native HTML elsewhere.**
-`Select` is a hard problem (listbox semantics, typeahead, focus, portals) and
-uses `@radix-ui/react-select`. `Button` and `TextField` are a native `<button>`
-and `<input>`. The dependency is deliberate: adopt a primitive when it removes a
-class of accessibility bugs, not by reflex.
+Adopt a primitive when it removes a class of accessibility bugs, not by reflex.
+Radix backs the four patterns whose ARIA is genuinely hard: `Select`
+(listbox semantics, typeahead, focus, portals), `Slider` (range semantics,
+keyboard stepping), `Tabs` (tablist/tabpanel wiring, roving tabindex) and
+`Dialog`/`Tooltip` (focus trap, dismissal, portal). Everything else is a native
+element: `Button` (`<button>`), `TextField` (`<input>`/`<label>`), `Checkbox`
+(`<input type="checkbox">`), `Radio` (`<input type="radio">`), `Switch`
+(`<input type="checkbox" role="switch">`) and `Table` (real `<table>` semantics).
+The dependency is deliberate: each Radix package is added because it earns its
+place, not because a component exists.
 
 **D7 — Storybook is the preview and documentation surface.**
 Docs are generated from real component types (`react-docgen-typescript`), so a
@@ -57,6 +67,64 @@ from a primitive.
 **D10 — The composition is real UI, with synthetic content.**
 `InformationReview` proves the pieces compose on the surface a psychologist
 actually uses. Content is fake and labelled as such; no clinical logic runs.
+
+**D11 — The Theme Explorer reads the token source directly, and promotion is a
+separate local step.**
+The explorer is a standalone Vite app (`npm run dev`), not a Storybook story or
+addon: Storybook documents the components, the explorer bends the tokens they
+read, and keeping the two apart means neither can disturb the other. It imports
+`tokens/*.mjs` — the same modules the generator uses — so there is no second
+token list to drift. It previews by applying overrides as scoped CSS custom
+properties on the preview wrapper, never on `:root`. A browser tab cannot write
+source: it exports a versioned *candidate*, and `npm run theme:apply`
+(dry-run by default, `--write` to apply) makes line-scoped edits, rebuilds and
+validates, and rolls back the source *and* the generated CSS if the contrast
+promises break. It never commits. Candidate validation is intentionally written
+in two places (the explorer for editing feedback, the CLI as a conservative
+pre-filter); the authoritative gate is the pipeline (`tokens:build` +
+`tokens:validate`) run straight after any write.
+
+**D12 — The Theme Explorer previews against vendored shadcn/ui, themed onto Nise
+tokens. Tailwind is scoped to the explorer. — REVERSED by D13.**
+Kept for the record. The explorer exists to answer "what does this palette look
+like on real components?", and Nise's own components were too thin to be a
+credible answer, so a dense shadcn/ui catalogue (forms, tables, overlays, charts)
+sourced into `src/components/ui/` and themed through `src/explorer/shadcn.css`.
+It was admitted under an explicit exception to D2 and scoped as tightly as the
+problem allowed (Tailwind only in the explorer; shadcn's variables aliased onto
+Nise tokens; `--nise-*` intermediates for colliding names; radius mapped onto the
+token scale; the vendored layer plus the bridge as the only token-boundary
+exemptions). It worked, but it bought a second design language and a Tailwind
+toolchain to preview one palette. D13 removes it.
+
+**D13 — The explorer previews Nise's own components. shadcn/ui and Tailwind are
+removed. (Reverses D12.)**
+The preview should show the components an application is actually expected to
+ship, not a parallel library. So the preview is built from Nise components alone,
+and to make that a fair answer the component set was widened from five to
+thirteen: `Checkbox`, `Radio`, `Switch`, `Slider`, `Tabs`, `Tooltip`, `Dialog`
+and `Table` join the original five (D6 states which use Radix and which are
+native). Every one is plain CSS over tokens, matching D2 without exception.
+
+- **The vendored layer, the Tailwind bridge and the Tailwind toolchain are
+  gone.** `src/components/ui/`, `src/hooks/`, `src/lib/utils.ts`,
+  `components.json` and `src/explorer/shadcn.css` are deleted; the Tailwind Vite
+  plugin and the `@` path alias are removed from `vite.config.explorer.ts`,
+  `vitest.config.ts` and `tsconfig.json`; the sixteen dependencies that only
+  served shadcn/ui are pruned from `package.json`.
+- **The token-boundary exemptions are gone with them.**
+  `scripts/check-token-usage.mjs` no longer skips any path. The single greppable
+  waiver (`token-boundary: waive`) for the colour-picker's hue spectrum remains —
+  it is control chrome, not themeable colour.
+- **The catalogue is a Nise catalogue.** `src/explorer/components/Catalogue.tsx`
+  renders the same components with plain CSS; `Preview.tsx` scopes
+  `portalContainer` onto Radix overlays (Select, Dialog, Tooltip) so their
+  portalled content still inherits the preview's experimental custom properties
+  instead of escaping to the document root.
+
+The cost is scope: eight new components to design and keep accessible. The
+benefit is one design language and no second toolchain, and a preview that is
+honest about what ships.
 
 ## Provisional
 
@@ -90,8 +158,10 @@ consumer.
 theme (icons follow `currentColor`), and tokens are structured so a second theme
 is a second set of semantic values — but no dark theme is built.
 
-**A token gallery / editor and MCP tooling.** `tokens/dist/tokens.json` is the
-machine-readable form a future tool would read. Not built.
+**MCP tooling and multi-theme authoring.** The Theme Explorer (D11) edits the one
+light theme; authoring a *second* theme (a dark set of semantic values) and
+exposing the token graph to MCP tooling are not built. `tokens/dist/tokens.json`
+is the machine-readable form such tooling would read.
 
 ## Constraints carried in
 

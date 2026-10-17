@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { layers, allTokens, layerOf } from "./index.mjs";
 import { contrastChecks } from "./semantic.mjs";
 import { renderCss } from "./emit.mjs";
+import { expand, parseColor, contrast } from "./color.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
@@ -22,86 +23,12 @@ const errors = [];
 const fail = (msg) => errors.push(msg);
 
 // ── value resolution ─────────────────────────────────────────────────────────
+// The colour maths lives in tokens/color.mjs so the Theme Explorer resolves and
+// checks contrast exactly the way this validator does. Here we bind the shared
+// helpers to `fail`, and to the canonical token map.
 
-const hexToRgb = (hex) => {
-  const h = hex.replace("#", "");
-  const n =
-    h.length === 3
-      ? h.split("").map((c) => c + c).join("")
-      : h.slice(0, 6);
-  return {
-    r: parseInt(n.slice(0, 2), 16),
-    g: parseInt(n.slice(2, 4), 16),
-    b: parseInt(n.slice(4, 6), 16),
-  };
-};
-
-const parseColor = (raw) => {
-  const v = raw.trim();
-  if (v.startsWith("#")) return hexToRgb(v);
-  const m = v.match(/^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/);
-  if (m) return { r: +m[1], g: +m[2], b: +m[3] };
-  return null;
-};
-
-/** Replace every var(--x) with x's fully-expanded value. */
-function substituteVars(value, path = []) {
-  return value.replace(/var\(\s*(--[a-zA-Z0-9_-]+)\s*\)/g, (_m, name) => {
-    if (!(name in allTokens)) {
-      fail(`${path.at(-1) ?? "?"}: references undefined token ${name}`);
-      return "0";
-    }
-    if (path.includes(name)) {
-      fail(`circular reference: ${[...path, name].join(" → ")}`);
-      return "0";
-    }
-    return expand(name, [...path, name]);
-  });
-}
-
-/** Evaluate any color-mix(in srgb, A p%, B) left after var substitution. */
-function evalMix(value) {
-  return value.replace(
-    /color-mix\(\s*in\s+srgb\s*,\s*([^,]+?)\s+([\d.]+)%\s*,\s*([^,)]+?)\s*\)/g,
-    (_m, aRaw, pct, bRaw) => {
-      const a = parseColor(aRaw);
-      const b = parseColor(bRaw);
-      if (!a || !b) {
-        fail(`could not evaluate color-mix: ${_m}`);
-        return "#000000";
-      }
-      const p = +pct / 100;
-      const ch = (x, y) => Math.round(x * p + y * (1 - p));
-      return `#${[ch(a.r, b.r), ch(a.g, b.g), ch(a.b, b.b)]
-        .map((n) => n.toString(16).padStart(2, "0"))
-        .join("")}`;
-    },
-  );
-}
-
-/** Fully resolve a token to a plain value (hex for colours, e.g. "12px" else). */
-function expand(name, path = [name]) {
-  const raw = allTokens[name];
-  if (raw === undefined) {
-    fail(`unknown token ${name}`);
-    return "";
-  }
-  return evalMix(substituteVars(raw, path));
-}
-
-const luminance = ({ r, g, b }) => {
-  const c = [r, g, b].map((v) => {
-    const s = v / 255;
-    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
-};
-
-const contrast = (fg, bg) => {
-  const l1 = luminance(fg);
-  const l2 = luminance(bg);
-  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
-};
+/** Fully resolve a canonical token, reporting problems through `fail`. */
+const expandToken = (name) => expand(name, allTokens, [name], fail);
 
 // ── 1 & 2: references resolve and only point down ────────────────────────────
 
@@ -138,8 +65,8 @@ for (const layer of layers) {
 
 const contrastRows = [];
 for (const { fg, bg, min, why } of contrastChecks) {
-  const fgColor = parseColor(expand(fg));
-  const bgColor = parseColor(expand(bg));
+  const fgColor = parseColor(expandToken(fg));
+  const bgColor = parseColor(expandToken(bg));
   if (!fgColor || !bgColor) {
     fail(`contrast: could not resolve ${fg} on ${bg}`);
     continue;

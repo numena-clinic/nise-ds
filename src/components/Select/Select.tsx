@@ -24,6 +24,10 @@
    Error handling matches TextField: there is no status colour (color.md §4;
    iconography.md §4), so text + icon + a heavier boundary, and the hint leaves
    the DOM when an error shows.
+
+   `portalContainer` (optional) mounts the popup somewhere other than
+   document.body, so a Select inside a themed subtree keeps that subtree's CSS
+   custom properties. Default behaviour is unchanged.
    ============================================================================= */
 
 import * as SelectPrimitive from "@radix-ui/react-select";
@@ -51,6 +55,13 @@ export interface SelectProps {
   required?: boolean;
   name?: string;
   className?: string;
+  /**
+   * Where to mount the popup. Defaults to the document body. Supply a container
+   * when the Select lives inside a scoped theme (e.g. the Theme Explorer's
+   * preview), so the popup inherits the same CSS custom properties as the
+   * trigger instead of the document root.
+   */
+  portalContainer?: HTMLElement | null;
 }
 
 export function Select({
@@ -67,6 +78,7 @@ export function Select({
   required,
   name,
   className,
+  portalContainer,
 }: SelectProps) {
   const reactId = useId();
   const fieldId = id ?? `nise-select-${reactId}`;
@@ -124,7 +136,7 @@ export function Select({
           </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
 
-        <SelectPrimitive.Portal>
+        <SelectPrimitive.Portal container={portalContainer ?? undefined}>
           <SelectPrimitive.Content
             className="nise-select__content"
             position="popper"

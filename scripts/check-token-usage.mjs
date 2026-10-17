@@ -23,6 +23,12 @@ const srcDir = resolve(root, "src");
 
 const GENERATED = ["src/tokens/tokens.css"];
 
+// One documented exemption: a single line carrying the marker
+// `token-boundary: waive` — used only for colour-picker affordances (a hue
+// slider's spectrum) that are UI chrome, not themeable colour. Grep for the
+// marker to audit every waiver.
+const WAIVER = /token-boundary:\s*waive/;
+
 const COLOR_LITERAL =
   /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b|\b(?:rgb|rgba|hsl|hsla)\(/;
 
@@ -108,6 +114,7 @@ for (const file of walk(srcDir)) {
 
   lines.forEach((raw, i) => {
     const line = i + 1;
+    if (WAIVER.test(raw)) return;
     const text = raw.replace(/\/\*.*?\*\//g, "").trim();
     if (!text || text.startsWith("//")) return;
 

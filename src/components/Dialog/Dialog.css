@@ -1,0 +1,54 @@
+.nise-dialog__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-scrim);
+  z-index: 40;
+}
+
+.nise-dialog__content {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(var(--dialog-width), 95vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: var(--radius-lg);
+  border: var(--border-width) solid var(--color-border-strong);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  padding: var(--dialog-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--dialog-gap);
+  z-index: 50;
+}
+
+.nise-dialog__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nise-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.nise-dialog__title {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.nise-dialog__description {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-snug);
+  margin: 0;
+}
