@@ -1,0 +1,127 @@
+@import "../../styles/field.css";
+
+/* The trigger reads as a text field; the popup is a floating surface. */
+
+.nise-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--control-gap);
+  width: 100%;
+  height: var(--select-height);
+  padding-inline: var(--select-padding-x);
+  font-size: var(--select-font-size);
+  color: var(--color-text);
+  text-align: left;
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--select-radius, var(--radius-md));
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-select__trigger:hover:not(:disabled) {
+  border-color: var(--color-text-muted);
+}
+
+.nise-select__trigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+  border-color: var(--color-focus-ring);
+}
+
+.nise-select__trigger:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.nise-field--error .nise-select__trigger {
+  border-color: var(--color-text);
+}
+
+.nise-select__placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Chevron follows the icon states (iconography.md §4): Ink Plum at rest,
+   Deep Purple on hover. */
+.nise-select__chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-text);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-select__trigger:hover:not(:disabled) .nise-select__chevron {
+  color: var(--color-action);
+}
+
+/* popup */
+.nise-select__content {
+  z-index: 50;
+  min-width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  padding: var(--space-1);
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  animation: nise-select-in var(--duration-fast) var(--ease-standard);
+}
+
+.nise-select__viewport {
+  display: flex;
+  flex-direction: column;
+}
+
+.nise-select__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--select-item-height);
+  padding-inline: var(--space-2);
+  font-size: var(--select-font-size);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  outline: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.nise-select__item[data-highlighted] {
+  background-color: var(--color-surface-subtle);
+}
+
+.nise-select__item[data-state="checked"] {
+  color: var(--color-selected-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.nise-select__item[data-disabled] {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}
+
+.nise-select__indicator-slot {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: var(--space-4);
+}
+
+.nise-select__indicator {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-action);
+}
+
+@keyframes nise-select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

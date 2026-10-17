@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+storybook-static/
+*.local
+*.log
+.DS_Store
+
+# Tokens are generated from tokens/*.mjs; the generated CSS is committed so the
+# system is reproducible without a build step, and validated against a fresh
+# regeneration. The JSON/MD reference artifacts are build output only.
+tokens/dist/
+
+# Licensed fonts are never committed (see the brand's assets/README.md).
+*.woff
+*.woff2
+*.ttf
+*.otf

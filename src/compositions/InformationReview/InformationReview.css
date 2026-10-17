@@ -1,0 +1,58 @@
+.nise-info-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--measure-prose);
+  padding: var(--space-8);
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+.nise-info-review__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--field-label-gap);
+}
+
+.nise-info-review__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.nise-info-review__note {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+
+.nise-info-review__grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.nise-info-review__sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.nise-info-review__body {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Two columns once there is room for both; a single column below. */
+@media (min-width: 48rem) {
+  .nise-info-review__grid {
+    grid-template-columns: 3fr 2fr;
+  }
+}

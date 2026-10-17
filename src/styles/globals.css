@@ -1,0 +1,120 @@
+/* =============================================================================
+   Nise Design System — global baseline
+   -----------------------------------------------------------------------------
+   The single entry point for a consuming app: it pulls in the web fonts and the
+   generated token layer, then applies a minimal, opinionated baseline. Every
+   value here comes from a token; there are no literals. Component styles live
+   with their components under src/components.
+   ============================================================================= */
+
+@import "./fonts.css";
+@import "../tokens/tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* The serif carries headlines and reading; the sans is for UI, labels and data
+   (typography.md §3). */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+}
+h2 {
+  font-size: var(--font-size-3xl);
+}
+h3 {
+  font-size: var(--font-size-2xl);
+}
+h4 {
+  font-size: var(--font-size-xl);
+}
+h5 {
+  font-size: var(--font-size-lg);
+}
+h6 {
+  font-size: var(--font-size-md);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-link);
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/* Controls inherit type so they can never drift from the surrounding text. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* One focus treatment for the whole system. Components that draw a tighter ring
+   (e.g. a text field around its own border) override outline-offset locally. */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+::selection {
+  background-color: var(--color-tint-purple);
+  color: var(--color-tint-text);
+}
+
+/* Motion is reduced to nothing when the user asks for it
+   (motion-generative-patterns.md, Motion principles §04, and its Accessibility
+   & performance section). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

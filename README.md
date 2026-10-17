@@ -1,0 +1,86 @@
+# Nise Design System
+
+The design system for **Numena** — a code-first library of interface tokens,
+components and patterns for the clinical reasoning workspace Numena builds for
+psychologists.
+
+Nise *consumes* the Numena brand; it does not define it. Brand decisions — the
+palette, the typefaces, the icon grid, the rules about what colour may and may
+not mean — live in [`numena-clinic/numena-brand`](https://github.com/numena-clinic/numena-brand)
+and are treated here as input. Everything in this repository turns those
+decisions into things an engineer can import.
+
+## Quickstart
+
+```bash
+npm install
+npm run tokens:build     # regenerate src/tokens/tokens.css from tokens/*.mjs
+npm run storybook        # browse the components at http://localhost:6006
+npm run verify           # the full gate: tokens, usage, lint, types, tests
+```
+
+## What's here
+
+```
+tokens/            canonical token source (the .mjs files) + build & validation
+  primitives.mjs   raw values: colour, type, space, radius, motion
+  semantic.mjs     interface roles, and the contrast promises kept
+  component.mjs    per-component values (control heights, paddings)
+  build.mjs        source → src/tokens/tokens.css (+ tokens/dist/tokens.json)
+  validate.mjs     references, layer direction, contrast, reproducibility
+src/
+  tokens/tokens.css  GENERATED — the artifact the app loads. Do not edit.
+  styles/            global baseline, fonts, shared field layout
+  icons/             the seed of the icon set (Iconoir grid)
+  components/        Button, TextField, Select, Badge, Card
+  compositions/      InformationReview — the reference composition
+  index.ts           the public surface
+tests/             behaviour + axe accessibility tests
+docs/              tokens, typography, accessibility, decisions, per-component
+```
+
+## Tokens
+
+Three layers, each referencing only the layers below it:
+
+| Layer | Answers | Example |
+| --- | --- | --- |
+| **primitive** | *what value?* | `--deep-purple: #4C207F` |
+| **semantic** | *what role?* | `--color-action: var(--deep-purple)` |
+| **component** | *where used?* | `--button-height-md: var(--control-height-md)` |
+
+The source of truth is the `.mjs` files, not the CSS. `npm run tokens:build`
+renders them to `src/tokens/tokens.css`, which is **committed** so the system is
+usable without a build step; `npm run tokens:validate` proves the committed CSS
+is exactly what the source produces, that every reference resolves, and that
+every promised colour pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/tokens.md).
+
+## Scripts
+
+| Script | Does |
+| --- | --- |
+| `npm run tokens:build` | Regenerate `tokens.css` and `tokens/dist/tokens.json` |
+| `npm run tokens:validate` | References, layer direction, contrast, reproducibility |
+| `npm run check:usage` | Fail on raw colours / off-token px / unknown tokens in `src` |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint (flat config) |
+| `npm run test` | Vitest: behaviour + axe |
+| `npm run storybook` | Storybook dev server (docs + a11y panel) |
+| `npm run build-storybook` | Static Storybook build |
+| `npm run verify` | All of the above gates in order |
+
+## Definition of done
+
+A change is done when `npm run verify` is green and:
+
+- the token source changed (if visuals did), not just the generated CSS;
+- any new token references a lower layer and is validated;
+- new behaviour has a test, and new UI passes axe;
+- component docs (`docs/components/*.md`) and the component's header comment
+  still describe what the code does.
+
+## Status
+
+Foundation. See [`docs/decisions.md`](docs/decisions.md) for what is settled,
+what is provisional, and what is deliberately deferred (visual-regression
+tooling, package publishing, a full icon catalogue, theming).

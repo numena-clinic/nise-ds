@@ -1,0 +1,46 @@
+/* Nise Design System — shared field layout.
+   The label / control / hint / error skeleton used by TextField and Select. Kept
+   in one place so a labelled control always looks and reads the same. */
+
+.nise-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--field-gap);
+  font-family: var(--font-sans);
+}
+
+.nise-field__label {
+  display: inline-flex;
+  gap: var(--field-label-gap);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.nise-field__required {
+  color: var(--color-link);
+}
+
+.nise-field__message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--field-message-font-size);
+  line-height: var(--line-height-snug);
+}
+
+.nise-field__hint {
+  color: var(--color-text-muted);
+}
+
+/* Error is a message and an icon, never colour alone (no status colour exists). */
+.nise-field__error {
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.nise-field__message-icon {
+  flex-shrink: 0;
+  margin-top: 0.15em;
+}

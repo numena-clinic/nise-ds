@@ -1,0 +1,39 @@
+@import "../../styles/field.css";
+
+/* The text input itself. Radius is declared here with a fallback so one field
+   can be re-rounded without a token: var(--input-radius, var(--radius-md)). */
+
+.nise-field__control {
+  width: 100%;
+  height: var(--input-height);
+  padding-inline: var(--input-padding-x);
+  font-size: var(--input-font-size);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--input-radius, var(--radius-md));
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-field__control::placeholder {
+  color: var(--color-text-muted);
+}
+
+.nise-field__control:hover:not(:disabled) {
+  border-color: var(--color-text-muted);
+}
+
+.nise-field__control:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+  border-color: var(--color-focus-ring);
+}
+
+.nise-field__control:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.nise-field--error .nise-field__control {
+  border-color: var(--color-text);
+}

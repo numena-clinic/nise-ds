@@ -1,0 +1,47 @@
+.nise-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--badge-gap);
+  border-radius: var(--badge-radius);
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.nise-badge--sm {
+  height: var(--badge-height-sm);
+  padding-inline: var(--badge-padding-x-sm);
+  font-size: var(--badge-font-size-sm);
+}
+
+.nise-badge--md {
+  height: var(--badge-height-md);
+  padding-inline: var(--badge-padding-x-md);
+  font-size: var(--badge-font-size-md);
+}
+
+.nise-badge--neutral {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text);
+}
+
+.nise-badge--purple {
+  background-color: var(--color-tint-purple);
+  color: var(--color-tint-text);
+}
+
+.nise-badge--cyan {
+  background-color: var(--color-tint-cyan);
+  color: var(--color-tint-text);
+}
+
+.nise-badge--tangerine {
+  background-color: var(--color-tint-tangerine);
+  color: var(--color-tint-text);
+}
+
+.nise-badge__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}

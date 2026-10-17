@@ -1,0 +1,111 @@
+.nise-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--button-radius, var(--radius-md));
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-button:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.nise-button--full {
+  width: 100%;
+}
+
+/* sizes */
+.nise-button--sm {
+  height: var(--button-height-sm);
+  padding-inline: var(--button-padding-x-sm);
+  font-size: var(--button-font-size-sm);
+}
+
+.nise-button--md {
+  height: var(--button-height-md);
+  padding-inline: var(--button-padding-x-md);
+  font-size: var(--button-font-size-md);
+}
+
+.nise-button--lg {
+  height: var(--button-height-lg);
+  padding-inline: var(--button-padding-x-lg);
+  font-size: var(--button-font-size-lg);
+}
+
+/* variants */
+.nise-button--primary {
+  background-color: var(--color-action);
+  color: var(--color-action-text);
+}
+
+.nise-button--primary:hover:not(:disabled) {
+  background-color: var(--color-action-hover);
+}
+
+.nise-button--primary:active:not(:disabled) {
+  background-color: var(--color-action-active);
+}
+
+.nise-button--secondary {
+  background-color: var(--color-surface);
+  color: var(--color-action);
+  border-color: var(--color-border-strong);
+}
+
+.nise-button--secondary:hover:not(:disabled) {
+  background-color: var(--color-surface-subtle);
+}
+
+.nise-button--secondary:active:not(:disabled) {
+  background-color: var(--color-selected-surface);
+}
+
+.nise-button--ghost {
+  background-color: transparent;
+  color: var(--color-action);
+}
+
+.nise-button--ghost:hover:not(:disabled) {
+  background-color: var(--color-surface-subtle);
+}
+
+.nise-button--ghost:active:not(:disabled) {
+  background-color: var(--color-selected-surface);
+}
+
+/* shared parts */
+.nise-button__icon,
+.nise-button__label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nise-button__spinner {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  border: var(--border-width-strong) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--radius-full);
+  animation: nise-button-spin var(--duration-slow) linear infinite;
+}
+
+@keyframes nise-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
