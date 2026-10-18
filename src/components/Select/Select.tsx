@@ -16,9 +16,9 @@
      --select-height, --select-padding-x, --select-font-size, --select-item-height
        → --control-* → --space-*, --font-size-*
      --field-gap, --field-label-gap, --field-message-font-size
-     --color-surface, --color-surface-subtle, --color-text, --color-text-muted,
-     --color-border-strong, --color-focus-ring, --color-selected-surface,
-     --color-selected-text, --shadow-md, --radius-md, --border-width,
+     --color-surface, --color-surface-subtle, --color-surface-hover, --color-text,
+     --color-text-muted, --color-border-strong, --color-border-hover, --color-focus-ring,
+     --color-selected-surface, --color-selected-text, --shadow-md, --radius-md, --border-width,
      --focus-ring-width, --opacity-disabled, --duration-fast, --ease-standard
 
    Error handling matches TextField: there is no status colour (color.md §4;

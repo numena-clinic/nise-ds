@@ -54,6 +54,14 @@
   background-color: var(--color-action);
 }
 
+.nise-switch:hover:not(.nise-switch--disabled) .nise-switch__track {
+  background-color: var(--color-border-hover);
+}
+
+.nise-switch:hover:not(.nise-switch--disabled) .nise-switch__input:checked + .nise-switch__track {
+  background-color: var(--color-action-hover);
+}
+
 .nise-switch__input:checked + .nise-switch__track .nise-switch__knob {
   transform: translateX(calc(var(--switch-width) - var(--switch-knob) - 2 * var(--switch-inset)));
 }

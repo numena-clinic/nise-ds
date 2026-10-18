@@ -10,8 +10,8 @@
      --button-padding-x-{sm,md,lg}   → --space-*          → literal px
      --button-font-size-{sm,md,lg}   → --font-size-*      → literal px
      --button-gap                    → --space-2
-     --color-action / -hover / -active / -action-text, --color-surface,
-     --color-surface-subtle, --color-selected-surface, --color-border-strong
+     --color-action / -hover / -active / -action-text,
+     --color-surface / -hover / -active, --color-border-strong, --color-border-hover,
      --opacity-disabled, --duration-fast, --ease-standard, --border-width
 
    Radius is declared at the point of use as `var(--button-radius,

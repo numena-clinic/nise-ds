@@ -52,8 +52,15 @@
   border: var(--border-width-strong) solid var(--color-border-strong);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--duration-fast) var(--ease-standard);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
   display: block;
+}
+
+.nise-slider__thumb:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
 }
 
 .nise-slider__thumb:focus-visible {

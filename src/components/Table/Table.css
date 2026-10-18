@@ -21,6 +21,11 @@
 
 .nise-table__row {
   border-top: var(--border-width) solid var(--color-border);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-table__row:hover:not(.nise-table__row--header) {
+  background-color: var(--color-surface-hover);
 }
 
 .nise-table__row--header {

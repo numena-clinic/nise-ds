@@ -101,6 +101,7 @@
   --color-surface: var(--white);
   --color-surface-subtle: var(--pale-lavender);
   --color-surface-hover: var(--pale-lavender);
+  --color-surface-active: color-mix(in srgb, var(--pale-lavender) 88%, var(--ink-plum));
   --color-text: var(--ink-plum);
   --color-text-muted: color-mix(in srgb, var(--ink-plum) 68%, var(--white));
   --color-text-inverted: var(--white);
@@ -109,6 +110,8 @@
   /* border */
   --color-border: color-mix(in srgb, var(--ink-plum) 16%, var(--white));
   --color-border-strong: color-mix(in srgb, var(--ink-plum) 50%, var(--white));
+  --color-border-hover: color-mix(in srgb, var(--ink-plum) 70%, var(--white));
+  --color-border-error: var(--ink-plum);
 
   /* action */
   /* The primary interactive role. */

@@ -73,6 +73,14 @@ brand are load-bearing here:
   Plum on Vibrant Cyan 10.83:1, and the Vibrant Purple focus ring at 5.27:1 on
   White and 4.41:1 on Pale Lavender).
 
+## Interaction state tokens
+
+Interactive states are standardized across controls:
+- **Surfaces:** `--color-surface` (rest) $\rightarrow$ `--color-surface-hover` (hover) $\rightarrow$ `--color-surface-active` (pressed).
+- **Actions:** `--color-action` (rest) $\rightarrow$ `--color-action-hover` (hover) $\rightarrow$ `--color-action-active` (pressed).
+- **Boundaries:** `--color-border-strong` (rest) $\rightarrow$ `--color-border-hover` (hover) $\rightarrow$ `--color-focus-ring` (focus).
+All hover and active state pairs are verified in `tokens/semantic.mjs` contrast checks.
+
 ## Radius is declared at the point of use
 
 There are no `--button-radius` / `--card-radius` tokens. A component writes

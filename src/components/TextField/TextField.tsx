@@ -10,7 +10,8 @@
      --input-height, --input-padding-x, --input-font-size
        → --control-* → --space-3, --font-size-md
      --color-surface, --color-text, --color-text-muted, --color-border-strong,
-     --color-focus-ring, --focus-ring-width, --border-width-strong, --opacity-disabled
+     --color-border-hover, --color-focus-ring, --focus-ring-width, --border-width-strong,
+     --opacity-disabled
 
    Error handling: there is no status colour in the brand palette — "the palette
    does not establish fixed colors for … system statuses" (color.md §4) and

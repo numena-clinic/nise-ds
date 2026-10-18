@@ -21,7 +21,7 @@
 }
 
 .nise-select__trigger:hover:not(:disabled) {
-  border-color: var(--color-text-muted);
+  border-color: var(--color-border-hover);
 }
 
 .nise-select__trigger:focus-visible {
@@ -36,7 +36,7 @@
 }
 
 .nise-field--error .nise-select__trigger {
-  border-color: var(--color-text);
+  border-color: var(--color-border-error);
 }
 
 .nise-select__placeholder {
@@ -90,7 +90,7 @@
 }
 
 .nise-select__item[data-highlighted] {
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-surface-hover);
 }
 
 .nise-select__item[data-state="checked"] {

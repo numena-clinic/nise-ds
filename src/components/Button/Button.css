@@ -67,11 +67,12 @@
 }
 
 .nise-button--secondary:hover:not(:disabled) {
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
 }
 
 .nise-button--secondary:active:not(:disabled) {
-  background-color: var(--color-selected-surface);
+  background-color: var(--color-surface-active);
 }
 
 .nise-button--ghost {
@@ -80,11 +81,11 @@
 }
 
 .nise-button--ghost:hover:not(:disabled) {
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-surface-hover);
 }
 
 .nise-button--ghost:active:not(:disabled) {
-  background-color: var(--color-selected-surface);
+  background-color: var(--color-surface-active);
 }
 
 /* shared parts */

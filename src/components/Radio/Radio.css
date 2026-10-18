@@ -45,6 +45,18 @@
   border-color: var(--color-action);
 }
 
+.nise-radio:hover:not(.nise-radio--disabled) .nise-radio__box {
+  border-color: var(--color-border-hover);
+}
+
+.nise-radio:hover:not(.nise-radio--disabled) .nise-radio__input:checked + .nise-radio__box {
+  border-color: var(--color-action-hover);
+}
+
+.nise-radio:hover:not(.nise-radio--disabled) .nise-radio__input:checked + .nise-radio__box::after {
+  background-color: var(--color-action-hover);
+}
+
 .nise-radio__input:focus-visible + .nise-radio__box {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: 0;

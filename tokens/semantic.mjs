@@ -36,6 +36,7 @@ export const text = {
   "--color-surface": white,
   "--color-surface-subtle": paleLavender,
   "--color-surface-hover": paleLavender,
+  "--color-surface-active": mix(paleLavender, 88, inkPlum),
   "--color-text": inkPlum,
   "--color-text-muted": mix(inkPlum, 68, white),
   "--color-text-inverted": white,
@@ -43,10 +44,13 @@ export const text = {
 };
 
 /** Borders. `--color-border` is decorative only; `--color-border-strong`
- * carries a control boundary, so it clears the 3:1 non-text minimum. */
+ * carries a control boundary, so it clears the 3:1 non-text minimum.
+ * `--color-border-hover` provides clear interactive focus/hover feedback. */
 export const borders = {
   "--color-border": mix(inkPlum, 16, white),
   "--color-border-strong": mix(inkPlum, 50, white),
+  "--color-border-hover": mix(inkPlum, 70, white),
+  "--color-border-error": ref("--ink-plum"),
 };
 
 /** The primary interactive role. Deep Purple, the brand's defining colour
@@ -122,6 +126,10 @@ export const contrastChecks = [
   { fg: "--color-tint-text", bg: "--color-tint-cyan", min: 4.5, why: "tint label (cyan)" },
   { fg: "--color-tint-text", bg: "--color-tint-tangerine", min: 4.5, why: "tint label (tangerine)" },
   { fg: "--color-border-strong", bg: "--color-surface", min: 3, why: "control boundary (non-text)" },
+  { fg: "--color-border-hover", bg: "--color-surface", min: 3, why: "control boundary on hover (non-text)" },
+  { fg: "--color-border-error", bg: "--color-surface", min: 3, why: "error boundary on white (non-text)" },
+  { fg: "--color-text", bg: "--color-surface-hover", min: 4.5, why: "text on hovered surface" },
+  { fg: "--color-text", bg: "--color-surface-active", min: 4.5, why: "text on active/pressed surface" },
   { fg: "--color-focus-ring", bg: "--color-surface", min: 3, why: "focus ring on white (non-text)" },
   { fg: "--color-focus-ring", bg: "--color-surface-subtle", min: 3, why: "focus ring on a tinted surface (non-text)" },
 ];

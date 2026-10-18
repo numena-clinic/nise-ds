@@ -46,6 +46,16 @@
   border-color: var(--color-action);
 }
 
+.nise-checkbox:hover:not(.nise-checkbox--disabled) .nise-checkbox__box {
+  border-color: var(--color-border-hover);
+}
+
+.nise-checkbox:hover:not(.nise-checkbox--disabled) .nise-checkbox__input:checked + .nise-checkbox__box,
+.nise-checkbox:hover:not(.nise-checkbox--disabled) .nise-checkbox__input:indeterminate + .nise-checkbox__box {
+  background-color: var(--color-action-hover);
+  border-color: var(--color-action-hover);
+}
+
 .nise-checkbox__input:focus-visible + .nise-checkbox__box {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: 0;

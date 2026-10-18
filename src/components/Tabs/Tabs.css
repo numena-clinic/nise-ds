@@ -22,6 +22,15 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
+.nise-tabs__trigger:hover:not([data-state="active"]):not(:disabled) {
+  color: var(--color-text);
+  background-color: var(--color-surface-hover);
+}
+
+.nise-tabs__trigger:active:not(:disabled) {
+  background-color: var(--color-surface-active);
+}
+
 .nise-tabs__trigger[data-state="active"] {
   background-color: var(--color-surface);
   color: var(--color-text);

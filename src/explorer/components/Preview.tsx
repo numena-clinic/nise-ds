@@ -15,9 +15,6 @@
 // wrapper and lose the scoped variables; it is pointed at the wrapper instead.
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { Badge, Button, Card, Select, TextField } from "../../index";
-import { AlertIcon, ChevronDownIcon, InfoIcon, PlusIcon } from "../../icons";
-import { InformationReview } from "../../compositions/InformationReview";
 import { ALL_TOKENS } from "../theme/tokens";
 import { experimentalTokens, previewStyle, resolve, type Overrides } from "../theme/theme";
 import { Catalogue } from "./Catalogue";
@@ -34,13 +31,17 @@ const ROLE_SWATCHES: string[] = [
   "--color-surface",
   "--color-surface-subtle",
   "--color-surface-hover",
+  "--color-surface-active",
   "--color-border",
   "--color-border-strong",
+  "--color-border-hover",
+  "--color-border-error",
   "--color-text",
   "--color-text-muted",
   "--color-text-inverted",
   "--color-action",
   "--color-action-hover",
+  "--color-action-active",
   "--color-link",
   "--color-focus-ring",
   "--color-selected-surface",
@@ -56,13 +57,6 @@ const ROLE_SWATCHES: string[] = [
   "--color-tint-tangerine",
   "--color-tint-text",
 ].filter((name) => name in ALL_TOKENS);
-
-const OPTIONS = [
-  { value: "client", label: "Client report" },
-  { value: "collateral", label: "Collateral" },
-  { value: "observation", label: "Observation" },
-  { value: "assessment", label: "Standardised assessment", disabled: true },
-];
 
 const DEVICES: { id: Device; label: string; width: string }[] = [
   { id: "mobile", label: "Phone", width: "390px" },
@@ -164,141 +158,6 @@ export function Preview({ overrides }: Props) {
                   </li>
                 ))}
               </ul>
-            </section>
-
-            <section className="nise-explorer__specimen" aria-labelledby="pv-buttons">
-              <h2 id="pv-buttons" className="nise-explorer__specimen-title">
-                Buttons
-              </h2>
-              <div className="nise-pv__stack">
-                {(["primary", "secondary", "ghost"] as const).map((variant) => (
-                  <div key={variant} className="nise-pv__row">
-                    <span className="nise-pv__rowlabel">{variant}</span>
-                    <Button variant={variant} size="sm">
-                      Small
-                    </Button>
-                    <Button variant={variant} size="md">
-                      Medium
-                    </Button>
-                    <Button variant={variant} size="lg">
-                      Large
-                    </Button>
-                    <Button variant={variant} leftIcon={<PlusIcon size={16} />}>
-                      With icon
-                    </Button>
-                    <Button variant={variant} loading>
-                      Saving
-                    </Button>
-                    <Button variant={variant} disabled>
-                      Disabled
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="nise-explorer__specimen" aria-labelledby="pv-fields">
-              <h2 id="pv-fields" className="nise-explorer__specimen-title">
-                Form fields
-              </h2>
-              <div className="nise-pv__grid2">
-                <TextField id="pv-name" label="Client name" defaultValue="Maya Calderón" />
-                <TextField
-                  id="pv-name-hint"
-                  label="Preferred name"
-                  defaultValue="Maya"
-                  hint="How they would like to be addressed."
-                />
-                <TextField
-                  id="pv-name-error"
-                  label="Contact email"
-                  defaultValue="maya@"
-                  error="Enter a full email address."
-                />
-                <TextField
-                  id="pv-name-disabled"
-                  label="Reference"
-                  defaultValue="SESSION-004"
-                  disabled
-                  hint="Assigned automatically."
-                />
-                <Select
-                  id="pv-source"
-                  label="Source"
-                  options={OPTIONS}
-                  defaultValue="client"
-                  portalContainer={portalContainer}
-                />
-                <Select
-                  id="pv-source-error"
-                  label="Confidence"
-                  options={[
-                    { value: "low", label: "Low" },
-                    { value: "medium", label: "Medium" },
-                    { value: "high", label: "High" },
-                  ]}
-                  placeholder="Not sure"
-                  error="Choose a confidence level."
-                  portalContainer={portalContainer}
-                />
-              </div>
-            </section>
-
-            <section className="nise-explorer__specimen" aria-labelledby="pv-badges">
-              <h2 id="pv-badges" className="nise-explorer__specimen-title">
-                Badges
-              </h2>
-              <div className="nise-pv__row">
-                <Badge tone="neutral">Neutral</Badge>
-                <Badge tone="purple" icon={<InfoIcon size={16} />}>
-                  Client report
-                </Badge>
-                <Badge tone="cyan">Collateral</Badge>
-                <Badge tone="tangerine" icon={<AlertIcon size={16} />}>
-                  Observation
-                </Badge>
-                <Badge tone="purple" size="sm">
-                  Small
-                </Badge>
-                <Badge tone="neutral" size="sm">
-                  Small neutral
-                </Badge>
-              </div>
-            </section>
-
-            <section className="nise-explorer__specimen" aria-labelledby="pv-card">
-              <h2 id="pv-card" className="nise-explorer__specimen-title">
-                Card &amp; composition
-              </h2>
-              <Card
-                heading="Session 4 · 12 May"
-                description="Fortnightly review. Client described improved sleep onset."
-                actions={<Badge tone="cyan">Collateral</Badge>}
-                footer={
-                  <>
-                    <Button variant="ghost">Discard</Button>
-                    <Button variant="primary" rightIcon={<ChevronDownIcon size={16} />}>
-                      Save review
-                    </Button>
-                  </>
-                }
-              >
-                <div className="nise-pv__row">
-                  <Badge tone="purple">Client report</Badge>
-                  <Badge tone="cyan">Collateral</Badge>
-                  <Badge tone="neutral">Observation</Badge>
-                </div>
-                <TextField id="pv-concern" label="Presenting concern" defaultValue="Sleep onset" />
-                <TextField
-                  id="pv-words"
-                  label="Client's own words"
-                  defaultValue="I lie awake for about an hour most nights."
-                />
-              </Card>
-
-              <div className="nise-pv__composition">
-                <InformationReview />
-              </div>
             </section>
 
             <Catalogue portalContainer={portalContainer} />

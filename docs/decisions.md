@@ -126,6 +126,17 @@ The cost is scope: eight new components to design and keep accessible. The
 benefit is one design language and no second toolchain, and a preview that is
 honest about what ships.
 
+**D14 — Standardized interaction state tokens.**
+Interactive states across all controls are structured into three coherent
+role progressions:
+- Surfaces: `--color-surface` $\rightarrow$ `--color-surface-hover` $\rightarrow$ `--color-surface-active`
+- Actions: `--color-action` $\rightarrow$ `--color-action-hover` $\rightarrow$ `--color-action-active`
+- Boundaries: `--color-border-strong` $\rightarrow$ `--color-border-hover` $\rightarrow$ `--color-focus-ring`
+This replaces ad-hoc mixes and fallback proxies (such as using `--color-text-muted`
+for border hover), guarantees mathematical contrast via `tokens/validate.mjs`, and
+keeps interactive feedback consistent across Button, Select, TextField, Tabs,
+Checkbox, Radio, Switch, Table, and Slider without adding runtime dependencies.
+
 ## Provisional
 
 **P1 — The type scale, weights and line heights.**

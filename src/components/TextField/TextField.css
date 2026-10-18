@@ -20,7 +20,7 @@
 }
 
 .nise-field__control:hover:not(:disabled) {
-  border-color: var(--color-text-muted);
+  border-color: var(--color-border-hover);
 }
 
 .nise-field__control:focus-visible {
@@ -35,5 +35,5 @@
 }
 
 .nise-field--error .nise-field__control {
-  border-color: var(--color-text);
+  border-color: var(--color-border-error);
 }
