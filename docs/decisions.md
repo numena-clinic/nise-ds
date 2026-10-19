@@ -175,6 +175,16 @@ changed and `tokens/tokens.css` is byte-identical. Behaviour and axe tests were
 added for the eight components that had none (Checkbox, Radio, Switch, Tabs,
 Slider, Dialog, Tooltip, Table), so all thirteen are now covered both ways.
 
+**D17 — Node's type definitions are declared, so the type check is self-contained.**
+`tests/promote.test.ts` imports `node:fs`/`node:path` and uses `process`, but
+`@types/node` was never a declared dependency — it resolved only from an ancestor
+`node_modules` on the author's machine, so `npm run typecheck` passed locally while
+a clean checkout (CI) failed with `TS2307` for `node:fs`/`node:path` and `TS2591`
+for `process`. Node's types are now declared explicitly: `@types/node` (v22, the
+runtime CI pins) is a devDependency, and `tsconfig.json` lists `"node"` in
+`types`. The gate is unchanged and no check is disabled — the type check simply no
+longer depends on an ancestor directory that CI does not have.
+
 ## Provisional
 
 **P1 — The type scale, weights and line heights.**
