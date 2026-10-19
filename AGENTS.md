@@ -45,6 +45,10 @@ npm run verify           # the gate — run before saying you are done
   `tokens/semantic.mjs` and let the validator prove the ratio.
 - Component-specific values go in the component layer; radius is the exception —
   declare it at the point of use: `var(--button-radius, var(--radius-md))`.
+- `npm run tokens:build` also writes `tokens/dist/nise.tokens.json`, a DTCG
+  2025.10 export (`tokens/dtcg.mjs`) — an isolated interchange artifact next to
+  the proprietary `tokens.json`. It precomputes `color-mix` colours and lists
+  em/ch values under the `com.numena.nise` extension; nothing depends on it.
 
 ## Components
 

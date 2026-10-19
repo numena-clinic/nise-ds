@@ -137,6 +137,23 @@ for border hover), guarantees mathematical contrast via `tokens/validate.mjs`, a
 keeps interactive feedback consistent across Button, Select, TextField, Tabs,
 Checkbox, Radio, Switch, Table, and Slider without adding runtime dependencies.
 
+**D15 — A DTCG 2025.10 export, generated alongside the proprietary JSON.**
+The token source (`tokens/*.mjs`) remains the single source of truth; `npm run
+tokens:build` additionally writes `tokens/dist/nise.tokens.json`, a Design
+Tokens Community Group document in the Format Module 2025.10 (a stable Final
+Community Group Report). The existing proprietary `tokens/dist/tokens.json` and
+all CSS/component/explorer behaviour are unchanged — the export is an isolated
+build step (`tokens/dtcg.mjs`), not a replacement, so nothing depends on it.
+Colours use the Color Module's `color` object; `color-mix(...)` derivations are
+precomputed to literals (via `tokens/color.mjs`) with the recipe kept in a
+namespaced `$extensions`. Values the stable modules cannot express (em/ch
+dimensions) are recorded under `$extensions["com.numena.nise"].cssOnlyTokens`
+rather than approximated. This also entailed a correctness fix: the evaluator
+now interpolates `color-mix` with premultiplied alpha (CSS Color 5 §3.5), so
+`--color-scrim` resolves to its true `rgba(34, 26, 42, 0.4)` instead of a
+spurious `#000000`. Deciding to *emit* DTCG is reversible; the exporter and its
+extensions can be deleted without touching the token source.
+
 ## Provisional
 
 **P1 — The type scale, weights and line heights.**

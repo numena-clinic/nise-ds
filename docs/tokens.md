@@ -33,16 +33,46 @@ tokens. Anything pointing the wrong way fails.
 ## Source of truth, and the artifact
 
 The `.mjs` files under `tokens/` are canonical. `npm run tokens:build` renders
-them into two artifacts:
+them into three artifacts:
 
 | Artifact | Committed? | Why |
 | --- | --- | --- |
 | `src/tokens/tokens.css` | **yes** | The app and Storybook load it; no build step to run a consumer |
-| `tokens/dist/tokens.json` | no (gitignored) | Machine form for future consumers (tokens studio, other platforms) |
+| `tokens/dist/tokens.json` | no (gitignored) | Proprietary machine form for future consumers |
+| `tokens/dist/nise.tokens.json` | no (gitignored) | DTCG 2025.10 interchange export (see below) |
 
 Because the CSS is committed, it could drift from the source. `npm run
 tokens:validate` regenerates the CSS in memory and diffs it against the commit —
 a stale `tokens.css` is a build failure, not a silent inconsistency.
+
+## The DTCG export
+
+`tokens/dist/nise.tokens.json` is the same token set rendered in the Design
+Tokens Community Group format, Format Module **2025.10** (a stable Final
+Community Group Report). It is a one-way export for tools that speak DTCG — a
+tokens studio, an MCP tool surface, a future cross-platform build — and is
+deliberately separate from the proprietary `tokens.json`, which is unchanged.
+
+- **Types.** Every literal carries a `$type` and a `$value` in the module's
+  shape: `color` as a Color-module object (`colorSpace`/`components`/`alpha`/
+  `hex`), `dimension` (px/rem), `duration` (ms), `number`, `fontWeight`,
+  `fontFamily`, `cubicBezier`, `shadow`. Aliases are `{group.token}` references
+  and inherit their `$type` (§5.2.2).
+- **Derived colours.** A `color-mix(...)` has no DTCG value, so it is
+  precomputed to a literal colour and its recipe is kept under
+  `$extensions["com.numena.nise"].mix`. The maths follows CSS Color 5 §3.5
+  (premultiplied alpha) — see `tokens/color.mjs`.
+- **What the standard cannot hold.** em/ch dimension values
+  (`--letter-spacing-tight`, `--letter-spacing-wide`, `--measure-prose`) have no
+  faithful DTCG dimension (only px/rem are defined). They are listed, with their
+  original value and unit, under the root extension
+  `$extensions["com.numena.nise"].cssOnlyTokens` rather than being faked.
+- **Extensions.** Every token also records its original CSS variable name at
+  `$extensions["com.numena.nise"].cssVar`, so a consumer can round-trip.
+
+The format is versioned by the DTCG, not by Nise: the export targets the last
+*stable* module (2025.10). Re-check the spec before adopting a newer draft.
+
 
 ## Adding or changing a token
 
