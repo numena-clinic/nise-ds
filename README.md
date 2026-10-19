@@ -29,7 +29,7 @@ tokens/            canonical token source (the .mjs files) + build & validation
   component.mjs    per-component values (control heights, paddings)
   build.mjs        source → tokens.css (+ tokens/dist/*.json: proprietary & DTCG)
   dtcg.mjs         renders the DTCG 2025.10 export (tokens/dist/nise.tokens.json)
-  validate.mjs     references, layer direction, contrast, reproducibility
+  validate.mjs     references, layer direction, acyclicity, contrast, reproducibility
 src/
   tokens/tokens.css  GENERATED — the artifact the app loads. Do not edit.
   styles/            global baseline, fonts, shared field layout
@@ -64,7 +64,7 @@ every promised colour pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/to
 | Script | Does |
 | --- | --- |
 | `npm run tokens:build` | Regenerate `tokens.css` and `tokens/dist/*.json` (proprietary + DTCG) |
-| `npm run tokens:validate` | References, layer direction, contrast, reproducibility |
+| `npm run tokens:validate` | References, layer direction, acyclicity, contrast, reproducibility |
 | `npm run check:usage` | Fail on raw colours / off-token px / unknown tokens in `src` |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint (flat config) |

@@ -1,10 +1,12 @@
 // Validates the token system. `npm run tokens:validate` — exits non-zero on any
-// failure. Four things are proven:
+// failure. Five things are proven:
 //
 //   1. every var(--x) reference resolves to a defined token
 //   2. references only point DOWN the layers (primitive < semantic < component)
-//   3. the promised colour pairs meet their WCAG 2.2 contrast minimum
-//   4. src/tokens/tokens.css is exactly what the source regenerates (reproducible)
+//   3. the reference graph is acyclic (no token depends on itself, directly or
+//      transitively — a cycle would make `expand()` recurse without end)
+//   4. the promised colour pairs meet their WCAG 2.2 contrast minimum
+//   5. src/tokens/tokens.css is exactly what the source regenerates (reproducible)
 
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -14,6 +16,7 @@ import { layers, allTokens, layerOf } from "./index.mjs";
 import { contrastChecks } from "./semantic.mjs";
 import { renderCss } from "./emit.mjs";
 import { expand, parseColor, contrast } from "./color.mjs";
+import { refsOf, findCycles } from "./graph.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
@@ -41,7 +44,7 @@ for (const layer of layers) {
       }
       seenNames.set(name, layer.id);
 
-      const refs = [...value.matchAll(/var\(\s*(--[a-zA-Z0-9_-]+)\s*\)/g)].map((m) => m[1]);
+      const refs = refsOf(value);
 
       if (layer.allow.length === 0) {
         if (refs.length > 0 || value.includes("color-mix(")) {
@@ -61,7 +64,13 @@ for (const layer of layers) {
   }
 }
 
-// ── 3: contrast ──────────────────────────────────────────────────────────────
+// ── 3: the reference graph is acyclic ────────────────────────────────────────
+
+for (const cycle of findCycles(allTokens)) {
+  fail(`circular reference: ${cycle.join(" → ")}`);
+}
+
+// ── 4: contrast ──────────────────────────────────────────────────────────────
 
 const contrastRows = [];
 for (const { fg, bg, min, why } of contrastChecks) {
@@ -79,7 +88,7 @@ for (const { fg, bg, min, why } of contrastChecks) {
   }
 }
 
-// ── 4: reproducibility ───────────────────────────────────────────────────────
+// ── 5: reproducibility ───────────────────────────────────────────────────────
 
 let committed = null;
 try {

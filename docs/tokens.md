@@ -28,7 +28,9 @@ component   per-component use   →   where used?
 `tokens/validate.mjs` enforces the direction: a primitive may not contain a
 `var()` or a `color-mix()`; a semantic token may only reference primitives; a
 component token may only reference primitives, semantics, or other component
-tokens. Anything pointing the wrong way fails.
+tokens. Anything pointing the wrong way fails. The graph is also proven
+**acyclic** (`tokens/graph.mjs`): no token depends on itself, directly or
+transitively, so the resolver can never recurse without end.
 
 ## Source of truth, and the artifact
 

@@ -17,7 +17,7 @@
 .nise-switch__control {
   position: relative;
   display: inline-flex;
-  padding-block: calc((40px - var(--switch-height)) / 2);
+  padding-block: calc((var(--control-height-md) - var(--switch-height)) / 2);
   padding-inline: 0;
 }
 

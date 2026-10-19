@@ -154,6 +154,27 @@ now interpolates `color-mix` with premultiplied alpha (CSS Color 5 §3.5), so
 spurious `#000000`. Deciding to *emit* DTCG is reversible; the exporter and its
 extensions can be deleted without touching the token source.
 
+**D16 — The guards were hardened after an audit.**
+An audit of the verification surface found that two guards were narrower than
+they claimed. `scripts/check-token-usage.mjs` stripped `/* */` comments one line
+at a time, so a colour inside a multi-line comment or a trailing `//` comment was
+a false positive; and it only tested a line that was *entirely* one `prop: value`,
+so an inline one-liner (`.x { padding: 13px; }`), a declaration split across
+lines, a JSX `style={{ padding: "13px" }}`, and any literal `px` inside `calc()`
+were false negatives. The `calc()` gap was not theoretical: it hid a real
+off-token `40px` in `Radio.css`/`Switch.css` where every sibling used
+`var(--control-height-md)`. The scanner is now a pure, unit-tested module
+(`scripts/lib/token-usage.mjs`, `tests/usage.test.ts`) that strips block comments
+across lines, drops trailing `//` comments, and reads *declarations* — CSS
+`prop: value` and JSX `style={{ }}` (camelCase→kebab) — rather than lines.
+Separately, `tokens/validate.mjs` proved references resolve and point down the
+layers but never that the graph was acyclic, and a cycle would make the resolver
+recurse without end; `tokens/graph.mjs` now proves acyclicity
+(`tests/graph.test.ts`) and the validator fails on any cycle. No token value
+changed and `tokens/tokens.css` is byte-identical. Behaviour and axe tests were
+added for the eight components that had none (Checkbox, Radio, Switch, Tabs,
+Slider, Dialog, Tooltip, Table), so all thirteen are now covered both ways.
+
 ## Provisional
 
 **P1 — The type scale, weights and line heights.**

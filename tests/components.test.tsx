@@ -5,8 +5,27 @@ import { describe, expect, it, vi } from "vitest";
 import { Badge } from "../src/components/Badge";
 import { Button } from "../src/components/Button";
 import { Card } from "../src/components/Card";
+import { Checkbox } from "../src/components/Checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "../src/components/Dialog";
+import { Radio } from "../src/components/Radio";
 import { Select } from "../src/components/Select";
+import { Slider } from "../src/components/Slider";
+import { Switch } from "../src/components/Switch";
+import { Table } from "../src/components/Table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../src/components/Tabs";
 import { TextField } from "../src/components/TextField";
+import {
+  TooltipContent,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from "../src/components/Tooltip";
 
 describe("Button", () => {
   it("renders its label and fires onClick", async () => {
@@ -104,5 +123,149 @@ describe("Card", () => {
     expect(screen.getByText("Fortnightly review")).toBeInTheDocument();
     expect(screen.getByText("Body")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+  });
+});
+
+describe("Checkbox", () => {
+  it("is a labelled native checkbox that toggles on click", async () => {
+    render(<Checkbox label="Include allergies" />);
+    const box = screen.getByRole("checkbox", { name: "Include allergies" });
+    expect(box).not.toBeChecked();
+    await userEvent.click(box);
+    expect(box).toBeChecked();
+  });
+
+  it("does not toggle when disabled", async () => {
+    render(<Checkbox label="Include allergies" disabled />);
+    const box = screen.getByRole("checkbox");
+    await userEvent.click(box);
+    expect(box).not.toBeChecked();
+  });
+
+  it("exposes indeterminate as a DOM property, not a third value", () => {
+    render(<Checkbox label="Select all" indeterminate />);
+    const box = screen.getByRole<HTMLInputElement>("checkbox");
+    expect(box.indeterminate).toBe(true);
+    expect(box).not.toBeChecked();
+  });
+
+  it("describes itself with its hint", () => {
+    render(<Checkbox label="Include allergies" hint="Shown on the summary" />);
+    expect(screen.getByRole("checkbox")).toHaveAccessibleDescription("Shown on the summary");
+  });
+});
+
+describe("Switch", () => {
+  it("is a labelled toggle that turns on", async () => {
+    render(<Switch label="Email reminders" />);
+    const sw = screen.getByRole("checkbox", { name: "Email reminders" });
+    expect(sw).not.toBeChecked();
+    await userEvent.click(sw);
+    expect(sw).toBeChecked();
+  });
+
+  it("describes itself with its hint", () => {
+    render(<Switch label="Email reminders" hint="Weekly digest" />);
+    expect(screen.getByRole("checkbox")).toHaveAccessibleDescription("Weekly digest");
+  });
+});
+
+describe("Radio", () => {
+  it("selects one option in a named group", async () => {
+    render(
+      <>
+        <Radio name="tone" label="Calm" />
+        <Radio name="tone" label="Direct" />
+      </>,
+    );
+    const calm = screen.getByRole("radio", { name: "Calm" });
+    const direct = screen.getByRole("radio", { name: "Direct" });
+    await userEvent.click(direct);
+    expect(direct).toBeChecked();
+    expect(calm).not.toBeChecked();
+  });
+});
+
+describe("Table", () => {
+  it("renders a caption, column headers and rows", () => {
+    render(
+      <Table
+        caption="Recent sessions"
+        header={["Date", "Notes"]}
+        rows={[
+          { key: "1", cells: ["12 May", "Steady"] },
+          { key: "2", cells: ["26 May", 3] },
+        ]}
+      />,
+    );
+    expect(screen.getByRole("table", { name: "Recent sessions" })).toBeInTheDocument();
+    expect(screen.getAllByRole("columnheader")).toHaveLength(2);
+    expect(screen.getAllByRole("row")).toHaveLength(3);
+    expect(screen.getByRole("cell", { name: "12 May" })).toBeInTheDocument();
+  });
+});
+
+describe("Slider", () => {
+  it("is a labelled slider that steps with the arrow keys", async () => {
+    render(<Slider label="Intensity" defaultValue={[50]} min={0} max={100} step={1} />);
+    const thumb = screen.getByRole("slider", { name: "Intensity" });
+    expect(thumb).toHaveAttribute("aria-valuenow", "50");
+    thumb.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await waitFor(() => expect(thumb).toHaveAttribute("aria-valuenow", "51"));
+  });
+});
+
+describe("Tabs", () => {
+  it("shows the active panel and switches on click", async () => {
+    render(
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="history">History</TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">Overview panel</TabsContent>
+        <TabsContent value="history">History panel</TabsContent>
+      </Tabs>,
+    );
+    expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText("Overview panel")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("tab", { name: "History" }));
+    expect(await screen.findByText("History panel")).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "History" })).toHaveAttribute("aria-selected", "true");
+  });
+});
+
+describe("Dialog", () => {
+  it("opens with an accessible name and closes on Escape", async () => {
+    render(
+      <Dialog>
+        <DialogTrigger>Open settings</DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Settings</DialogTitle>
+          <DialogDescription>Adjust your preferences</DialogDescription>
+        </DialogContent>
+      </Dialog>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Open settings" }));
+    const dialog = await screen.findByRole("dialog", { name: "Settings" });
+    expect(dialog).toHaveAccessibleDescription("Adjust your preferences");
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+});
+
+describe("Tooltip", () => {
+  it("reveals supplemental text on hover", async () => {
+    render(
+      <TooltipProvider delayDuration={0}>
+        <TooltipRoot>
+          <TooltipTrigger>More info</TooltipTrigger>
+          <TooltipContent>Shown on the summary</TooltipContent>
+        </TooltipRoot>
+      </TooltipProvider>,
+    );
+    await userEvent.hover(screen.getByRole("button", { name: "More info" }));
+    expect(await screen.findByRole("tooltip")).toHaveTextContent("Shown on the summary");
   });
 });

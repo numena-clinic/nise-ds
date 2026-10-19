@@ -70,10 +70,12 @@ npm run verify           # the gate — run before saying you are done
 
 ## Tests
 
-- `tests/components.test.tsx` — behaviour (roles, names, states).
+- `tests/components.test.tsx` — behaviour (roles, names, states) for every component.
 - `tests/a11y.test.tsx` — axe over rendered components, closed and open.
 - `tests/theme.test.ts` / `tests/promote.test.ts` — the theme model, candidate
   format, and the promotion planner (pure).
+- `tests/usage.test.ts` — the token-boundary scanner (`scripts/lib/token-usage.mjs`).
+- `tests/graph.test.ts` — the reference-graph acyclicity proof (`tokens/graph.mjs`).
 - `tests/explorer.test.tsx` — the Theme Explorer as a user drives it, plus axe.
 - Prefer querying by role/name. Polyfills live in `tests/setup.ts`; the axe
   helper is `tests/axe.ts`.

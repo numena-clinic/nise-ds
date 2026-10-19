@@ -17,7 +17,7 @@
 .nise-radio__control {
   position: relative;
   display: inline-flex;
-  padding-block: calc((40px - var(--choice-size)) / 2);
+  padding-block: calc((var(--control-height-md) - var(--choice-size)) / 2);
   padding-inline: 0;
 }
 
