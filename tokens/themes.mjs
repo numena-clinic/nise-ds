@@ -32,7 +32,7 @@ import { ref, mix } from "./semantic.mjs";
  *   surface-hover             the first wide chrome step
  *
  * — and it keeps every step perceptible: .194 → .235, then the wide chrome
- * steps (.43 → .53) that make a hover or a press unmistakable. Those two are
+ * steps (.43 → .51) that make a hover or a press unmistakable. Those two are
  * STATES, not structural layers, so they keep the values they had. */
 export const textDark = {
   "--color-surface": ref("--dark-ground"),
@@ -46,7 +46,7 @@ export const textDark = {
 };
 
 /** Borders (dark). The error boundary is chromatic here too (P4) — the pink
- * family's vivid step, which clears 5.66:1 on the dark ground. */
+ * family's vivid step, which clears 6.44:1 on the dark ground. */
 export const bordersDark = {
   "--color-border": ref("--neutral-800"),
   "--color-border-strong": ref("--neutral-600"),
@@ -114,7 +114,7 @@ export const accentsDark = {
  *
  * Same three role names as the light mapping, and this is where the families'
  * published BRIGHT accents finally get their dark ground: mint-500 on the page
- * is 11.62:1, citron-500 11.89:1, teal-500 11.15:1. The panel is the family's
+ * is 13.01:1, citron-500 13.31:1, teal-500 12.48:1. The panel is the family's
  * near-black step and the content on a fill is that same step, so a badge reads
  * as the family colour rather than as a pale wash. Dark is not an inversion of
  * light: the accent steps are chosen per theme against that theme's ground. */

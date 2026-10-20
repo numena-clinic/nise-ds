@@ -265,11 +265,23 @@ What keeps the brand rule intact:
 
 1. **Operational states only** — saved, failed, caution, unsaved. Never clinical
    or epistemic meaning.
-2. **Separate families.** Tangerine is not warning, cyan is not info. Teal is
-   pushed a few degrees bluer than `--vibrant-cyan` so the two never collide;
-   the brand cyan keeps its own anchor and its own uses.
+2. **Separate families.** Tangerine is not warning, cyan is not info; the brand
+   cyan keeps its own anchor and its own uses. The teal/vibrant-cyan separation
+   is measured, and it is two claims rather than one: at the DEEP steps — the
+   ones the light theme reads (info = teal-800, secondary = cyan-700) — they
+   are clearly apart (H 218.8° vs 204.1°, ΔE .060 in OKLab); at the BRIGHT end
+   they sit on top of each other (teal-500 `#45E8FF` vs `--vibrant-cyan`
+   `#25E4F8`: ΔE .019, a just-noticeable difference — the hue order 209.0° >
+   206.5° that `tests/color.test.ts` asserts is preserved but is not itself a
+   visible separation). In the dark theme it is therefore the roles and the
+   form — operational info vs brand secondary fill — that keep them distinct,
+   not the hue. Neither approved value may be moved to widen the gap. If a
+   surface ever shows both at once, re-point the dark `--color-info` at
+   teal-600 (`#29b2cc`, an interpolated step, not a pin): 7.31:1 on
+   `--dark-ground`, 6.05:1 on its own surface. Today no component consumes
+   either role, so the near-collision is latent rather than observed.
 3. **The light theme takes its accents from the deep end of each ramp.** A neon
-   is not legible on a pale panel — mint-500 is 1.6:1 on white, citron-600 is
+   is not legible on a pale panel — mint-500 is 1.4:1 on white, citron-600 is
    3.83:1 with white content — so light sources mint/pink at 700 and
    citron/teal at 800 (measured per hue, never one step for all four), and the
    brightness lives in the dark theme where it has a dark ground to read

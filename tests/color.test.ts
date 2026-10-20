@@ -225,12 +225,29 @@ describe("authored functional ramps", () => {
     const hueOf = (name: string) => colorMeta[name].oklch.h;
     // vibrant-cyan is 206.5°; the info family is pushed bluer on purpose.
     expect(hueOf("--teal-500")).toBeGreaterThan(hueOf("--vibrant-cyan"));
+    // The separation the light theme actually reads is in the deep steps:
+    // info sources teal-800 (218.8°) against secondary's cyan-700 (204.1°),
+    // 14.7° apart (ΔE .060 in OKLab). The bright pair is within a JND by
+    // design — roles and form, not hue, separate it in dark; measured in
+    // decisions.md P4, which also carries the contingency if both ever meet.
+    expect(hueOf("--teal-800") - hueOf("--cyan-700")).toBeGreaterThanOrEqual(12);
     for (const family of Object.keys(functionalFamilies)) {
       for (const step of ["50", "500", "950"]) {
         const h = hueOf(`--${family}-${step}`);
         expect(h, `${family}-${step}`).toBeGreaterThanOrEqual(0);
         expect(h).toBeLessThan(360);
       }
+    }
+  });
+
+  it("keeps the warm family on its brand anchor's hue", () => {
+    const hueOf = (name: string) => colorMeta[name].oklch.h;
+    // vibrant-tangerine measures 42.9°; the 400–500 steps must sit on it
+    // (41.8° / 43.7° with the +10° warm shift), so a family-hue edit cannot
+    // quietly drift the ramp toward golden-amber, a hue the brand does not have.
+    for (const step of ["400", "500"]) {
+      const drift = Math.abs(hueOf(`--tangerine-${step}`) - hueOf("--vibrant-tangerine"));
+      expect(drift, `tangerine-${step}`).toBeLessThan(2);
     }
   });
 });

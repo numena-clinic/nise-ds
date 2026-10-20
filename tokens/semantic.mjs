@@ -149,7 +149,7 @@ export const fills = {
  *   -content  the foreground ON the accent fill
  *
  * The light theme sources the accent from the DEEP end of each ramp. A vivid
- * neon is not legible as text on a pale panel (the mint accent is 1.6:1 on
+ * neon is not legible as text on a pale panel (the mint accent is 1.4:1 on
  * white), so the brightness lives in the dark theme where it has a dark ground
  * to read against — see tokens/themes.mjs. This is the same reasoning as
  * `--color-text-accent-tangerine`, and it is why no family's brightest step

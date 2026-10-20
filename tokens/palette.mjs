@@ -6,8 +6,9 @@
 //   1. The ten brand anchors from numena-brand color.md §2. Their published hex
 //      is preserved verbatim and their provenance is kept alongside the OKLCH we
 //      derive FROM that hex — the brand stays the authority on identity, and we
-//      never round its values through our own maths. (Analysis of these anchors
-//      is in docs/palette.md; it is why no anchor value is changed here.)
+//      never round its values through our own maths. The analysis and the reason
+//      no anchor value is changed here are in docs/tokens.md and the verbatim
+//      assertions in tests/color.test.ts.
 //
 //   2. Scales, two kinds. Four families are GENERATED from a lightness curve
 //      plus a family-specific chroma curve (one neutral ramp, and purple/cyan/
@@ -22,7 +23,7 @@
 // Nothing downstream stores OKLCH as the runtime value: `colorTokens` resolves
 // every colour to a deterministic sRGB hex, which is what `tokens.css` ships.
 // The OKLCH source travels with each token in `colorMeta` and is preserved in
-// the DTCG export. See docs/tokens.md and docs/color-architecture.md.
+// the DTCG export. See docs/tokens.md and docs/decisions.md.
 //
 // Deterministic: same source → same bytes. No dependencies.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -69,7 +70,7 @@ export function oklchOf(hex) {
 // The steps are deliberately TIGHT (0.04 L apart) rather than the neutral
 // ramp's 0.09: a container ladder has to stay near its ground or a card reads
 // as a hole, and the tight steps are what let a saturated accent clear 4.5:1 on
-// the strongest panel — pink-500 is 5.45:1 on --dark-panel and only 2.86:1 on
+// the strongest panel — pink-500 is 5.26:1 on --dark-panel and only 2.86:1 on
 // neutral-800, which is why this is authored rather than reusing the ramp.
 //
 // `--color-surface` in the dark theme IS --dark-ground, so the page and
@@ -129,16 +130,28 @@ function chromaEnvelope(l) {
  * and very dark steps of one hue read better with a small shift, and warm hues
  * need a touch more). `maxChroma` is the envelope peak.
  *
- * Hues follow the brand anchors: purple ~299° (deep-purple 300, vibrant-purple
- * 293), cyan ~205° (vibrant-cyan), tangerine ~52° (vibrant-tangerine).
+ * Hues follow the brand anchors, measured from their published hex:
+ * purple 299° (deep-purple 300.0°, vibrant-purple 298.4°), cyan 205°
+ * (vibrant-cyan 206.5°), tangerine 45° (vibrant-tangerine 42.9° — with the
+ * +10° warm shift this puts the 400–500 steps on the anchor's own hue; a 52°
+ * base had them 7–9° toward golden-amber, a hue the brand does not contain).
  */
 export const families = {
   purple: { hue: 299, maxChroma: 0.226, hueShift: -6 },
   cyan: { hue: 205, maxChroma: 0.132, hueShift: 4 },
-  tangerine: { hue: 52, maxChroma: 0.176, hueShift: 10 },
+  tangerine: { hue: 45, maxChroma: 0.176, hueShift: 10 },
 };
 
-/** The neutral family: a faint brand-plum tint, chroma rising toward the dark end. */
+/** The neutral family: a faint brand-plum tint, chroma rising toward the dark end.
+ *
+ * The hue is the brand's own: 305° sits between ink-plum (306.9°) and
+ * dark-ground (305.1°), so every neutral is tonally related to the brand ink.
+ * The curve keeps it a NEUTRAL, not a tint: chroma peaks at .016 on the dark
+ * end — less than half ink-plum's .032, which is why neutral-950 (#211E25)
+ * reads near the brand (#221A2A) without being it (ΔE ≈ .019, different bytes,
+ * different chroma) — and falls to ≈ .006 at the light steps, so page surfaces
+ * and borders carry no visible purple cast. The dark ground/panel anchors stay
+ * outside the ramp entirely (they are ladder values, not curve steps). */
 export const neutral = { hue: 305, maxChroma: 0.016 };
 
 /**
@@ -173,7 +186,7 @@ export function generateScale(steps, chromaAt, hueAt) {
 //
 // A pinned step keeps its published hex verbatim: `authoredScale` returns the
 // literal, not a round-trip through OKLCH, so an anchor can never drift by a
-// rounding unit. See docs/color-architecture.md.
+// rounding unit. See docs/tokens.md.
 
 const lerp = (a, b, t) => a + (b - a) * t;
 /** Hue on the short arc: always the <=180° path. */
@@ -262,8 +275,11 @@ export const functionalFamilies = {
     900: "#5B2043",
     950: "#351629",
   },
-  /** info — cyan pushed a few degrees bluer so it never collides with the
-   * brand's vibrant-cyan. Related to it by design; never a replacement. */
+  /** info — the cyan family pushed bluer at every step, related to the brand's
+   * vibrant-cyan by design and never a replacement for it. The separation is
+   * real in the deep steps the light theme reads (teal-800 vs cyan-700,
+   * ΔE .060) but tiny at 500 (ΔE .019, inside a JND) — there the roles, not
+   * the values, keep them apart. Measured; see decisions.md P4. */
   teal: {
     50: "#E5FBFF",
     200: "#B1F7FF",
