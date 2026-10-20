@@ -9,19 +9,29 @@
 //   3. a token-reference view lays out the whole graph with live values.
 //
 // A device toggle constrains the canvas width so a theme can be judged at
-// phone, tablet and desktop size without leaving the page.
+// phone, tablet and desktop size without leaving the page, and a theme toggle
+// switches the preview between the light mapping and the dark mapping of the
+// same edits (the wrapper pins the theme's own values — see previewStyle).
 //
 // The Select popup portals to document.body by default, which would escape the
 // wrapper and lose the scoped variables; it is pointed at the wrapper instead.
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ALL_TOKENS } from "../theme/tokens";
-import { experimentalTokens, previewStyle, resolve, type Overrides } from "../theme/theme";
+import {
+  experimentalTokens,
+  previewStyle,
+  resolve,
+  type Overrides,
+  type ThemeMode,
+} from "../theme/theme";
 import { Catalogue } from "./Catalogue";
 import { TokenReference } from "./TokenReference";
 
 interface Props {
   overrides: Overrides;
+  mode: ThemeMode;
+  onModeChange: (mode: ThemeMode) => void;
 }
 
 type View = "catalogue" | "tokens";
@@ -32,6 +42,10 @@ const ROLE_SWATCHES: string[] = [
   "--color-surface-subtle",
   "--color-surface-hover",
   "--color-surface-active",
+  "--color-base-100",
+  "--color-base-200",
+  "--color-base-300",
+  "--color-base-content",
   "--color-border",
   "--color-border-strong",
   "--color-border-hover",
@@ -42,6 +56,10 @@ const ROLE_SWATCHES: string[] = [
   "--color-action",
   "--color-action-hover",
   "--color-action-active",
+  "--color-secondary",
+  "--color-secondary-content",
+  "--color-neutral",
+  "--color-neutral-content",
   "--color-link",
   "--color-focus-ring",
   "--color-selected-surface",
@@ -56,6 +74,18 @@ const ROLE_SWATCHES: string[] = [
   "--color-tint-cyan",
   "--color-tint-tangerine",
   "--color-tint-text",
+  "--color-success-surface",
+  "--color-success",
+  "--color-success-content",
+  "--color-warning-surface",
+  "--color-warning",
+  "--color-warning-content",
+  "--color-error-surface",
+  "--color-error",
+  "--color-error-content",
+  "--color-info-surface",
+  "--color-info",
+  "--color-info-content",
 ].filter((name) => name in ALL_TOKENS);
 
 const DEVICES: { id: Device; label: string; width: string }[] = [
@@ -64,15 +94,20 @@ const DEVICES: { id: Device; label: string; width: string }[] = [
   { id: "desktop", label: "Desktop", width: "100%" },
 ];
 
-export function Preview({ overrides }: Props) {
+const MODES: { id: ThemeMode; label: string }[] = [
+  { id: "light", label: "Light" },
+  { id: "dark", label: "Dark" },
+];
+
+export function Preview({ overrides, mode, onModeChange }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   const [view, setView] = useState<View>("catalogue");
   const [device, setDevice] = useState<Device>("desktop");
   useEffect(() => setPortalContainer(wrapperRef.current), []);
 
-  const map = experimentalTokens(overrides);
-  const style = previewStyle(overrides) as CSSProperties;
+  const map = experimentalTokens(overrides, mode);
+  const style = previewStyle(overrides, mode) as CSSProperties;
   const width = DEVICES.find((d) => d.id === device)?.width ?? "100%";
 
   return (
@@ -97,6 +132,20 @@ export function Preview({ overrides }: Props) {
           </button>
         </div>
 
+        <div className="nise-preview__group" role="group" aria-label="Preview theme">
+          {MODES.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              aria-pressed={mode === m.id}
+              className={`nise-preview__seg ${mode === m.id ? "nise-preview__seg--on" : ""}`}
+              onClick={() => onModeChange(m.id)}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
         <div className="nise-preview__group" role="group" aria-label="Preview width">
           {DEVICES.map((d) => (
             <button
@@ -116,10 +165,10 @@ export function Preview({ overrides }: Props) {
         className="nise-explorer__preview"
         ref={wrapperRef}
         style={{ ...style, maxWidth: width }}
-        data-nise-theme
+        data-nise-theme={mode}
       >
         {view === "tokens" ? (
-          <TokenReference overrides={overrides} query="" />
+          <TokenReference overrides={overrides} query="" mode={mode} />
         ) : (
           <>
             <section className="nise-explorer__specimen" aria-labelledby="pv-type">

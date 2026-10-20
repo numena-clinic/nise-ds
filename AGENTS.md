@@ -29,8 +29,12 @@ npm run verify           # the gate — run before saying you are done
 
 - Source of truth is `tokens/*.mjs`. `src/tokens/tokens.css` is **generated** —
   never edit it by hand; edit the source and rebuild.
-- The palette is **generated** in `tokens/palette.mjs` (OKLCH model; the ten
-  brand hex are anchors, not the whole palette). `primitives.mjs` re-exports its
+- The palette lives in `tokens/palette.mjs` (OKLCH model; the ten brand hex are
+  anchors, not the whole palette). Four families are **generated** — `neutral`,
+  `purple`, `cyan`, `tangerine` — from a shared lightness curve; four are
+  **authored** (pinned to published candidate values, no interpolation may move
+  a pin) — `mint`, `citron`, `pink`, `teal` — plus two pinned dark-ground
+  anchors, `--dark-ground` / `--dark-panel`. `primitives.mjs` re-exports its
   `colorTokens`; do not hand-author a colour primitive. Themes live in
   `tokens/themes.mjs` (light is the base, dark re-points the same role names).
 - Three layers, downward references only: primitive → semantic → component.
@@ -42,9 +46,14 @@ npm run verify           # the gate — run before saying you are done
   time on a typo.
 - **No raw colours and no off-token `px`.** `npm run check:usage` fails on raw
   colour literals and on `px` values on spacing/radius/type properties.
-- **No status colours, ever.** There is no `--color-success` / `-danger` /
-  `-warning`, by brand rule (color.md §4). Errors are text + an icon + a heavier
-  boundary; accents are categorical, not verdicts.
+- **No verdict colours.** Accents are categorical, not verdicts, and an interface
+  error is text + an icon + a heavier boundary first (color.md §4). The one
+  carve-out is **decisions.md P4**, provisional and user-directed: four
+  *operational* role families exist — `--color-success/warning/error/info` with
+  a `-surface` and `-content` each — for machine states only (saved, failed,
+  caution, unsaved), never clinical or epistemic meaning. They read from the
+  authored ramps above; tangerine is not warning and cyan is not info. Do not
+  add a fifth, and do not let a status colour imply a clinical judgement.
 - When a component needs to rely on a colour pair, add it to `contrastChecks` in
   `tokens/semantic.mjs` and let the validator prove the ratio.
 - Component-specific values go in the component layer; radius is the exception —
@@ -91,11 +100,20 @@ npm run verify           # the gate — run before saying you are done
   `@storybook/builder-vite` does not auto-load it.
 - It reads `tokens/*.mjs` directly — no second token list. A new token shows up
   automatically; classify edibility from the raw value (literal / `var()` alias /
-  `color-mix` derived) in `src/explorer/theme/tokens.ts`, not by hand.
+  `color-mix` derived) in `src/explorer/theme/tokens.ts`, not by hand. The ten
+  brand anchors are excluded from editability (`IMMUTABLE_TOKENS` /
+  `isEditable`) and shown as fixed cards — a candidate may not name one.
 - Preview overrides are **scoped custom properties on the preview wrapper**, never
-  on `:root`. Radix overlays inside a scoped theme (Select, Dialog, Tooltip) get
-  the wrapper via their optional `container` / `portalContainer` prop (default
-  behaviour unchanged).
+  on `:root`. The wrapper also pins every theme-varying token to the value of the
+  selected Light/Dark mode (`previewStyle(overrides, mode)`), so the preview's
+  theme does not depend on `data-theme` cascading or the OS preference. Radix
+  overlays inside a scoped theme (Select, Dialog, Tooltip) get the wrapper via
+  their optional `container` / `portalContainer` prop (default behaviour
+  unchanged).
+- The Light/Dark toggle is a **view**, not theme authoring: edits always target
+  the light base (D19), and the dark mapping of the same edits is what the toggle
+  shows. `resolveContrast(overrides, mode)` re-checks the promises against the
+  mapping on screen, and the review panel names it.
 - The browser never writes source. It exports a versioned candidate
   (`nise.theme-candidate` v1); `npm run theme:apply -- <file> [--write]` promotes
   it locally — dry-run by default, rebuilds + validates, rolls back on failure,
@@ -105,7 +123,8 @@ npm run verify           # the gate — run before saying you are done
   with palette and roles split apart; the preview has a **Catalogue** view (the
   Nise components) and a **Tokens** view (the reference graph), each with a
   Phone / Tablet / Desktop toggle. The preview wrapper class
-  (`.nise-explorer__preview`) and the labelled token inputs are load-bearing for
+  (`.nise-explorer__preview`), the `data-nise-theme` marker, the labelled token
+  inputs and the `.nise-swatch-card--locked` cards are load-bearing for
   `tests/explorer.test.tsx` — keep them.
 
 ## Docs
@@ -118,12 +137,13 @@ When you change something a doc describes, update the doc: `docs/tokens.md`,
 
 - Commit licensed font files.
 - Edit generated files (`src/tokens/tokens.css`, `tokens/dist/*`).
-- Write the token source from the browser, or add a status colour — promotion is
-  always `theme:apply`.
+- Write the token source from the browser — promotion is always `theme:apply`.
 - Add a dependency without a note in `docs/decisions.md` — most things are a
   native element or a token, not a library.
 - Import Tailwind, `src/components/ui/` or `@/lib/utils` from anywhere — the
   vendored shadcn layer and the Tailwind toolchain were removed in D13 and must
   not come back. Every component is plain CSS over tokens (D2).
-- Write a status colour, or a hand-authored colour outside the token set — the
-  token boundary is enforced everywhere now, with no path exemptions (D13).
+- Write a colour outside the token set — raw hex, an off-scale `px`, or a family
+  that is not in `palette.mjs`. The token boundary is enforced everywhere, with
+  no path exemptions (D13). The four operational families in P4 are the complete
+  status vocabulary; do not add a role or a fifth family beside them.

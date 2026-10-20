@@ -1,9 +1,11 @@
 // The Theme Explorer shell.
 //
-// It holds one piece of state — the override map — and wires it to the three
-// surfaces: the parameter pane (left), the live preview canvas (right), and the
-// review drawer. The override map is the ONLY thing that changes; the token
-// source is untouched until you promote a candidate from the command line.
+// It holds two pieces of state — the override map (the only thing that changes
+// what is authored) and the preview's light/dark view mode — and wires them to
+// the three surfaces: the parameter pane (left), the live preview canvas
+// (right), and the review drawer. The override map is the ONLY thing that
+// changes; the token source is untouched until you promote a candidate from the
+// command line.
 //
 // The draft is persisted to localStorage so a refresh does not lose work, but
 // that draft is a convenience only — it is never treated as applied. Reset clears
@@ -15,7 +17,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { TooltipProvider } from "../index";
-import { changeCount, prune, type Override, type Overrides } from "./theme/theme";
+import {
+  changeCount,
+  prune,
+  type Override,
+  type Overrides,
+  type ThemeMode,
+} from "./theme/theme";
 import { TokenPanel } from "./components/TokenPanel";
 import { Preview } from "./components/Preview";
 import { ReviewPanel } from "./components/ReviewPanel";
@@ -37,6 +45,10 @@ function loadDraft(): Overrides {
 export function App() {
   const [overrides, setOverrides] = useState<Overrides>(loadDraft);
   const [reviewOpen, setReviewOpen] = useState(false);
+  // Which mapping the preview and the contrast re-check are judged under. It is
+  // a VIEW choice only — edits always target the light base (D19), and the dark
+  // mapping of the same edits is what the dark toggle shows.
+  const [mode, setMode] = useState<ThemeMode>("light");
 
   useEffect(() => {
     try {
@@ -110,7 +122,7 @@ export function App() {
             </p>
             <TokenPanel overrides={overrides} onChange={setOverride} onReset={resetToken} />
           </div>
-          <Preview overrides={overrides} />
+          <Preview overrides={overrides} mode={mode} onModeChange={setMode} />
         </main>
 
         <ReviewPanel
@@ -118,6 +130,7 @@ export function App() {
           onClose={() => setReviewOpen(false)}
           overrides={overrides}
           onImport={replaceAll}
+          mode={mode}
         />
       </div>
     </TooltipProvider>

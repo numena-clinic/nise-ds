@@ -16,14 +16,17 @@
      --select-height, --select-padding-x, --select-font-size, --select-item-height
        → --control-* → --space-*, --font-size-*
      --field-gap, --field-label-gap, --field-message-font-size
-     --color-surface, --color-surface-subtle, --color-surface-hover, --color-text,
-     --color-text-muted, --color-border-strong, --color-border-hover, --color-focus-ring,
-     --color-selected-surface, --color-selected-text, --shadow-md, --radius-md, --border-width,
-     --focus-ring-width, --opacity-disabled, --duration-fast, --ease-standard
+      --color-surface, --color-surface-subtle, --color-surface-hover, --color-text,
+      --color-text-muted, --color-border-strong, --color-border-hover, --color-focus-ring,
+      --color-border-error,
+      --color-selected-surface, --color-selected-text, --shadow-md, --radius-md, --border-width,
+      --focus-ring-width, --opacity-disabled, --duration-fast, --ease-standard
 
-   Error handling matches TextField: there is no status colour (color.md §4;
-   iconography.md §4), so text + icon + a heavier boundary, and the hint leaves
-   the DOM when an error shows.
+   Error handling matches TextField: text + icon + a heavier boundary, never
+   colour alone (color.md §4; iconography.md §4). Since decisions.md P4 the
+   heavier boundary also reads from `--color-border-error` — the operational
+   error accent, not a verdict colour — and the hint leaves the DOM when an
+   error shows.
 
    `portalContainer` (optional) mounts the popup somewhere other than
    document.body, so a Select inside a themed subtree keeps that subtree's CSS

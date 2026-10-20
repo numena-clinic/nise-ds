@@ -234,6 +234,59 @@ A seed, not a catalogue: the grid, stroke rule and four sizes are fixed by
 iconography.md §3, but the glyph list grows on demand. Empty states and the
 reasoning-stage icons (iconography.md §7) are not built yet.
 
+**P4 — Operational colour roles (success / warning / error / info).**
+color.md §4 and D5 still govern: the palette establishes no status colours,
+accents are categorical and never a verdict, and an error is text + an icon + a
+heavier boundary. This entry records a **user-directed, provisional override** so
+the decision is visible rather than implied by code.
+
+What it adds:
+
+- Four **authored** ramps — mint (success), citron (warning), pink (error),
+  teal (info) — pinned to published candidate values in `tokens/palette.mjs`
+  (`functionalFamilies`) instead of generated from the shared lightness curve.
+  They are authored because the candidates are deliberately uneven per hue: a
+  neon accent and a near-black surface in one family, and no single lightness
+  curve fits all four. A pinned step keeps its published hex **verbatim**;
+  `tests/color.test.ts` asserts that, to the unit.
+- Twelve semantic roles (three per family: `-surface`, the accent, `-content`),
+  mapped independently per theme, plus `--color-border-error` re-pointed from
+  neutral to the pink family. Its four consumers (TextField, Select, the two
+  explorer call sites) are unchanged — only the value moved.
+- Two pinned foundation values for the dark ground (`--dark-ground` #17121D,
+  `--dark-panel` #2D2238) with the brand ink-plum as the raised step between
+  them. The dark **page** moves from neutral-950 to `--dark-ground`. This was
+  not optional: at L .43 the neutral-800 panel leaves pink-500 at 2.86:1, so no
+  saturated accent could clear 4.5:1 on the strongest dark panel. The tight
+  0.04-L ladder is what makes the operational roles legible in dark, and it
+  improves every other dark ratio.
+
+What keeps the brand rule intact:
+
+1. **Operational states only** — saved, failed, caution, unsaved. Never clinical
+   or epistemic meaning.
+2. **Separate families.** Tangerine is not warning, cyan is not info. Teal is
+   pushed a few degrees bluer than `--vibrant-cyan` so the two never collide;
+   the brand cyan keeps its own anchor and its own uses.
+3. **The light theme takes its accents from the deep end of each ramp.** A neon
+   is not legible on a pale panel — mint-500 is 1.6:1 on white, citron-600 is
+   3.83:1 with white content — so light sources mint/pink at 700 and
+   citron/teal at 800 (measured per hue, never one step for all four), and the
+   brightness lives in the dark theme where it has a dark ground to read
+   against. Same reasoning as `--color-text-accent-tangerine`.
+
+What it deliberately does **not** add: a lavender ramp (pale-lavender plus the
+low-chroma neutral ramp already cover that ground, and a third near-identical
+ramp fails D5's own test); a separate `--color-primary`/`-content` (that is
+`--color-action`/`--color-action-text`, and one value under two names is the
+redundancy D5 exists to prevent); border roles for the three non-error families
+(nothing consumes them).
+
+If P4 is vetoed, remove `functionalFamilies` and `groundAnchors` from
+`tokens/palette.mjs`, the `functional`/`functionalDark` groups and their
+`contrastChecks`, and the operational-roles group from the Foundations story.
+Nothing in the component layer depends on them.
+
 ## Deferred
 
 **Visual regression (Playwright / Chromatic).** Assessed and deferred. It needs a
@@ -246,14 +299,14 @@ one surface and a visual baseline is worth maintaining.
 is not published and not split per-component. Deferred until there is a second
 consumer.
 
-**Theming / dark mode.** The brand is light-only. The icon rules anticipate a
-theme (icons follow `currentColor`), and tokens are structured so a second theme
-is a second set of semantic values — but no dark theme is built.
+**Theming breadth.** Light and dark are both built (D19, P4). A third theme —
+a different brand, or a high-contrast variant — is not, and the promotion
+workflow still carries no theme id, so theme values change in the source.
 
-**MCP tooling and multi-theme authoring.** The Theme Explorer (D11) edits the one
-light theme; authoring a *second* theme (a dark set of semantic values) and
-exposing the token graph to MCP tooling are not built. `tokens/dist/tokens.json`
-is the machine-readable form such tooling would read.
+**MCP tooling and multi-theme authoring.** The Theme Explorer (D11) edits the
+light theme and *displays* dark; authoring a candidate that targets a theme, and
+exposing the token graph to MCP tooling, are not built.
+`tokens/dist/tokens.json` is the machine-readable form such tooling would read.
 
 ## Constraints carried in
 

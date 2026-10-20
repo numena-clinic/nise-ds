@@ -1,7 +1,8 @@
 // The parameter pane — a visual editor over the real token graph.
 //
-// Colour is split the way a designer thinks about it: the PALETTE (the ten
-// primitives you author) and the ROLES (semantic tokens that point at them).
+// Colour is split the way a designer thinks about it: the PALETTE (primitive
+// colours — the ten brand anchors shown fixed, plus the generated scale steps
+// you author) and the ROLES (semantic tokens that point at them).
 // Everything else — type, space, shape, motion — is a labelled row with the
 // input that matches its kind. Derived colours are listed read-only so the
 // dependency stays visible.
@@ -13,6 +14,7 @@ import { useMemo, useState } from "react";
 import {
   DERIVED_TOKENS,
   EDITABLES,
+  IMMUTABLE_TOKENS,
   editablesBySection,
   type EditableToken,
   type Section,
@@ -24,7 +26,7 @@ import {
   type Override,
   type Overrides,
 } from "../theme/theme";
-import { PrimitiveColorEditor, RoleColorEditor } from "./ColorControls";
+import { LockedAnchorCard, PrimitiveColorEditor, RoleColorEditor } from "./ColorControls";
 import { TokenControl } from "./TokenControl";
 
 interface Props {
@@ -41,7 +43,7 @@ const TABS: { id: Section; label: string }[] = [
   { id: "motion", label: "Motion" },
 ];
 
-const matches = (e: EditableToken, q: string) =>
+const matches = (e: { name: string; group: string }, q: string) =>
   q === "" || e.name.toLowerCase().includes(q) || e.group.toLowerCase().includes(q);
 
 export function TokenPanel({ overrides, onChange, onReset }: Props) {
@@ -53,6 +55,7 @@ export function TokenPanel({ overrides, onChange, onReset }: Props) {
   const colourTokens = bySection.color ?? {};
   const palette = Object.values(colourTokens).flat().filter((e) => e.kind === "value");
   const roles = Object.values(colourTokens).flat().filter((e) => e.kind === "alias");
+  const locked = IMMUTABLE_TOKENS;
 
   const visible = query.trim().toLowerCase();
 
@@ -110,9 +113,19 @@ export function TokenPanel({ overrides, onChange, onReset }: Props) {
             <section aria-labelledby="grp-palette">
               <h2 id="grp-palette" className="nise-panel__group-title">
                 Palette
-                <span className="nise-panel__group-note">authored primitives</span>
+                <span className="nise-panel__group-note">
+                  authored primitives · {locked.length} brand anchors fixed
+                </span>
               </h2>
               <div className="nise-panel__cards">
+                {locked.filter((t) => matches(t, visible)).map((t) => (
+                  <LockedAnchorCard
+                    key={t.name}
+                    name={t.name}
+                    raw={t.raw}
+                    resolved={resolve(t.name, tokens)}
+                  />
+                ))}
                 {palette.filter((e) => matches(e, visible)).map((e) => (
                   <PrimitiveColorEditor
                     key={e.name}
@@ -198,8 +211,9 @@ export function TokenPanel({ overrides, onChange, onReset }: Props) {
       </div>
 
       <p className="nise-panel__foot">
-        {EDITABLES.length} editable tokens. Changes stay local until you promote a candidate with{" "}
-        <code>theme:apply</code>.
+        {EDITABLES.length} editable tokens. The {locked.length} brand anchors are fixed by
+        numena-brand and cannot be edited here. Changes stay local until you promote a candidate
+        with <code>theme:apply</code>.
       </p>
     </div>
   );

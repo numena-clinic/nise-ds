@@ -10,11 +10,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { contrastChecks } from "../../../tokens/semantic.mjs";
+import { themeOverrides } from "../../../tokens/themes.mjs";
 import { expand, parseColor, contrast } from "../../../tokens/color.mjs";
 import {
   ALL_TOKENS,
   EDITABLE_BY_NAME,
   LAYER_OF,
+  directDependents,
   transitiveDependents,
   type EditableToken,
   type LayerId,
@@ -23,6 +25,17 @@ import {
 /** A single change. "value" replaces a literal; "alias" retargets a reference. */
 export type Override = { kind: "value"; value: string } | { kind: "alias"; ref: string };
 export type Overrides = Record<string, Override>;
+
+/** Which theme mapping the preview and the contrast re-check are judged under.
+ * The explorer EDITS the light base (D19); "dark" is a VIEW of the same edits
+ * against tokens/themes.mjs. */
+export type ThemeMode = "light" | "dark";
+
+const DARK_RAW = themeOverrides.dark as Record<string, string>;
+
+/** Every token whose raw value differs between the two themes — exactly the
+ * keys of the generated [data-theme="dark"] block. */
+export const THEME_VARYING: string[] = Object.keys(DARK_RAW);
 
 export interface ContrastCheck {
   fg: string;
@@ -109,9 +122,11 @@ export function withFontFamily(value: string, family: string): string {
 
 // ── experimental resolution ──────────────────────────────────────────────────
 
-/** The token graph with overrides applied — the "experimental" state. */
-export function experimentalTokens(overrides: Overrides): Record<string, string> {
-  const map: Record<string, string> = { ...ALL_TOKENS };
+/** The token graph with overrides applied — the "experimental" state. Under
+ * "dark" the graph starts from the dark mapping, so resolved values, the token
+ * reference and the contrast re-check all read the same theme as the preview. */
+export function experimentalTokens(overrides: Overrides, mode: ThemeMode = "light"): Record<string, string> {
+  const map: Record<string, string> = mode === "dark" ? { ...ALL_TOKENS, ...DARK_RAW } : { ...ALL_TOKENS };
   for (const [name, o] of Object.entries(overrides)) {
     if (!(name in EDITABLE_BY_NAME)) continue;
     map[name] = o.kind === "alias" ? `var(${o.ref})` : o.value;
@@ -119,9 +134,19 @@ export function experimentalTokens(overrides: Overrides): Record<string, string>
   return map;
 }
 
-/** Inline custom properties for a scoped preview wrapper (no :root mutation). */
-export function previewStyle(overrides: Overrides): Record<string, string> {
+/** Inline custom properties for a scoped preview wrapper (no :root mutation).
+ *
+ * Beyond the user's overrides, every theme-varying token is pinned to its value
+ * under `mode`. That makes the preview's theme explicit on the wrapper itself —
+ * it follows the switcher even when the OS prefers the other scheme, and it
+ * never depends on [data-theme] cascading from an ancestor. */
+export function previewStyle(overrides: Overrides, mode: ThemeMode = "light"): Record<string, string> {
   const style: Record<string, string> = {};
+  const themeSource = mode === "dark" ? DARK_RAW : ALL_TOKENS;
+  for (const name of THEME_VARYING) {
+    const raw = themeSource[name];
+    if (raw !== undefined) style[name] = raw;
+  }
   for (const [name, o] of Object.entries(overrides)) {
     if (!(name in EDITABLE_BY_NAME)) continue;
     style[name] = o.kind === "alias" ? `var(${o.ref})` : o.value;
@@ -147,9 +172,10 @@ export interface ContrastResult extends ContrastCheck {
   pass: boolean;
 }
 
-/** Re-run every contrast promise against the experimental tokens. */
-export function resolveContrast(overrides: Overrides): ContrastResult[] {
-  const map = experimentalTokens(overrides);
+/** Re-run every contrast promise against the experimental tokens, under the
+ * given theme mapping. */
+export function resolveContrast(overrides: Overrides, mode: ThemeMode = "light"): ContrastResult[] {
+  const map = experimentalTokens(overrides, mode);
   return CONTRAST_CHECKS.map((check) => {
     const fgResolved = resolve(check.fg, map);
     const bgResolved = resolve(check.bg, map);
@@ -175,6 +201,9 @@ export interface DiffRow {
   kind: "value" | "alias";
   from: string;
   to: string;
+  /** Tokens that point at this one directly. */
+  direct: string[];
+  /** Every token that follows it, directly or transitively. */
   dependents: string[];
 }
 
@@ -190,6 +219,7 @@ export function diffRows(overrides: Overrides): DiffRow[] {
       kind: o.kind,
       from: e.kind === "alias" ? `var(${e.canonicalRef})` : e.canonical,
       to: o.kind === "alias" ? `var(${o.ref})` : o.value,
+      direct: directDependents(name),
       dependents: transitiveDependents(name),
     });
   }

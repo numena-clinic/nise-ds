@@ -25,14 +25,16 @@ carries your changes. Nothing is written to disk while you work — a browser ta
 must not author source files. When you are happy, you export a **candidate** and
 promote it from the command line.
 
-The preview has two views, each with a Phone / Tablet / Desktop width:
+The preview has two views, each with a Phone / Tablet / Desktop width, and a
+**Light / Dark toggle** that picks which theme mapping everything reads:
 
 - **Catalogue** — a dense set of Nise specimens covering the whole component set
   (buttons, badges, cards, form fields, choice controls, sliders, tabs, tables,
   overlays). This is the "what does this palette look like on real components?"
   answer.
 - **Tokens** — the reference graph: primitive → semantic → component, column by
-  column, each row showing the live resolved value under your current edits.
+  column, each row showing the live resolved value under your current edits and
+  the selected mapping.
 
 The catalogue renders the **Nise components themselves** — the same ones an
 application ships — plus the `InformationReview` composition. There is no
@@ -41,24 +43,27 @@ separate library behind the preview: it shows what ships.
 ## What you can edit
 
 The panel is a tabbed editor — **Colour / Type / Space / Shape / Motion** — with
-a search box that filters across the active tab. In Colour, authored primitives
-and the roles that point at them are split into two groups, because they are
-different edits (change a value vs. re-point an alias). A change is marked and
-can be reset, per token or all at once.
+a search box that filters across the active tab. In Colour, the palette and the
+roles that point at it are split into two groups, because they are different
+edits (change a value vs. re-point an alias). A change is marked and can be
+reset, per token or all at once.
 
 | Section | Editable | Read-only |
 | --- | --- | --- |
-| **Colour** | the colour primitives — brand anchors and generated scale steps (swatch + hex + picker); every colour *role* retargets which primitive it points at | derived colours (`color-mix`, e.g. `--color-scrim`) — they follow the palette |
+| **Colour** | the generated scale steps (swatch + hex + picker); every colour *role* retargets which primitive it points at | the ten **brand anchors** — fixed by numena-brand (color.md §2), shown with their published value and an "Immutable" badge; derived colours (`color-mix`, e.g. `--color-scrim`) — they follow the palette |
 | **Type** | sizes, line heights, weights, letter spacing; font families via a constrained select | — |
 | **Space** | the spacing scale, layout measures | — |
 | **Shape** | radii, border widths, control heights, badge heights | component *aliases* (they follow lower layers) |
 | **Motion** | durations, disabled opacity | easings |
 
-Two principles decide editability:
+Three principles decide editability:
 
 - **A value can be edited; a reference can be re-pointed; a derivation cannot be
   edited directly.** A `color-mix(...)` token is shown read-only because it is a
   function of the primitives — change those instead.
+- **The brand anchors are immutable.** The ten published values (color.md §2)
+  have no control: a role may point at an anchor, but neither the panel nor a
+  candidate file can change one — `parseCandidate` rejects it.
 - **Font families are a closed set** (the families already referenced in the
   repo). The explorer will not introduce a font the brand does not already name.
 
@@ -68,6 +73,15 @@ Overrides are applied as **scoped CSS custom properties** on the preview
 wrapper, never on `:root`. The token layer cascades exactly as it does in an app,
 so changing one primitive flows through every semantic and component token that
 depends on it — live — while the explorer's own chrome is untouched.
+
+The **Light / Dark toggle** chooses which mapping the preview, the Tokens view
+and the contrast re-check read. Light is the base you edit; dark is the same
+role names mapped onto `tokens/themes.mjs`. The mechanism is the same scoped
+custom properties: besides your overrides, the wrapper pins every token that
+differs between themes to its value under the selected mode — so the preview
+follows the toggle regardless of the operating system's colour-scheme
+preference, and your overrides still win over the pin. Nothing is applied to
+`:root` or an ancestor, and no `[data-theme]` attribute is relied on.
 
 The Radix overlays (the `Select` popup, `Dialog` and `Tooltip` content) portal to
 `document.body` by default, which would escape the wrapper and lose the scoped
@@ -79,11 +93,13 @@ default behaviour.
 
 **Review & export** shows three things before you commit to anything:
 
-1. **The diff** — each changed token, its old and new value, and how many tokens
-   follow from it.
+1. **The diff** — each changed token, its old and new value, and what follows
+   from it: how many dependents it has directly and in total, with the first few
+   named.
 2. **The contrast promises** — the same pairs `npm run tokens:validate` checks,
-   re-resolved against your experimental values. A failure is shown as an icon
-   plus the word, never a colour verdict (color.md §4).
+   re-resolved against your experimental values **under the mapping the preview
+   is showing** (the heading says "light mapping" or "dark mapping"). A failure
+   is shown as an icon plus the word, never a colour verdict (color.md §4).
 3. **The candidate** — the portable, versioned change set.
 
 The candidate is the only thing that leaves the tool. Its shape:
@@ -136,8 +152,11 @@ immediately after any write.
   and no Tailwind toolchain; an earlier version previewed against shadcn/ui
   (D12) and was reversed (D13). Every component in the preview is plain CSS over
   tokens, so the token boundary has no path exemptions.
-- No status colours, ever. The palette defines none (color.md §4) and the tool
-  does not invent any.
+- No verdict colours, ever. The palette defines none as verdicts (color.md §4)
+  and the tool does not invent any. The operational roles that exist under the
+  provisional P4 carve-out (success / warning / error / info — machine states
+  only) are ordinary colour roles here, editable like any other; they never
+  carry a clinical judgement.
 - The generated `src/tokens/tokens.css` is never edited by hand — only
   regenerated by `tokens:build`.
 
@@ -170,6 +189,9 @@ explorer's config out of that filename keeps the two tools independent.
 - No theme *authoring*: the token source now defines a dark mapping
   (`tokens/themes.mjs`), but the explorer edits the light base only — a candidate
   carries no theme id, so dark is promoted by editing the source, not the tool.
+  The Light/Dark toggle is a **view** of both mappings, not an editor: an override
+  you make in dark mode is still a light-base change (D19), re-shown against the
+  dark mapping.
 - No persistent server-side storage — the draft is a convenience in
   `localStorage`, never an applied change.
 - No write-back from the browser; promotion is always the local CLI step.

@@ -39,14 +39,18 @@ hint or error
 
 ## Error handling — read this
 
-There is **no error colour**. The palette "does not establish fixed colors for …
-system statuses" (color.md §4) and, until semantic status colours exist, a
-warning "uses Ink Plum, with their shape and a text label doing the work"
-(iconography.md §4). So an error is carried by three things at once:
+An error is carried by three things at once, in this order of importance:
 
 1. the message text,
 2. a 16px `AlertIcon` (shape, not hue),
-3. a heavier boundary (`--border-width-strong`, a near-black `--color-border-error`).
+3. a heavier boundary (`--border-width-strong` plus `--color-border-error`).
+
+The boundary reads from the operational error accent (decisions.md P4) rather
+than a neutral, which is the *only* place colour enters — it is the third
+channel, not the first. Strip the text and the icon and the field must still
+read as invalid. This follows color.md §4: colour may reinforce a state the
+other channels have already stated, and an icon or label must not "deliver a
+verdict" on its own (iconography.md §5).
 
 When an error is present the hint is **removed from the DOM**, and
 `aria-describedby` lists only ids that are actually rendered — it never points

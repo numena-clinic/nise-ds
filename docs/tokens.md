@@ -91,41 +91,55 @@ The format is versioned by the DTCG, not by Nise: the export targets the last
 Reference a primitive in the semantic layer with the `ref()` helper; it throws
 at author time on a misspelled name, so a typo cannot reach the CSS.
 
-## The OKLCH colour model
+## The colour model
 
-The palette is **generated, not transcribed**. `tokens/palette.mjs` holds the
-ten brand colours as the reference anchors and generates around them a neutral
-ramp and three chromatic scales (`purple`, `cyan`, `tangerine`) in **OKLCH** —
-the space where "lighter" and "darker" mean the same thing at every hue and
-chroma.
+The palette is **modelled, not transcribed**. `tokens/palette.mjs` holds the ten
+brand colours as reference anchors plus two pinned dark-ground anchors, and
+produces every other colour primitive in one of two ways.
+
+**Generated families** — `neutral`, `purple`, `cyan`, `tangerine` — are walked
+through an OKLCH model: a hue, a maximum chroma and a small hue drift over a
+fixed lightness ramp. Chroma is clamped into the sRGB gamut by reducing chroma at
+constant lightness and hue, so no step is out of gamut and none is a naive RGB
+blend.
+
+**Authored families** — `mint`, `citron`, `pink`, `teal` — are pinned to
+published candidate values rather than generated, because their candidates are
+deliberately uneven per hue: a neon accent and a near-black surface live in one
+family, and no single lightness curve fits all four. `authoredScale()`
+interpolates the steps between pins in OKLCH; **a pinned step keeps its
+published hex verbatim**, to the unit, and `tests/color.test.ts` asserts that a
+regeneration cannot move an anchor. These four exist only for the operational
+roles described below (decisions.md P4) and are deliberately separate from the
+brand accents — tangerine is not warning, cyan is not info.
 
 - **Anchors, not a cage.** The ten brand hex are kept verbatim (`--deep-purple`,
-  `--vibrant-purple`, …) and are the reference point for the scales. The scales
-  are named `--<family>-<step>` (`--purple-600`, `--neutral-950`).
-- **Generated, deterministically.** A family is a hue, a maximum chroma and a
-  small hue drift; a scale is a fixed lightness ramp walked through that model.
-  Chroma is clamped into the sRGB gamut by reducing chroma at constant lightness
-  and hue, so no step is out of gamut and none is a naive RGB blend.
+  `--vibrant-purple`, …) and are the reference point for the generated scales.
+  The scales are named `--<family>-<step>` (`--purple-600`, `--neutral-950`),
+  and every step is itself a primitive, so a role can point at a step as readily
+  as at an anchor.
 - **OKLCH is canonical; the emitted value is sRGB hex.** Values are *authored*
   in OKLCH and emitted as deterministic hex (`tokens/palette.mjs` keeps the
   OKLCH alongside each hex, and the DTCG export records it). There is no
   `oklch()` in the CSS because the validator, the Theme Explorer and the tests
   all resolve colours from hex, and there is no explicit browser baseline to make
   an `oklch()` fallback sound.
-- `--deep-purple`, `--ink-plum`, `--pale-lavender`, `--vibrant-*` and
-  `--soft-*` remain as named references to the anchors. Every scale step is a
-  primitive too (`--purple-600`), so a role can point at a step as readily as at
-  an anchor.
 
 ## The colour rules the system keeps
 
 Two rules from the brand are load-bearing:
 
-- **No status colours.** "The palette does not establish fixed colors for
+- **No verdict colours.** "The palette does not establish fixed colors for
   clinical observations, evidence, hypotheses, decisions, or system statuses"
-  (color.md §4). Nise therefore ships **no** `--color-success`, `--color-danger`,
-  `--color-warning`. Errors are carried by text, an icon and a heavier boundary;
-  a categorical accent is emphasis, never a verdict.
+  (color.md §4). A categorical accent is emphasis, never a verdict, and an
+  interface error is still text + an icon + a heavier boundary first. The one
+  carve-out is recorded as **decisions.md P4**: four *operational* role families
+  (mint / citron / pink / teal) exist for machine states only — saved, failed,
+  caution, unsaved — never clinical or epistemic meaning. In the light theme
+  they read from the deep end of each ramp (mint-700, citron-800, pink-700,
+  teal-800) because a neon is not legible on a pale panel; the brightness lives
+  in the dark theme, where there is a dark ground to read against. There is no
+  `--color-primary` beside `--color-action`; that role already exists.
 - **Approved combinations only.** For every foreground/background pair the system
   relies on, `tokens/semantic.mjs` records the pair and its minimum ratio in
   `contrastChecks`, and the validator proves it. The check runs under **every**
@@ -161,10 +175,12 @@ resolves against the same `data-theme`, no second theme. The Storybook UI itself
 
 Storybook's **Foundations → Colour** page reads that same source
 (`tokens/palette.mjs`, `tokens/semantic.mjs`, `tokens/themes.mjs`) — it never
-keeps a second colour list. The palette is grouped into the ten brand anchors and
-the four generated scales; the semantic roles are grouped by meaning and follow
-the preview theme, so the Theme toolbar drives them and the reference under each
-role tracks the active mapping.
+keeps a second colour list. The palette is grouped into the ten brand anchors,
+the two dark-ground anchors, the four generated scales and the four authored
+operational scales; the semantic roles are grouped by meaning (base, surfaces,
+actions, fills, operational roles) and follow the preview theme, so the Theme
+toolbar drives them and the reference under each role tracks the active
+mapping.
 
 ## Interaction state tokens
 

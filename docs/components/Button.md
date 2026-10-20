@@ -15,8 +15,9 @@ An action. Triggers a single, immediate operation.
 - For navigation with no action, use a link.
 - To carry status — a button never changes colour to mean good or bad (color.md
   §4). This is why there is no `danger` variant: a destructive action earns a
-  clear label and confirmation, not a red fill, because the palette defines no
-  status colour.
+  clear label and confirmation, not a red fill. The operational roles that exist
+  now (decisions.md P4) describe machine states — saved, failed — and are not a
+  licence to make a button's colour carry a verdict.
 
 ## Props
 

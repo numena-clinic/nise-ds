@@ -92,8 +92,8 @@ describe("DTCG document shape", () => {
     expect(rootExt.source).toBe("tokens/*.mjs");
   });
 
-  it("exports 196 typed tokens and records the 3 css-only tokens (199 total)", () => {
-    expect(leaves).toHaveLength(196);
+  it("exports 262 typed tokens and records the 3 css-only tokens (265 total)", () => {
+    expect(leaves).toHaveLength(262);
     expect(cssOnly).toHaveLength(3);
     expect(leaves.length + cssOnly.length).toBe(Object.keys(allTokens).length);
   });

@@ -9,16 +9,16 @@
      --field-gap, --field-label-gap, --field-message-font-size
      --input-height, --input-padding-x, --input-font-size
        → --control-* → --space-3, --font-size-md
-     --color-surface, --color-text, --color-text-muted, --color-border-strong,
-     --color-border-hover, --color-focus-ring, --focus-ring-width, --border-width-strong,
-     --opacity-disabled
+      --color-surface, --color-text, --color-text-muted, --color-border-strong,
+      --color-border-hover, --color-border-error, --color-focus-ring, --focus-ring-width,
+      --border-width-strong, --opacity-disabled
 
-   Error handling: there is no status colour in the brand palette — "the palette
-   does not establish fixed colors for … system statuses" (color.md §4) and
-   "semantic status colors are not defined yet … system-state icons such as
-   warnings use Ink Plum, with their shape and a text label doing the work"
-   (iconography.md §4). So an error is carried by text, an icon and a heavier
-   boundary, never by colour alone. When an error is present the hint is removed
+   Error handling: an error is carried by text, an icon and a heavier
+   boundary — never by colour alone (color.md §4; iconography.md §4). Since
+   decisions.md P4 the heavier boundary also reads from the operational error
+   accent (`--color-border-error`), but it is the third channel, not the first:
+   remove the text and the icon and the field must still read as invalid.
+   When an error is present the hint is removed
    from the DOM, and `aria-describedby` never points at an id that is not
    rendered. `required` maps to the native attribute and an aria-hidden marker,
    so the label reads cleanly.

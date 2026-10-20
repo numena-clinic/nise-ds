@@ -7,7 +7,14 @@ import {
   oklchToRgb,
   toHex,
 } from "../tokens/color.mjs";
-import { allTokens, themeOverrides } from "../tokens/index.mjs";
+import { allTokens, themeOverrides, semantic } from "../tokens/index.mjs";
+import {
+  functionalFamilies,
+  groundAnchors,
+  brandAnchors,
+  colorTokens,
+  colorMeta,
+} from "../tokens/palette.mjs";
 
 // The colour maths is shared by the validator and the Theme Explorer, so these
 // lock the semantics both rely on: CSS Color 4 parsing (hex, rgb/rgba, oklch)
@@ -164,12 +171,113 @@ describe("dark theme overrides", () => {
   const dark = { ...allTokens, ...themeOverrides.dark };
 
   it("maps the same role names onto the dark ground", () => {
-    expect(expand("--color-surface", dark)).toBe("#211e25");
+    // The dark page IS the published dark ground (tokens/palette.mjs), not a
+    // neutral step: it is the value the base ladder is pinned around.
+    expect(expand("--color-surface", dark)).toBe("#17121D");
+    expect(expand("--color-base-200", dark)).toBe("#221A2A"); // the brand ink
     expect(expand("--color-text", dark)).toBe("#faf8fc");
   });
 
   it("brightens the action and deepens the shadow", () => {
     expect(expand("--color-action", dark)).toBe("#aa7fef");
     expect(expand("--shadow-md", dark)).toContain("rgb(0 0 0");
+  });
+});
+
+// ── the authored operational families (docs/decisions.md P4) ─────────────────
+//
+// mint / citron / pink / teal are pinned to published candidate values rather
+// than generated from the shared lightness curve. The one thing that must never
+// happen is a regeneration moving an anchor, so the pins are asserted verbatim.
+
+describe("authored functional ramps", () => {
+  const stepOrder = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"];
+
+  it("keeps every published pin verbatim, to the unit", () => {
+    // The token source is plain JS; this is the one seam where the pin table
+    // crosses into the typed test, so it is cast once, here.
+    const ramps = functionalFamilies as Record<string, Record<string, string>>;
+    for (const [family, pins] of Object.entries(ramps)) {
+      for (const [step, hex] of Object.entries(pins)) {
+        expect(colorTokens[`--${family}-${step}`], `${family}-${step}`).toBe(hex);
+      }
+    }
+  });
+
+  it("keeps the dark ground anchors verbatim, with the brand ink between them", () => {
+    for (const { name, hex } of groundAnchors) expect(colorTokens[name]).toBe(hex);
+    expect(colorTokens["--dark-ground"]).toBe("#17121D");
+    expect(colorTokens["--ink-plum"]).toBe("#221A2A"); // color.md §2, unchanged
+    expect(colorTokens["--dark-panel"]).toBe("#2D2238");
+    expect(new Set([...brandAnchors, ...groundAnchors].map((a) => a.name)).size).toBe(12);
+  });
+
+  it("steps monotonically darker down every ramp", () => {
+    for (const family of Object.keys(functionalFamilies)) {
+      const lightness = stepOrder.map((step) => colorMeta[`--${family}-${step}`].oklch.l);
+      for (let i = 1; i < lightness.length; i += 1) {
+        expect(lightness[i], `${family}-${stepOrder[i]}`).toBeLessThan(lightness[i - 1]);
+      }
+    }
+  });
+
+  it("stays inside its own hue family, so info never collides with brand cyan", () => {
+    const hueOf = (name: string) => colorMeta[name].oklch.h;
+    // vibrant-cyan is 206.5°; the info family is pushed bluer on purpose.
+    expect(hueOf("--teal-500")).toBeGreaterThan(hueOf("--vibrant-cyan"));
+    for (const family of Object.keys(functionalFamilies)) {
+      for (const step of ["50", "500", "950"]) {
+        const h = hueOf(`--${family}-${step}`);
+        expect(h, `${family}-${step}`).toBeGreaterThanOrEqual(0);
+        expect(h).toBeLessThan(360);
+      }
+    }
+  });
+});
+
+// A theme is a mapping, never a second token set: it may only re-point role
+// names the light contract already declares. With the operational roles added,
+// that claim needs proving, not asserting in a comment.
+
+describe("theme role parity", () => {
+  const dark = themeOverrides.dark;
+
+  it("never invents a token name the system does not already declare", () => {
+    // A theme may re-point a semantic role (the normal case) or override a
+    // primitive such as the elevation shadows — but it may never introduce a
+    // name of its own, or the theme would be a second token set.
+    for (const name of Object.keys(dark)) {
+      expect(allTokens, name).toHaveProperty(name);
+    }
+  });
+
+  it("covers the DaisyUI-shaped vocabulary in both themes", () => {
+    const roles = [
+      "--color-base-100",
+      "--color-base-200",
+      "--color-base-300",
+      "--color-base-content",
+      "--color-secondary",
+      "--color-secondary-content",
+      "--color-neutral",
+      "--color-neutral-content",
+      ...["success", "warning", "error", "info"].flatMap((r) => [
+        `--color-${r}`,
+        `--color-${r}-surface`,
+        `--color-${r}-content`,
+      ]),
+    ];
+    for (const role of roles) {
+      expect(semantic, role).toHaveProperty(role);
+      expect(dark, role).toHaveProperty(role);
+    }
+    expect(roles).toHaveLength(20);
+  });
+
+  it("keeps the primary pair as the action pair, not a second name for it", () => {
+    // `--color-action` IS the primary fill and `--color-action-text` its
+    // content; a separate --color-primary would be one value under two names.
+    expect(semantic).not.toHaveProperty("--color-primary");
+    expect(semantic).not.toHaveProperty("--color-primary-content");
   });
 });

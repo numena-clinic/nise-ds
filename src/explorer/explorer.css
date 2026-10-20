@@ -451,6 +451,12 @@
   color: var(--color-text-muted);
 }
 
+.nise-explorer__review-note {
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .nise-explorer__empty {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
@@ -473,6 +479,17 @@
 .nise-explorer__diff code,
 .nise-explorer__json {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.nise-explorer__diff-count {
+  display: block;
+  white-space: nowrap;
+}
+
+.nise-explorer__diff-names {
+  display: block;
+  color: var(--color-text-muted);
+  word-break: break-word;
 }
 
 .nise-explorer__ok,
@@ -780,6 +797,23 @@
 .nise-swatch-card--changed {
   border-color: var(--color-border-strong);
   border-width: var(--border-width-strong);
+}
+
+/* Read-only, the same dashed boundary the derived list uses — plus the badge's
+   words, so "fixed" never rests on colour alone. */
+.nise-swatch-card--locked {
+  border-style: dashed;
+  background: var(--color-surface-subtle);
+}
+
+.nise-color__badge {
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 .nise-reset-btn {

@@ -1,10 +1,12 @@
 // Visual colour editing for the parameter pane.
 //
-// Two shapes, matching the two ways a colour can be edited:
+// Three shapes, matching the three ways a colour appears in the palette:
 //   · a PRIMITIVE (kind "value") is authored directly — hue/sat/light sliders,
 //     a hex field and the native colour well all write the same hex literal.
 //   · a ROLE (kind "alias") is never authored — it points at a primitive. You
 //     retarget it by clicking a palette swatch or picking from the list.
+//   · a BRAND ANCHOR is shown read-only: numena-brand owns its value
+//     (color.md §2), so there is no control to write with.
 // Nothing here writes to the token source; it only emits an override.
 
 import { useState } from "react";
@@ -35,6 +37,30 @@ function Swatch({ hex, size = 40 }: { hex: string; size?: number }) {
       className="nise-color__swatch"
       style={{ background: hex, width: size, height: size }}
     />
+  );
+}
+
+/** A brand anchor (numena-brand color.md §2): the published value, shown
+ * read-only. The explorer can point roles at it; it can never change it — the
+ * badge says so in words, not colour. */
+export function LockedAnchorCard({ name, raw, resolved }: { name: string; raw: string; resolved: string }) {
+  const bare = pretty(name);
+  return (
+    <div className="nise-swatch-card nise-swatch-card--locked">
+      <div className="nise-color__head">
+        <div className="nise-color__id">
+          <Swatch hex={resolved} size={44} />
+          <div className="nise-color__names">
+            <p className="nise-color__name">{bare}</p>
+            <p className="nise-color__meta">brand anchor · color.md §2</p>
+          </div>
+        </div>
+        <span className="nise-color__badge">Immutable</span>
+      </div>
+      <div className="nise-color__row">
+        <code className="nise-color__canonical">{raw}</code>
+      </div>
+    </div>
   );
 }
 

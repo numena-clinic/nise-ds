@@ -34,6 +34,8 @@
   --soft-purple: #E8D7FD;
   --soft-cyan: #D3FAFE;
   --soft-tangerine: #FDE4DA;
+  --dark-ground: #17121D;
+  --dark-panel: #2D2238;
   --neutral-0: #ffffff;
   --neutral-50: #faf8fc;
   --neutral-100: #f2f0f4;
@@ -79,6 +81,50 @@
   --tangerine-800: #7d3b00;
   --tangerine-900: #552700;
   --tangerine-950: #341600;
+  --mint-50: #E8FFF2;
+  --mint-100: #d2ffe7;
+  --mint-200: #9CFFD0;
+  --mint-300: #83fcc2;
+  --mint-400: #67f9b4;
+  --mint-500: #42F5A5;
+  --mint-600: #1E8F63;
+  --mint-700: #1a7856;
+  --mint-800: #196148;
+  --mint-900: #174B3A;
+  --mint-950: #142D27;
+  --citron-50: #FFF8DE;
+  --citron-100: #fff5ce;
+  --citron-200: #FFF0A6;
+  --citron-300: #fee88c;
+  --citron-400: #fee170;
+  --citron-500: #FFD84D;
+  --citron-600: #A27D14;
+  --citron-700: #866818;
+  --citron-800: #6b5418;
+  --citron-900: #514017;
+  --citron-950: #302817;
+  --pink-50: #FFF0F6;
+  --pink-100: #ffddeb;
+  --pink-200: #FFB4D8;
+  --pink-300: #ff9ac9;
+  --pink-400: #ff7eb9;
+  --pink-500: #FF5CA8;
+  --pink-600: #d1448c;
+  --pink-700: #A52D70;
+  --pink-800: #7f275a;
+  --pink-900: #5B2043;
+  --pink-950: #351629;
+  --teal-50: #E5FBFF;
+  --teal-100: #d6f9ff;
+  --teal-200: #B1F7FF;
+  --teal-300: #94f2ff;
+  --teal-400: #73edff;
+  --teal-500: #45E8FF;
+  --teal-600: #29b2cc;
+  --teal-700: #087F99;
+  --teal-800: #146275;
+  --teal-900: #164653;
+  --teal-950: #142831;
 
   /* typography */
   /* Families from typography.md §3; scale and weights are provisional. */
@@ -157,20 +203,34 @@
   --color-text-inverted: var(--neutral-0);
   --color-scrim: color-mix(in srgb, var(--neutral-950) 40%, transparent);
 
+  /* base */
+  /* The branded panel ladder (DaisyUI-shaped). */
+  --color-base-100: var(--neutral-0);
+  --color-base-200: var(--neutral-50);
+  --color-base-300: var(--pale-lavender);
+  --color-base-content: var(--neutral-950);
+
   /* border */
   --color-border: var(--neutral-200);
   --color-border-strong: var(--neutral-600);
   --color-border-hover: var(--neutral-700);
-  --color-border-error: var(--neutral-950);
+  --color-border-error: var(--pink-700);
 
   /* action */
   /* The primary interactive role. */
-  --color-action: var(--purple-800);
+  --color-action: var(--deep-purple);
   --color-action-hover: var(--purple-900);
   --color-action-active: var(--purple-950);
   --color-action-text: var(--white);
   --color-link: var(--purple-700);
   --color-link-hover: var(--purple-900);
+
+  /* fill */
+  /* Secondary and neutral button fills. */
+  --color-secondary: var(--cyan-700);
+  --color-secondary-content: var(--white);
+  --color-neutral: var(--ink-plum);
+  --color-neutral-content: var(--white);
 
   /* focus */
   --color-focus-ring: var(--purple-600);
@@ -193,6 +253,21 @@
   --color-tint-cyan: var(--cyan-100);
   --color-tint-tangerine: var(--tangerine-100);
   --color-tint-text: var(--ink-plum);
+
+  /* operational roles */
+  /* Provisional (P4): operational states only, never clinical meaning. */
+  --color-success-surface: var(--mint-50);
+  --color-success: var(--mint-700);
+  --color-success-content: var(--white);
+  --color-warning-surface: var(--citron-50);
+  --color-warning: var(--citron-800);
+  --color-warning-content: var(--white);
+  --color-error-surface: var(--pink-50);
+  --color-error: var(--pink-700);
+  --color-error-content: var(--white);
+  --color-info-surface: var(--teal-50);
+  --color-info: var(--teal-800);
+  --color-info-content: var(--white);
 }
 
 /* ── Component layer ───────────────────────────────────────── */
@@ -300,8 +375,8 @@
   color-scheme: dark;
 
   /* surface & text */
-  --color-surface: var(--neutral-950);
-  --color-surface-subtle: var(--neutral-900);
+  --color-surface: var(--dark-ground);
+  --color-surface-subtle: var(--ink-plum);
   --color-surface-hover: var(--neutral-800);
   --color-surface-active: var(--neutral-700);
   --color-text: var(--neutral-50);
@@ -309,11 +384,17 @@
   --color-text-inverted: var(--neutral-950);
   --color-scrim: color-mix(in srgb, var(--neutral-950) 60%, transparent);
 
+  /* base */
+  --color-base-100: var(--dark-ground);
+  --color-base-200: var(--ink-plum);
+  --color-base-300: var(--dark-panel);
+  --color-base-content: var(--neutral-50);
+
   /* border */
   --color-border: var(--neutral-800);
   --color-border-strong: var(--neutral-600);
   --color-border-hover: var(--neutral-500);
-  --color-border-error: var(--neutral-400);
+  --color-border-error: var(--pink-500);
 
   /* action */
   --color-action: var(--purple-500);
@@ -322,6 +403,12 @@
   --color-action-text: var(--neutral-950);
   --color-link: var(--purple-300);
   --color-link-hover: var(--purple-200);
+
+  /* fill */
+  --color-secondary: var(--vibrant-cyan);
+  --color-secondary-content: var(--ink-plum);
+  --color-neutral: var(--neutral-800);
+  --color-neutral-content: var(--neutral-50);
 
   /* focus */
   --color-focus-ring: var(--purple-300);
@@ -341,6 +428,21 @@
   --color-tint-cyan: var(--cyan-900);
   --color-tint-tangerine: var(--tangerine-900);
   --color-tint-text: var(--neutral-50);
+
+  /* operational roles */
+  /* Provisional (P4). */
+  --color-success-surface: var(--mint-950);
+  --color-success: var(--mint-500);
+  --color-success-content: var(--mint-950);
+  --color-warning-surface: var(--citron-950);
+  --color-warning: var(--citron-500);
+  --color-warning-content: var(--citron-950);
+  --color-error-surface: var(--pink-950);
+  --color-error: var(--pink-500);
+  --color-error-content: var(--pink-950);
+  --color-info-surface: var(--teal-950);
+  --color-info: var(--teal-500);
+  --color-info-content: var(--teal-950);
 
   /* elevation */
   --shadow-sm: 0 2px 4px rgb(0 0 0 / 0.4);
@@ -353,8 +455,8 @@
     color-scheme: dark;
 
   /* surface & text */
-  --color-surface: var(--neutral-950);
-  --color-surface-subtle: var(--neutral-900);
+  --color-surface: var(--dark-ground);
+  --color-surface-subtle: var(--ink-plum);
   --color-surface-hover: var(--neutral-800);
   --color-surface-active: var(--neutral-700);
   --color-text: var(--neutral-50);
@@ -362,11 +464,17 @@
   --color-text-inverted: var(--neutral-950);
   --color-scrim: color-mix(in srgb, var(--neutral-950) 60%, transparent);
 
+  /* base */
+  --color-base-100: var(--dark-ground);
+  --color-base-200: var(--ink-plum);
+  --color-base-300: var(--dark-panel);
+  --color-base-content: var(--neutral-50);
+
   /* border */
   --color-border: var(--neutral-800);
   --color-border-strong: var(--neutral-600);
   --color-border-hover: var(--neutral-500);
-  --color-border-error: var(--neutral-400);
+  --color-border-error: var(--pink-500);
 
   /* action */
   --color-action: var(--purple-500);
@@ -375,6 +483,12 @@
   --color-action-text: var(--neutral-950);
   --color-link: var(--purple-300);
   --color-link-hover: var(--purple-200);
+
+  /* fill */
+  --color-secondary: var(--vibrant-cyan);
+  --color-secondary-content: var(--ink-plum);
+  --color-neutral: var(--neutral-800);
+  --color-neutral-content: var(--neutral-50);
 
   /* focus */
   --color-focus-ring: var(--purple-300);
@@ -394,6 +508,21 @@
   --color-tint-cyan: var(--cyan-900);
   --color-tint-tangerine: var(--tangerine-900);
   --color-tint-text: var(--neutral-50);
+
+  /* operational roles */
+  /* Provisional (P4). */
+  --color-success-surface: var(--mint-950);
+  --color-success: var(--mint-500);
+  --color-success-content: var(--mint-950);
+  --color-warning-surface: var(--citron-950);
+  --color-warning: var(--citron-500);
+  --color-warning-content: var(--citron-950);
+  --color-error-surface: var(--pink-950);
+  --color-error: var(--pink-500);
+  --color-error-content: var(--pink-950);
+  --color-info-surface: var(--teal-950);
+  --color-info: var(--teal-500);
+  --color-info-content: var(--teal-950);
 
   /* elevation */
   --shadow-sm: 0 2px 4px rgb(0 0 0 / 0.4);

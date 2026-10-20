@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
-import { colorTokens, colorMeta, brandAnchors, scales } from "../../tokens/palette.mjs";
+import { colorTokens, colorMeta, brandAnchors, groundAnchors, authoredFamilies, scales } from "../../tokens/palette.mjs";
 import { formatOklch } from "../../tokens/color.mjs";
 import { semanticGroups, darkGroups } from "../../tokens/index.mjs";
 
@@ -23,10 +23,23 @@ const anchorChips: Chip[] = brandAnchors.map((anchor: { name: string }) => ({
   oklch: oklchOf(anchor.name),
 }));
 
-const scaleFamilies: Array<{ label: string; chips: Chip[] }> = (
+const groundChips: Chip[] = groundAnchors.map((anchor: { name: string }) => ({
+  name: anchor.name,
+  hex: colorTokens[anchor.name],
+  oklch: oklchOf(anchor.name),
+}));
+
+const GENERATED_NOTE =
+  "Generated in OKLCH; every family shares the same lightness steps, so ramps compare step for step.";
+const AUTHORED_NOTE =
+  "Authored (decisions.md P4): pinned to published candidate values rather than generated, " +
+  "because a neon accent and a near-black surface share one family. No interpolation may move a pin.";
+
+const scaleFamilies: Array<{ label: string; chips: Chip[]; note: string }> = (
   Object.entries(scales) as Array<[string, Record<string, { oklch: { l: number; c: number; h: number }; hex: string }>]>
 ).map(([family, scale]) => ({
   label: family.charAt(0).toUpperCase() + family.slice(1),
+  note: authoredFamilies.has(family) ? AUTHORED_NOTE : GENERATED_NOTE,
   chips: Object.entries(scale).map(([step, value]) => ({
     name: `--${family}-${step}`,
     label: step,
@@ -115,12 +128,14 @@ const PaletteView = () => (
     <Section title="Brand anchors" note="The ten brand hex, unchanged (numena-brand color.md §2).">
       <ChipGrid chips={anchorChips} />
     </Section>
+    <Section
+      title="Dark ground anchors"
+      note="The pinned ladder the dark theme reads from: the page, the brand ink as the raised step, the strong panel. The dark page is --dark-ground (decisions.md P4)."
+    >
+      <ChipGrid chips={groundChips} />
+    </Section>
     {scaleFamilies.map((family) => (
-      <Section
-        key={family.label}
-        title={`${family.label} scale`}
-        note="Generated in OKLCH; every family shares the same lightness steps, so ramps compare step for step."
-      >
+      <Section key={family.label} title={`${family.label} scale`} note={family.note}>
         <Ramp chips={family.chips} />
       </Section>
     ))}
@@ -220,12 +235,16 @@ const meta: Meta = {
         component:
           "Colour comes from the token source, not from a hand-kept list. The " +
           "Palette story groups the ten brand anchors (numena-brand color.md §2, " +
-          "unchanged) and the generated OKLCH scales by family, each with its " +
-          "resolved sRGB hex and OKLCH source. The Semantic roles story groups the " +
+          "unchanged), the two pinned dark-ground anchors, and every scale — " +
+          "generated OKLCH families and the four authored operational families " +
+          "(decisions.md P4) — each with its resolved sRGB hex and OKLCH source. " +
+          "The Semantic roles story groups the " +
           "roles by meaning and follows the preview theme (use the Theme toolbar): " +
           "the reference under each swatch is the primitive that the active mapping " +
-          "points at. There are no status " +
-          "colours (color.md §4); accents are categorical, not verdicts.",
+          "points at. Accents remain categorical, never verdicts (color.md §4); " +
+          "the success / warning / error / info roles exist for operational states " +
+          "only, and read from the deep end of each ramp in light because a neon " +
+          "is not legible on a pale panel.",
       },
     },
   },

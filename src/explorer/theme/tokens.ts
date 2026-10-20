@@ -15,6 +15,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { layers, allTokens, layerOf } from "../../../tokens/index.mjs";
+import { brandAnchors } from "../../../tokens/palette.mjs";
 
 export type LayerId = "primitive" | "semantic" | "component";
 export type Section = "color" | "typography" | "space" | "shape" | "motion";
@@ -49,11 +50,19 @@ export interface TokenInfo {
   ref?: string;
   /** Primitives are the only tokens whose value is authored directly. */
   primitive: boolean;
+  /** A brand anchor (color.md §2): fixed, never editable, shown read-only. */
+  immutable: boolean;
 }
+
+/** The ten brand anchors. numena-brand owns their values; the explorer shows
+ * them but cannot change them (see docs/decisions.md, "identity"). */
+export const IMMUTABLE_PRIMITIVES: ReadonlySet<string> = new Set(
+  brandAnchors.map((a: { name: string }) => a.name),
+);
 
 const ALIAS_RE = /^var\(\s*(--[a-zA-Z0-9_-]+)\s*\)$/;
 
-function groupSection(layer: LayerId, group: string): Section {
+function groupSection(layer: LayerId, group: string, name: string): Section {
   const key = `${layer}:${group}`;
   const map: Record<string, Section> = {
     "primitive:colour": "color",
@@ -65,13 +74,21 @@ function groupSection(layer: LayerId, group: string): Section {
     "primitive:elevation": "shape",
     "primitive:motion": "motion",
     "semantic:surface & text": "color",
+    "semantic:base": "color",
     "semantic:border": "color",
     "semantic:action": "color",
+    "semantic:fill": "color",
     "semantic:focus": "color",
     "semantic:selected": "color",
     "semantic:categorical accents": "color",
+    "semantic:operational roles": "color",
   };
-  return map[key] ?? "shape";
+  const hit = map[key];
+  if (hit) return hit;
+  // An unlisted group still lands in the right tab if its tokens are colour
+  // roles — every colour role in the contract is named --color-*.
+  if (name.startsWith("--color-")) return "color";
+  return "shape";
 }
 
 export const TOKEN_INFOS: TokenInfo[] = LAYERS.flatMap((layer) =>
@@ -83,11 +100,12 @@ export const TOKEN_INFOS: TokenInfo[] = LAYERS.flatMap((layer) =>
         name,
         layer: layer.id,
         group: group.label,
-        section: groupSection(layer.id, group.label),
+        section: groupSection(layer.id, group.label, name),
         raw,
         form,
         ref: alias ? alias[1] : undefined,
         primitive: layer.id === "primitive",
+        immutable: IMMUTABLE_PRIMITIVES.has(name),
       };
     }),
   ),
@@ -172,6 +190,7 @@ function controlFor(info: TokenInfo): { control: Control; unit?: string } | null
 }
 
 function isEditable(info: TokenInfo): boolean {
+  if (info.immutable) return false;
   if (info.form === "derived") return false;
   if (info.primitive) {
     // Colour, sizes, spacing, radius, borders, layout, durations — but not the
@@ -225,6 +244,9 @@ export const EDITABLES: EditableToken[] = TOKEN_INFOS.map(toEditable).filter(
 export const EDITABLE_BY_NAME: Record<string, EditableToken> = Object.fromEntries(
   EDITABLES.map((e) => [e.name, e]),
 );
+
+/** The brand anchors, shown read-only in the palette (never in EDITABLES). */
+export const IMMUTABLE_TOKENS: TokenInfo[] = TOKEN_INFOS.filter((t) => t.immutable);
 
 /** Derived tokens, shown read-only so the dependency is visible. */
 export const DERIVED_TOKENS: TokenInfo[] = TOKEN_INFOS.filter((t) => t.form === "derived");

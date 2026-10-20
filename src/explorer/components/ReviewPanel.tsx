@@ -21,6 +21,7 @@ import {
   overridesFromCandidate,
   changeCount,
   type Overrides,
+  type ThemeMode,
 } from "../theme/theme";
 
 interface Props {
@@ -28,16 +29,19 @@ interface Props {
   onClose: () => void;
   overrides: Overrides;
   onImport: (o: Overrides) => void;
+  /** The theme the preview is showing — the contrast promises are re-checked
+   * against this mapping, and the panel says which one it was. */
+  mode: ThemeMode;
 }
 
-export function ReviewPanel({ open, onClose, overrides, onImport }: Props) {
+export function ReviewPanel({ open, onClose, overrides, onImport, mode }: Props) {
   const [paste, setPaste] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   const diff = useMemo(() => diffRows(overrides), [overrides]);
-  const contrast = useMemo(() => resolveContrast(overrides), [overrides]);
+  const contrast = useMemo(() => resolveContrast(overrides, mode), [overrides, mode]);
   const candidate = useMemo(() => serializeCandidate(overrides), [overrides]);
   const json = useMemo(() => candidateToJson(candidate), [candidate]);
   const drift = useMemo(() => candidateDrift(candidate), [candidate]);
@@ -143,7 +147,17 @@ export function ReviewPanel({ open, onClose, overrides, onImport }: Props) {
                 <td>
                   <code>{d.to}</code>
                 </td>
-                <td>{d.dependents.length}</td>
+                <td>
+                  <span className="nise-explorer__diff-count">
+                    {d.direct.length} direct · {d.dependents.length} total
+                  </span>
+                  {d.dependents.length > 0 ? (
+                    <span className="nise-explorer__diff-names">
+                      {d.dependents.slice(0, 5).map((n) => n.replace(/^--/, "")).join(", ")}
+                      {d.dependents.length > 5 ? ` +${d.dependents.length - 5} more` : ""}
+                    </span>
+                  ) : null}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -153,6 +167,7 @@ export function ReviewPanel({ open, onClose, overrides, onImport }: Props) {
       <section className="nise-explorer__review-block" aria-labelledby="review-contrast">
         <h3 id="review-contrast" className="nise-explorer__review-subtitle">
           Contrast promises
+          <span className="nise-explorer__review-note"> · {mode} mapping</span>
         </h3>
         {failures.length === 0 ? (
           <p className="nise-explorer__ok">

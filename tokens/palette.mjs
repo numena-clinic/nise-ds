@@ -9,11 +9,15 @@
 //      never round its values through our own maths. (Analysis of these anchors
 //      is in docs/palette.md; it is why no anchor value is changed here.)
 //
-//   2. Generated scales: one neutral ramp and three chromatic families (purple
-//      as the primary identity, cyan and tangerine as the supporting accents the
-//      interface actually uses). A ramp is a lightness curve plus a
-//      family-specific chroma curve, evaluated in OKLCH and gamut-mapped to sRGB
-//      by tokens/color.mjs — never a naive interpolation between two hexes.
+//   2. Scales, two kinds. Four families are GENERATED from a lightness curve
+//      plus a family-specific chroma curve (one neutral ramp, and purple/cyan/
+//      tangerine as the identity and supporting accents). Four more are
+//      AUTHORED: mint, citron, pink and teal are the operational families
+//      (success / warning / error / info), and their published candidate values
+//      are pinned as anchors with the steps between them interpolated in OKLCH —
+//      never a naive interpolation between two hexes, and never a re-generation
+//      that would move an anchor off its published value. Both kinds are
+//      gamut-mapped to sRGB by tokens/color.mjs.
 //
 // Nothing downstream stores OKLCH as the runtime value: `colorTokens` resolves
 // every colour to a deterministic sRGB hex, which is what `tokens.css` ships.
@@ -51,6 +55,31 @@ export function oklchOf(hex) {
   const c = parseColor(hex);
   return rgbToOklch({ r: c.r, g: c.g, b: c.b });
 }
+
+// ── the dark ground ──────────────────────────────────────────────────────────
+//
+// Two more published values, for the same reason as the brand anchors: they are
+// proposed as given and are not on any curve. They bound the dark base ladder
+// with the brand's ink-plum between them —
+//
+//   --dark-ground  #17121D   L .194   the deep ground (dark base-100 / page)
+//   --ink-plum     #221A2A   L .235   the brand, as the raised panel (base-200)
+//   --dark-panel   #2D2238   L .275   the strong panel (dark base-300)
+//
+// The steps are deliberately TIGHT (0.04 L apart) rather than the neutral
+// ramp's 0.09: a container ladder has to stay near its ground or a card reads
+// as a hole, and the tight steps are what let a saturated accent clear 4.5:1 on
+// the strongest panel — pink-500 is 5.45:1 on --dark-panel and only 2.86:1 on
+// neutral-800, which is why this is authored rather than reusing the ramp.
+//
+// `--color-surface` in the dark theme IS --dark-ground, so the page and
+// base-100 are one value in both themes (see tokens/themes.mjs).
+//
+// @type {{ name: string, hex: string, role: string, provenance: string }[]}
+export const groundAnchors = [
+  { name: "--dark-ground", hex: "#17121D", role: "foundation", provenance: "dark ground candidate" },
+  { name: "--dark-panel", hex: "#2D2238", role: "foundation", provenance: "dark panel candidate" },
+];
 
 // ── scale configuration ──────────────────────────────────────────────────────
 //
@@ -132,6 +161,123 @@ export function generateScale(steps, chromaAt, hueAt) {
   return out;
 }
 
+// ── authored ramps ───────────────────────────────────────────────────────────
+//
+// The operational families (mint = success, citron = warning, pink = error,
+// teal = info) are NOT generated from the shared lightness curve. Their
+// published candidates are deliberately uneven — a bright neon accent at one
+// end and a near-black surface at the other, with a different lightness per
+// hue — so the curve would move them. Instead each family PINS its candidates
+// as anchors and interpolates the steps between them in OKLCH (hue is
+// interpolated on the short arc, so a ramp never swings the long way round).
+//
+// A pinned step keeps its published hex verbatim: `authoredScale` returns the
+// literal, not a round-trip through OKLCH, so an anchor can never drift by a
+// rounding unit. See docs/color-architecture.md.
+
+const lerp = (a, b, t) => a + (b - a) * t;
+/** Hue on the short arc: always the <=180° path. */
+const lerpHue = (a, b, t) => {
+  const delta = ((b - a + 540) % 360) - 180;
+  return (((a + delta * t) % 360) + 360) % 360;
+};
+
+/**
+ * Author a ramp from pinned OKLCH anchors.
+ *
+ * @param {Record<string, string>} pins  step → published hex
+ * @param {string[]} steps               the steps to fill, light → dark
+ * @returns {Record<string, { oklch: { l: number, c: number, h: number }, hex: string }>}
+ */
+export function authoredScale(pins, steps) {
+  const pinSteps = Object.keys(pins).map(Number).sort((a, b) => a - b);
+  const pinOklch = new Map(pinSteps.map((step) => [step, oklchOf(pins[String(step)])]));
+  const out = {};
+  for (const step of steps) {
+    const n = Number(step);
+    const pinned = pinOklch.get(n);
+    if (pinned) {
+      // Verbatim: the published value is the value, to the unit.
+      out[step] = { oklch: pinned, hex: pins[step] };
+      continue;
+    }
+    let lo = pinSteps[0];
+    let hi = pinSteps[pinSteps.length - 1];
+    for (let i = 0; i < pinSteps.length - 1; i += 1) {
+      if (n > pinSteps[i] && n < pinSteps[i + 1]) {
+        lo = pinSteps[i];
+        hi = pinSteps[i + 1];
+        break;
+      }
+    }
+    const t = (n - lo) / (hi - lo);
+    const a = pinOklch.get(lo);
+    const b = pinOklch.get(hi);
+    const oklch = {
+      l: lerp(a.l, b.l, t),
+      c: lerp(a.c, b.c, t),
+      h: lerpHue(a.h, b.h, t),
+    };
+    out[step] = { oklch, hex: toHex(oklchToRgb(oklch)) };
+  }
+  return out;
+}
+
+/**
+ * The operational families, pinned. Each entry is the published candidate set:
+ * a pale surface for a tinted panel, a vivid accent, a deep step that carries
+ * text in the light theme, and the near-black surfaces the dark theme needs.
+ * The steps below are not on the shared curve, which is why they are authored.
+ *
+ * Semantics live in tokens/semantic.mjs (light) and tokens/themes.mjs (dark);
+ * this file only owns the values.
+ *
+ * @type {Record<string, Record<string, string>>}  family → step → published hex
+ */
+export const functionalFamilies = {
+  /** success — a cool green that reads as confirmation without a verdict hue. */
+  mint: {
+    50: "#E8FFF2",
+    200: "#9CFFD0",
+    500: "#42F5A5",
+    600: "#1E8F63",
+    900: "#174B3A",
+    950: "#142D27",
+  },
+  /** warning — amber, not ochre: brighter and sharper than a muted gold. */
+  citron: {
+    50: "#FFF8DE",
+    200: "#FFF0A6",
+    500: "#FFD84D",
+    600: "#A27D14",
+    900: "#514017",
+    950: "#302817",
+  },
+  /** error — a saturated pink, not a fire-engine red. */
+  pink: {
+    50: "#FFF0F6",
+    200: "#FFB4D8",
+    500: "#FF5CA8",
+    700: "#A52D70",
+    900: "#5B2043",
+    950: "#351629",
+  },
+  /** info — cyan pushed a few degrees bluer so it never collides with the
+   * brand's vibrant-cyan. Related to it by design; never a replacement. */
+  teal: {
+    50: "#E5FBFF",
+    200: "#B1F7FF",
+    500: "#45E8FF",
+    700: "#087F99",
+    900: "#164653",
+    950: "#142831",
+  },
+};
+
+/** Families built by `authoredScale` rather than the generated curve. */
+export const authoredFamilies = new Set(Object.keys(functionalFamilies));
+
+
 // ── the scales ───────────────────────────────────────────────────────────────
 
 function familyScale({ hue, maxChroma, hueShift }) {
@@ -151,6 +297,10 @@ export const scales = {
   purple: familyScale(families.purple),
   cyan: familyScale(families.cyan),
   tangerine: familyScale(families.tangerine),
+  mint: authoredScale(functionalFamilies.mint, chromaticSteps),
+  citron: authoredScale(functionalFamilies.citron, chromaticSteps),
+  pink: authoredScale(functionalFamilies.pink, chromaticSteps),
+  teal: authoredScale(functionalFamilies.teal, chromaticSteps),
 };
 
 // ── the token map the build consumes ─────────────────────────────────────────
@@ -166,7 +316,7 @@ export const colorTokens = {};
 /** @type {Record<string, { oklch: { l: number, c: number, h: number }, hex: string, source: string, family?: string, step?: string, provenance?: string }>} */
 export const colorMeta = {};
 
-for (const anchor of brandAnchors) {
+for (const anchor of [...brandAnchors, ...groundAnchors]) {
   colorTokens[anchor.name] = anchor.hex;
   colorMeta[anchor.name] = {
     oklch: {
@@ -181,6 +331,7 @@ for (const anchor of brandAnchors) {
 }
 
 for (const [family, scale] of Object.entries(scales)) {
+  const authored = authoredFamilies.has(family);
   for (const [step, { oklch, hex }] of Object.entries(scale)) {
     const name = `--${family}-${step}`;
     colorTokens[name] = hex;
@@ -191,7 +342,9 @@ for (const [family, scale] of Object.entries(scales)) {
         h: Number(oklch.h.toFixed(1)),
       },
       hex,
-      source: "generated",
+      // "authored-ramp" marks a family pinned to published candidate anchors;
+      // "generated" is a step on the shared lightness curve.
+      source: authored ? "authored-ramp" : "generated",
       family,
       step,
     };
@@ -200,7 +353,7 @@ for (const [family, scale] of Object.entries(scales)) {
 
 /** A compact, human-readable dump used by the validator report and the docs. */
 export function paletteReport() {
-  for (const anchor of brandAnchors) {
+  for (const anchor of [...brandAnchors, ...groundAnchors]) {
     console.log(
       `  anchor ${anchor.name.padEnd(20)} ${anchor.hex}  →  ${formatOklch(colorMeta[anchor.name].oklch)}`,
     );

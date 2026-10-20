@@ -6,6 +6,7 @@ import {
   COLOR_PRIMITIVES,
   TOKEN_INFOS,
   INFO_BY_NAME,
+  IMMUTABLE_TOKENS,
   transitiveDependents,
   editablesBySection,
 } from "../src/explorer/theme/tokens";
@@ -27,17 +28,26 @@ import {
   candidateDrift,
   withFontFamily,
   fontStackParts,
+  THEME_VARYING,
   type Overrides,
 } from "../src/explorer/theme/theme";
 
 describe("token classification", () => {
-  it("reads a primitive literal as an editable colour value", () => {
+  it("reads a brand anchor as a fixed, uneditable primitive", () => {
     const t = INFO_BY_NAME["--deep-purple"]!;
     expect(t.form).toBe("value");
     expect(t.primitive).toBe(true);
-    const e = EDITABLE_BY_NAME["--deep-purple"]!;
-    expect(e.kind).toBe("value");
-    expect(e.control).toBe("color");
+    expect(t.immutable).toBe(true);
+    expect(EDITABLE_BY_NAME["--deep-purple"]).toBeUndefined();
+  });
+
+  it("marks exactly the ten brand anchors immutable and leaves them uneditable", () => {
+    expect(IMMUTABLE_TOKENS).toHaveLength(10);
+    expect(IMMUTABLE_TOKENS.map((t) => t.name)).toContain("--deep-purple");
+    for (const t of IMMUTABLE_TOKENS) {
+      expect(t.immutable).toBe(true);
+      expect(EDITABLE_BY_NAME[t.name]).toBeUndefined();
+    }
   });
 
   it("reads a semantic colour role as a retargetable alias", () => {
@@ -104,7 +114,7 @@ describe("value validation", () => {
   const space = EDITABLE_BY_NAME["--space-3"]!;
   const lh = EDITABLE_BY_NAME["--line-height-normal"]!;
   const dur = EDITABLE_BY_NAME["--duration-fast"]!;
-  const colour = EDITABLE_BY_NAME["--vibrant-purple"]!;
+  const colour = EDITABLE_BY_NAME["--purple-600"]!;
 
   it("accepts a valid value for each control", () => {
     expect(validateValue(colour, "#4C207F")).toBeNull();
@@ -134,10 +144,18 @@ describe("overrides and preview resolution", () => {
   });
 
   it("produces scoped custom properties, not :root values", () => {
-    expect(previewStyle(only)).toEqual({ "--neutral-950": "#000000" });
-    expect(previewStyle({ "--color-surface": { kind: "alias", ref: "--soft-purple" } })).toEqual({
-      "--color-surface": "var(--soft-purple)",
-    });
+    const light = previewStyle(only);
+    expect(light["--neutral-950"]).toBe("#000000");
+    // every token that differs between themes is pinned on the wrapper under
+    // the light mapping, so the preview never inherits a system dark preference
+    expect(light["--color-surface"]).toBe("var(--neutral-0)");
+    expect(THEME_VARYING.every((n) => n in light)).toBe(true);
+    // and under the dark mapping the dark values are pinned instead
+    expect(previewStyle(only, "dark")["--color-surface"]).toBe("var(--dark-ground)");
+    // a user override wins over the pin
+    expect(previewStyle({ "--color-surface": { kind: "alias", ref: "--soft-purple" } })["--color-surface"]).toBe(
+      "var(--soft-purple)",
+    );
   });
 
   it("flows a primitive change through the semantic and derived tokens", () => {
@@ -148,8 +166,21 @@ describe("overrides and preview resolution", () => {
     );
   });
 
-  it("keeps the brand contrast promises under the baseline", () => {
-    expect(resolveContrast({}).every((c) => c.pass)).toBe(true);
+  it("resolves the dark mapping when the mode is dark", () => {
+    expect(resolve("--color-surface", experimentalTokens({}, "dark")).toLowerCase()).toBe("#17121d");
+    expect(resolve("--color-base-300", experimentalTokens({}, "dark")).toLowerCase()).toBe("#2d2238");
+    expect(resolve("--color-action", experimentalTokens({}, "dark")).toLowerCase()).not.toBe(
+      resolve("--color-action", experimentalTokens({}, "light")).toLowerCase(),
+    );
+  });
+
+  it("keeps the brand contrast promises under both mappings", () => {
+    expect(resolveContrast({}, "light").every((c) => c.pass)).toBe(true);
+    expect(
+      resolveContrast({}, "dark")
+        .filter((c) => !c.pass)
+        .map((c) => `${c.fg} on ${c.bg} ${c.ratio}`),
+    ).toEqual([]);
   });
 
   it("reports a broken promise when a role no longer clears its minimum", () => {
@@ -163,7 +194,8 @@ describe("overrides and preview resolution", () => {
     const rows = diffRows(only);
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ name: "--neutral-950", from: "#211e25", to: "#000000" });
-    expect(rows[0]!.dependents).toContain("--color-text");
+    expect(rows[0]!.direct).toContain("--color-text");
+    expect(rows[0]!.dependents).toContain("--color-scrim");
   });
 });
 
@@ -185,7 +217,7 @@ describe("font family control", () => {
 
 describe("candidate round-trip and validation", () => {
   const overrides: Overrides = {
-    "--deep-purple": { kind: "value", value: "#3B1E66" },
+    "--purple-600": { kind: "value", value: "#3B1E66" },
     "--color-surface": { kind: "alias", ref: "--pale-lavender" },
   };
 
@@ -193,7 +225,7 @@ describe("candidate round-trip and validation", () => {
     const candidate = serializeCandidate(overrides);
     expect(candidate.schema).toBe("nise.theme-candidate");
     expect(candidate.version).toBe(1);
-    expect(candidateToJson(candidate)).toContain('"--deep-purple"');
+    expect(candidateToJson(candidate)).toContain('"--purple-600"');
 
     const result = parseCandidate(candidateToJson(candidate));
     expect(result.ok).toBe(true);
@@ -227,9 +259,24 @@ describe("candidate round-trip and validation", () => {
   });
 
   it("flags drift when the source no longer matches the candidate", () => {
-    const candidate = serializeCandidate({ "--deep-purple": { kind: "value", value: "#000000" } });
+    const candidate = serializeCandidate({ "--purple-600": { kind: "value", value: "#000000" } });
     expect(candidateDrift(candidate)).toEqual([]);
     candidate.tokens[0]!.from = "#111111";
     expect(candidateDrift(candidate)[0]).toMatch(/source is now/);
+  });
+
+  it("rejects a candidate that tries to change a brand anchor", () => {
+    const res = parseCandidate(
+      JSON.stringify({
+        schema: "nise.theme-candidate",
+        version: 1,
+        tokens: [
+          { name: "--deep-purple", layer: "primitive", kind: "value", value: "#123456", from: "#4C207F" },
+        ],
+      }),
+    );
+    expect(res.ok).toBe(true);
+    expect(res.candidate!.tokens).toHaveLength(0);
+    expect(res.errors[0]).toMatch(/uneditable token "--deep-purple"/);
   });
 });

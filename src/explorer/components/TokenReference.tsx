@@ -6,8 +6,8 @@
 // the component layer. Derived tokens are marked, because you change them by
 // changing what they are derived from.
 
-import { LAYERS, type LayerId, type TokenInfo } from "../theme/tokens";
-import { experimentalTokens, resolve, type Overrides } from "../theme/theme";
+import { LAYERS, IMMUTABLE_PRIMITIVES, type LayerId, type TokenInfo } from "../theme/tokens";
+import { experimentalTokens, resolve, type Overrides, type ThemeMode } from "../theme/theme";
 import { INFO_BY_NAME } from "../theme/tokens";
 
 const LAYER_LABEL: Record<LayerId, string> = {
@@ -25,11 +25,23 @@ const LAYER_NOTE: Record<LayerId, string> = {
 interface Props {
   overrides: Overrides;
   query: string;
+  /** Which theme mapping the resolved column reads (the wrapper's preview). */
+  mode: ThemeMode;
 }
 
-function Row({ info, tokens }: { info: TokenInfo; tokens: Record<string, string> }) {
+function Row({
+  info,
+  tokens,
+  baseline,
+}: {
+  info: TokenInfo;
+  tokens: Record<string, string>;
+  baseline: Record<string, string>;
+}) {
   const resolved = resolve(info.name, tokens);
-  const changed = info.raw !== resolved && info.form !== "value";
+  // "live" means changed BY YOUR EDITS — compared against the same theme with
+  // no overrides, so flipping the preview to dark does not flag every role.
+  const changed = resolve(info.name, baseline) !== resolved;
   return (
     <li className="nise-ref__row">
       <code className="nise-ref__name">{info.name}</code>
@@ -48,15 +60,17 @@ function Row({ info, tokens }: { info: TokenInfo; tokens: Record<string, string>
   );
 }
 
-export function TokenReference({ overrides, query }: Props) {
-  const tokens = experimentalTokens(overrides);
+export function TokenReference({ overrides, query, mode }: Props) {
+  const tokens = experimentalTokens(overrides, mode);
+  const baseline = experimentalTokens({}, mode);
   const q = query.trim().toLowerCase();
 
   return (
     <div className="nise-ref">
       <p className="nise-ref__intro">
-        Every token in the source, with the value it resolves to under your current edits. Nothing
-        here is authored twice — it is the same graph the validator and the generator read.
+        Every token in the source, with the value it resolves to under your current edits and the{" "}
+        {mode} mapping. Nothing here is authored twice — it is the same graph the validator and the
+        generator read.
       </p>
       <div className="nise-ref__grid">
         {LAYERS.map((layer) => {
@@ -85,6 +99,7 @@ export function TokenReference({ overrides, query }: Props) {
                     <Row
                       key={t.name}
                       tokens={tokens}
+                      baseline={baseline}
                       info={
                         info ?? {
                           name: t.name,
@@ -94,6 +109,7 @@ export function TokenReference({ overrides, query }: Props) {
                           raw: t.raw,
                           form: "value",
                           primitive: layer.id === "primitive",
+                          immutable: IMMUTABLE_PRIMITIVES.has(t.name),
                         }
                       }
                     />

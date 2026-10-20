@@ -16,7 +16,10 @@ A short, non-interactive label: a category, a source type, a count.
   (color.md §4), and an icon or label must not "deliver a verdict"
   (iconography.md §5). A badge meaning "improving" or "at risk" is a misuse —
   the wording would be doing the work anyway, with colour implying a judgement
-  the system has not made.
+  the system has not made. The operational roles added by decisions.md P4 are
+  for machine states (saved, failed) and are deliberately not offered as `tone`
+  options; a clinical reading of a tinted badge is exactly what both rules
+  exist to prevent.
 
 ## Props
 
