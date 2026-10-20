@@ -5,7 +5,12 @@
 // when component code:
 //   1. references a token that does not exist (a typo, or a token never built)
 //   2. writes a raw colour literal instead of a semantic token
-//   3. writes an off-token px value for a spacing / radius / type property
+//   3. references a PRIMITIVE token directly instead of a semantic role
+//   4. writes an off-token px value for a spacing / radius / type property
+//
+// `NISE_ALLOW_PRIMITIVE_REF=1` relaxes rule 3 for a one-off investigation; the
+// generated token layer and the Theme Explorer are inherently primitive and are
+// exempted below rather than by the env var.
 //
 // Two kinds of `var()` are treated as intentional and left alone:
 //   · a var with a fallback — var(--button-radius, var(--radius-md)) — is a
@@ -22,6 +27,11 @@ import { GENERATED, scanSource } from "./lib/token-usage.mjs";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const srcDir = resolve(root, "src");
+
+// The Theme Explorer renders the PRIMITIVE and semantic layers themselves (it is
+// the token editor), and the generated layer is a primitive artifact — both
+// legitimately name primitives. Everything else consumes semantic roles.
+const PRIMITIVE_EXEMPT = [/^src[/\\]tokens[/\\]tokens\.css$/, /^src[/\\]explorer[/\\]/];
 
 const isKnownToken = (name) =>
   name in allTokens || name.startsWith("--radix-") || name.startsWith("--nise-");
@@ -44,7 +54,11 @@ for (const file of walk(srcDir)) {
 
   const text = readFileSync(file, "utf8");
   const found = scanSource(text, { isCss: file.endsWith(".css"), isKnownToken });
-  for (const { line, message } of found) problems.push(`${rel}:${line}  ${message}`);
+  const allowPrimitive = PRIMITIVE_EXEMPT.some((re) => re.test(rel));
+  for (const { line, message } of found) {
+    if (allowPrimitive && message.includes("primitive `")) continue;
+    problems.push(`${rel}:${line}  ${message}`);
+  }
 }
 
 if (problems.length > 0) {

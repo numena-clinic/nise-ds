@@ -125,7 +125,10 @@ const Section = ({ title, note, children }: { title: string; note?: string; chil
 
 const PaletteView = () => (
   <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
-    <Section title="Brand anchors" note="The ten brand hex, unchanged (numena-brand color.md §2).">
+    <Section
+      title="Brand anchors"
+      note="The ten brand hex, unchanged (numena-brand color.md §2). Artwork and marketing surfaces use these directly; product components do not — they use the Semantic roles story below (docs/tokens.md rule 2)."
+    >
       <ChipGrid chips={anchorChips} />
     </Section>
     <Section

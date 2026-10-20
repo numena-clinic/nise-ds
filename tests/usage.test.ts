@@ -2,11 +2,14 @@ import { describe, it, expect } from "vitest";
 import {
   stripLineComment,
   scanSource,
+  checkPrimitiveRefs,
 } from "../scripts/lib/token-usage.mjs";
 
 // A minimal stand-in for the real token table.
 const isKnownToken = (name: string) =>
-  /^--(?:space-|color-|control-|choice-|button-radius$|c$)/.test(name);
+  /^--(?:space-|color-|control-|choice-|white|ink-plum|deep-purple|vibrant-|soft-|pale-lavender|dark-ground|dark-panel|neutral-|purple-|cyan-|tangerine-|mint-|citron-|pink-|teal-|button-radius$|c$)/.test(
+    name,
+  );
 const scanCss = (text: string) => scanSource(text, { isCss: true, isKnownToken });
 const scanTsx = (text: string) => scanSource(text, { isCss: false, isKnownToken });
 const messages = (problems: { message: string }[]) => problems.map((p) => p.message);
@@ -103,8 +106,7 @@ describe("raw colour literals", () => {
   });
 });
 
-describe("JSX inline styles", () => {
-  it("catches an off-token px, mapped from camelCase to kebab", () => {
+describe("JSX inline styles", () => {  it("catches an off-token px, mapped from camelCase to kebab", () => {
     const problems = scanTsx(`<div style={{ paddingTop: "13px" }} />`);
     expect(problems).toHaveLength(1);
     expect(problems[0]!.message).toMatch(/`padding-top`/);
@@ -126,5 +128,45 @@ describe("JSX inline styles", () => {
 />`);
     expect(problems).toHaveLength(1);
     expect(problems[0]!.line).toBe(3);
+  });
+});
+
+describe("primitive references in component code", () => {
+  it.each([
+    ["--neutral-0", "neutral"],
+    ["--deep-purple", "brand anchor"],
+    ["--pale-lavender", "brand anchor"],
+    ["--dark-ground", "ground anchor"],
+    ["--vibrant-cyan", "brand anchor"],
+    ["--mint-700", "operational ramp"],
+  ])("flags a component that consumes the primitive %s (%s)", (token) => {
+    const problems = scanCss(`.a { color: var(${token}); }`);
+    expect(messages(problems)).toEqual([
+      `primitive \`${token}\` referenced directly — components consume a semantic role (--color-*)`,
+    ]);
+  });
+
+  it("accepts a semantic role and a component token", () => {
+    expect(scanCss(`.a { color: var(--color-text); padding: var(--space-3); border-radius: var(--button-radius); }`)).toEqual([]);
+  });
+
+  it("does not flag a semantic role whose name merely starts the same", () => {
+    // --color-* and --surface-* are roles, not primitives, whatever the value.
+    expect(messages(scanCss(`.a { color: var(--color-text); background: var(--color-surface-subtle); }`))).toEqual([]);
+  });
+
+  it("flags only when the primitive actually exists (a typo stays a var() error)", () => {
+    const isKnown = (n: string) => n === "--neutral-0";
+    expect(checkPrimitiveRefs(`var(--neutral-0)`, isKnown)).toHaveLength(1);
+    expect(checkPrimitiveRefs(`var(--neutral-nope)`, isKnown)).toHaveLength(0);
+  });
+
+  it("can be relaxed by the documented env escape hatch", () => {
+    process.env.NISE_ALLOW_PRIMITIVE_REF = "1";
+    try {
+      expect(scanCss(`.a { color: var(--neutral-0); }`)).toEqual([]);
+    } finally {
+      delete process.env.NISE_ALLOW_PRIMITIVE_REF;
+    }
   });
 });

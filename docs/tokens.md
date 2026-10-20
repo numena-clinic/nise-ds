@@ -127,6 +127,43 @@ brand accents — tangerine is not warning, cyan is not info.
 
 ## The colour rules the system keeps
 
+These are the rules a change must satisfy. Rules 1–4 are the brand rules from
+`numena-brand color.md §4`; rules 5–9 are what the token layer and
+`npm run check:usage` mechanically enforce. Together they are the reason the
+system is safe to bend in the Theme Explorer and safe to ship.
+
+1. **Brand artwork may use the fixed brand colours.** Kaleidoscopic artwork,
+   illustrations and marketing surfaces draw on the ten anchors directly. They
+   are the brand, not interface colours.
+2. **Product components use semantic roles — never a raw hex and never a
+   primitive scale reference.** A component names `--color-*` (or a component
+   token). `npm run check:usage` fails a hardcoded colour *and* a direct
+   `var(--neutral-400)`-style primitive reference anywhere under `src/` outside
+   the generated layer and the Theme Explorer (which render the primitives by
+   design). The one labelled waiver is `token-boundary: waive`, for a
+   colour-picker's own spectrum.
+3. **Every role has one documented purpose.** The semantic layer in
+   `tokens/semantic.mjs` is a contract of role names; each is declared once and
+   mapped, not re-invented per component.
+4. **A brand colour does not imply interface meaning.** Tangerine is not
+   warning, cyan is not info, and a vivid anchor is not promoted to a role just
+   because it exists. See "No verdict colours" below and decisions.md P4.
+5. **Foreground and background are validated together, never separately.** A
+   pair the UI relies on is recorded in `contrastChecks` and the validator
+   proves it under every theme.
+6. **Colour is never the only carrier of meaning.** An error is text + an icon
+   + a heavier boundary first, colour last (color.md §4, P4).
+7. **Both themes are first-class.** Every role is mapped in light and dark, and
+   the validator proves the same promises against both. Dark is a re-pointing of
+   the same role names, never a second token set.
+8. **New colours or scales need a demonstrated product need**, recorded in
+   decisions.md — not palette completeness.
+9. **When a role already exists, reuse it.** There is no `--color-primary`
+   beside `--color-action`; component-specific tokens are added only when a
+   semantic role cannot express the behaviour.
+
+### The two brand rules in detail
+
 Two rules from the brand are load-bearing:
 
 - **No verdict colours.** "The palette does not establish fixed colors for

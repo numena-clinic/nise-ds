@@ -41,6 +41,26 @@ export const NAMED_COLORS = new Set([
   "salmon", "tomato", "khaki", "indigo", "violet",
 ]);
 
+// The nise primitive namespaces. Component code must consume a SEMANTIC role,
+// never a primitive: the boundary rule 1 (docs/tokens.md) written down in
+// AGENTS.md depends on this. Component tokens (`--button-*`) and semantic
+// (`--color-*`, `--surface-*`) names are deliberately outside the set.
+export const PRIMITIVE_PREFIX =
+  /^--(?:white|ink-plum|deep-purple|vibrant-|soft-|pale-lavender|dark-ground|dark-panel|neutral-|purple-|cyan-|tangerine-|mint-|citron-|pink-|teal-)/;
+
+/** A `var()` that resolves a primitive directly instead of a semantic role. */
+export function checkPrimitiveRefs(text, isKnownToken) {
+  if (process.env.NISE_ALLOW_PRIMITIVE_REF) return [];
+  const out = [];
+  for (const m of text.matchAll(/var\(\s*(--[a-zA-Z0-9_-]+)\s*(,|\))/g)) {
+    const [, name] = m;
+    if (PRIMITIVE_PREFIX.test(name) && isKnownToken(name)) {
+      out.push(`primitive \`${name}\` referenced directly — components consume a semantic role (--color-*)`);
+    }
+  }
+  return out;
+}
+
 // px is only allowed on these when it comes through a token.
 export const PX_PROPERTY =
   /^(?:margin|padding|gap|row-gap|column-gap|inset|font-size|line-height|letter-spacing|border-width|outline-offset|outline-width|outline|border)(?:-(?:top|right|bottom|left|inline|block|start|end))*(?:-(?:width|radius|size))*$/;
@@ -176,6 +196,7 @@ export function scanSource(text, { isCss, isKnownToken }) {
     const line = isCss ? raw : stripLineComment(raw);
     if (!line.trim()) return;
     for (const message of checkVars(line, isKnownToken)) push(i + 1, message);
+    for (const message of checkPrimitiveRefs(line, isKnownToken)) push(i + 1, message);
     for (const message of checkColor(line)) push(i + 1, message);
   });
 
