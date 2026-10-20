@@ -29,6 +29,10 @@ npm run verify           # the gate — run before saying you are done
 
 - Source of truth is `tokens/*.mjs`. `src/tokens/tokens.css` is **generated** —
   never edit it by hand; edit the source and rebuild.
+- The palette is **generated** in `tokens/palette.mjs` (OKLCH model; the ten
+  brand hex are anchors, not the whole palette). `primitives.mjs` re-exports its
+  `colorTokens`; do not hand-author a colour primitive. Themes live in
+  `tokens/themes.mjs` (light is the base, dark re-points the same role names).
 - Three layers, downward references only: primitive → semantic → component.
   `tokens/validate.mjs` rejects a reference that points the wrong way. A
   primitive may not contain `var()` or `color-mix()`; a semantic token may only

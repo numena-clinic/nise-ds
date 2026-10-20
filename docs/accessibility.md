@@ -14,17 +14,18 @@ Accessibility is checked mechanically, not asserted in prose.
 Colour contrast is proven analytically rather than in axe, because jsdom has no
 layout. `tokens/semantic.mjs` lists every foreground/background pair the system
 depends on with its minimum ratio; the validator resolves the tokens (through
-`color-mix`) to sRGB and computes the real ratio. The resolved values reproduce
-the brand's published figures (color.md §5).
+`color-mix`) to sRGB and computes the real ratio, under **both** themes. The
+palette is generated in OKLCH (`docs/tokens.md`), so the ratios are the system's
+own, not a reproduction of the brand's published figures.
 
 ## Principles the components hold to
 
 - **A visible label always.** Every field has a real `<label>`; a placeholder is
   never a substitute (iconography.md §5, "label by default").
-- **Not by colour alone.** The focus ring is a 2px Vibrant Purple outline with an
-  offset, so it reads against any surface. Selection is a Pale Lavender tile
-  *and* a Deep Purple foreground (iconography.md §4). An error is text, an icon
-  and a heavier boundary — never just a colour.
+- **Not by colour alone.** The focus ring is a 2px outline with an offset, so it
+  reads against any surface. Selection is a tinted tile *and* a distinct
+  foreground (iconography.md §4). An error is text, an icon and a heavier
+  boundary — never just a colour.
 - **The error is described, not just shown.** A field's `aria-describedby`
   includes the error id only when the error is rendered; the hint leaves the DOM
   when an error is present, so the description never points at a missing node.

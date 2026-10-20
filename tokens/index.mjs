@@ -3,10 +3,12 @@
 
 export { primitiveGroups, primitives } from "./primitives.mjs";
 export { semanticGroups, semantic, contrastChecks } from "./semantic.mjs";
+export { darkGroups, semanticDark, themeOverrides } from "./themes.mjs";
 export { componentGroups, component } from "./component.mjs";
 
 import { primitiveGroups, primitives } from "./primitives.mjs";
 import { semanticGroups, semantic } from "./semantic.mjs";
+import { darkGroups } from "./themes.mjs";
 import { componentGroups, component } from "./component.mjs";
 
 /**
@@ -38,8 +40,17 @@ export const layers = [
   },
 ];
 
-/** Every token name → its declared value, across all layers. */
+/** Every token name → its declared value, across all layers (the light base). */
 export const allTokens = { ...primitives, ...semantic, ...component };
+
+/**
+ * Theme overrides rendered after the base layers: each is the SAME set of role
+ * names mapped onto another ground. The light mapping is the base `:root`, so it
+ * is not listed here. `npm run tokens:build` renders these into
+ * `[data-theme="<id>"]` blocks with a `prefers-color-scheme` fallback.
+ * @type {{ id: string, title: string, groups: import("./primitives.mjs").Group[] }[]}
+ */
+export const themes = [{ id: "dark", title: "Dark theme", groups: darkGroups }];
 
 /** Which layer each token name belongs to. */
 export const layerOf = Object.fromEntries(

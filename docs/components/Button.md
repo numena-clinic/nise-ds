@@ -38,9 +38,9 @@ An action. Triggers a single, immediate operation.
 
 - Heights `--button-height-{sm,md,lg}` → `--control-height-*`.
 - Padding `--button-padding-x-*` → `--space-*`; gap `--button-gap` → `--space-2`.
-- `primary` uses `--color-action` (Vibrant Purple) with `--color-action-text`
-  (White) — 5.27:1. `secondary` is a bordered surface; `ghost` has no fill until
-  hover.
+- `primary` uses `--color-action` (a deep purple) with `--color-action-text`
+  (white) — 9.06:1 in the light theme. `secondary` is a bordered surface; `ghost`
+  has no fill until hover.
 - Radius via `var(--button-radius, var(--radius-md))`, so a surface can re-round
   one button without a token.
 
@@ -48,8 +48,8 @@ An action. Triggers a single, immediate operation.
 
 A real `<button>`. Disabled is inert. While `loading`, the spinner is
 `aria-hidden` and `aria-busy="true"` is set, so the accessible name is still the
-label and the action cannot fire twice. The focus ring is the 2px Vibrant Purple
-outline, shared by every control.
+label and the action cannot fire twice. The focus ring is the 2px
+`--color-focus-ring` outline, shared by every control.
 
 ## Do / Don't
 

@@ -57,9 +57,11 @@ describe("planPromotion (against the real token source)", () => {
 
   it("recognises editable and non-editable tokens", () => {
     expect(isPrimitiveLiteral("--deep-purple")).toBe(true);
+    expect(isPrimitiveLiteral("--purple-600")).toBe(true);
     expect(isColorRole("--color-surface")).toBe(true);
-    expect(isColorRole("--color-text-muted")).toBe(false);
-    expect(isColorRole("--color-action-hover")).toBe(false);
+    expect(isColorRole("--color-action")).toBe(true);
+    expect(isColorRole("--color-scrim")).toBe(false);
+    expect(isColorRole("--focus-ring-width")).toBe(false);
   });
 
   it("plans a primitive value edit and leaves the file on disk untouched", () => {
@@ -67,11 +69,11 @@ describe("planPromotion (against the real token source)", () => {
     const plan = planPromotion(root, {
       schema: "nise.theme-candidate",
       version: 1,
-      tokens: [{ name: "--deep-purple", layer: "primitive", kind: "value", value: "#000000" }],
+      tokens: [{ name: "--space-3", layer: "primitive", kind: "value", value: "13px" }],
     });
     expect(plan.errors).toEqual([]);
     expect(plan.edits).toHaveLength(1);
-    expect(plan.files[TOKEN_FILES.primitive]).toContain('"--deep-purple": "#000000",');
+    expect(plan.files[TOKEN_FILES.primitive]).toContain('"--space-3": "13px",');
     // the on-disk file is unchanged — planning writes nothing
     expect(readFileSync(resolve(root, TOKEN_FILES.primitive), "utf8")).toBe(before);
   });
@@ -80,10 +82,10 @@ describe("planPromotion (against the real token source)", () => {
     const plan = planPromotion(root, {
       schema: "nise.theme-candidate",
       version: 1,
-      tokens: [{ name: "--color-surface", layer: "semantic", kind: "alias", ref: "--pale-lavender" }],
+      tokens: [{ name: "--color-surface", layer: "semantic", kind: "alias", ref: "--soft-purple" }],
     });
     expect(plan.errors).toEqual([]);
-    expect(plan.files[TOKEN_FILES.semantic]).toContain('"--color-surface": paleLavender,');
+    expect(plan.files[TOKEN_FILES.semantic]).toContain('"--color-surface": ref("--soft-purple"),');
   });
 
   it("plans a component literal edit", () => {
@@ -102,7 +104,7 @@ describe("planPromotion (against the real token source)", () => {
       version: 1,
       tokens: [
         { name: "--nope", layer: "primitive", kind: "value", value: "#000000" },
-        { name: "--color-text-muted", layer: "semantic", kind: "alias", ref: "--white" },
+        { name: "--color-scrim", layer: "semantic", kind: "alias", ref: "--neutral-950" },
         { name: "--color-action", layer: "semantic", kind: "alias", ref: "--space-3" },
       ],
     });

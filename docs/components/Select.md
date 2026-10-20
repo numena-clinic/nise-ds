@@ -38,7 +38,7 @@ cannot be styled consistently across the system.
 
 ```
 Label  *
-[ value              ▾ ]   chevron 20, Ink Plum → Deep Purple on hover
+[ value              ▾ ]   chevron 20, muted → action on hover
 hint or error
 ```
 
@@ -46,8 +46,8 @@ hint or error
   font size and item height come from the same `--control-*` slots.
 - The open menu is a floating surface: `--shadow-md`, `--radius-md`,
   `--color-surface`.
-- The reserved 16px indicator slot holds the check; the selected item is a Pale
-  Lavender tile (`--color-selected-surface`) with Deep Purple text
+- The reserved 16px indicator slot holds the check; the selected item is a tinted
+  tile (`--color-selected-surface`) with a distinct action foreground
   (`--color-selected-text`) — selection is shown by **tile and foreground**, not
   colour alone (iconography.md §4).
 - The chevron is `ChevronDownIcon size={20}` — the brand's default icon size.

@@ -23,6 +23,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { layers, allTokens } from "./index.mjs";
+import { colorMeta } from "./palette.mjs";
 import { expand, parseColor, mixRgb, substituteVars } from "./color.mjs";
 
 /** Vendor namespace for extensions (reverse-DNS, brand-owned). */
@@ -249,6 +250,10 @@ export function renderDtcg() {
           const resolved = expand(name, allTokens);
           node = { $type: kind, $value: literalValue(kind, resolved) };
         }
+        // OKLCH is the canonical authoring space (tokens/palette.mjs); the
+        // emitted $value is sRGB, so record the OKLCH alongside it where known.
+        const authored = colorMeta[name];
+        if (authored) meta.oklch = authored.oklch;
         node.$extensions = { [NS]: meta };
         groupNode[key(name)] = node;
       }

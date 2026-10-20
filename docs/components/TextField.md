@@ -46,7 +46,7 @@ warning "uses Ink Plum, with their shape and a text label doing the work"
 
 1. the message text,
 2. a 16px `AlertIcon` (shape, not hue),
-3. a heavier boundary (`--border-width-strong`, Ink Plum).
+3. a heavier boundary (`--border-width-strong`, a near-black `--color-border-error`).
 
 When an error is present the hint is **removed from the DOM**, and
 `aria-describedby` lists only ids that are actually rendered — it never points

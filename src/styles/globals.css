@@ -16,8 +16,10 @@
   box-sizing: border-box;
 }
 
+/* Native form controls and scrollbars follow the theme; the generated token
+   layer sets the concrete scheme per theme (see src/tokens/tokens.css). */
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
 }
 
 html {

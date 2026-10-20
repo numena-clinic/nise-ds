@@ -1,0 +1,19 @@
+/* =============================================================================
+   Storybook preview
+   -----------------------------------------------------------------------------
+   In Docs view Storybook renders each story inside a .docs-story block, on a
+   page chrome it paints from its own light palette. The block itself is
+   transparent, so a dark story would sit on the white panel.
+
+   This paints ONLY the story block with the theme surface, so the component
+   preview shows the theme the toolbar selected. The surrounding docs page
+   (heading, arg-types table, code blocks) keeps Storybook's own styling.
+
+   Values are the shared tokens, so they resolve per the data-theme attribute
+   the toolbar writes on the preview root (preview.ts) — no second theme.
+   ============================================================================= */
+
+body .docs-story {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}

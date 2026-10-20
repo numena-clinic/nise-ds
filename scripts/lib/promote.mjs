@@ -18,7 +18,7 @@
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { allTokens, layerOf } from "../../tokens/index.mjs";
+import { allTokens, layerOf, primitiveGroups } from "../../tokens/index.mjs";
 
 export const TOKEN_FILES = {
   primitive: "tokens/primitives.mjs",
@@ -29,25 +29,17 @@ export const TOKEN_FILES = {
 const ALIAS_RE = /^var\(\s*(--[a-zA-Z0-9_-]+)\s*\)$/;
 const LINE_RE = /^(\s*)"(--[a-zA-Z0-9_-]+)":\s*(.*),\s*$/;
 
-/** Colour primitives — the only legal targets for a colour-serif retarget. */
-export const COLOR_PRIMITIVES = [
-  "--white",
-  "--deep-purple",
-  "--ink-plum",
-  "--pale-lavender",
-  "--vibrant-purple",
-  "--vibrant-cyan",
-  "--vibrant-tangerine",
-  "--soft-purple",
-  "--soft-cyan",
-  "--soft-tangerine",
-];
+/** Colour primitives — the only legal targets for a colour-role retarget. Read
+ * from the source (the brand anchors plus the generated scales), so a scale step
+ * becomes a legal target the moment it exists. */
+export const COLOR_PRIMITIVES = Object.keys(
+  primitiveGroups.find((group) => group.label === "colour")?.tokens ?? {},
+);
 
 /** Named consts already defined in semantic.mjs, so a retarget reuses them. */
 const SEMANTIC_CONSTS = {
   "--white": "white",
   "--ink-plum": "inkPlum",
-  "--pale-lavender": "paleLavender",
 };
 
 /** Quote a value as a JS string literal, matching the source's own style. */

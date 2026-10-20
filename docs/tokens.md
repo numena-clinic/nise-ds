@@ -15,8 +15,9 @@ component   per-component use   →   where used?
 ```
 
 - **Primitive** tokens are values with no opinion about use: `--deep-purple`,
-  `--space-4`, `--radius-md`, `--duration-fast`. Only `tokens/primitives.mjs`
-  authors a literal.
+  `--purple-600`, `--space-4`, `--radius-md`, `--duration-fast`. Spacing, radii,
+  durations and the like are literals authored in `tokens/primitives.mjs`. Colour
+  primitives are **generated** — see *The colour model* below.
 - **Semantic** tokens are roles: `--color-surface`, `--color-text`,
   `--color-action`, `--color-focus-ring`. A semantic token must reference a
   primitive — never restate a value. Derived colours (a muted text, a border)
@@ -70,7 +71,9 @@ deliberately separate from the proprietary `tokens.json`, which is unchanged.
   original value and unit, under the root extension
   `$extensions["com.numena.nise"].cssOnlyTokens` rather than being faked.
 - **Extensions.** Every token also records its original CSS variable name at
-  `$extensions["com.numena.nise"].cssVar`, so a consumer can round-trip.
+  `$extensions["com.numena.nise"].cssVar`, so a consumer can round-trip. A
+  generated colour also carries its canonical `oklch` (`{ l, c, h }`) there,
+  since the `$value` is sRGB.
 
 The format is versioned by the DTCG, not by Nise: the export targets the last
 *stable* module (2025.10). Re-check the spec before adopting a newer draft.
@@ -88,22 +91,80 @@ The format is versioned by the DTCG, not by Nise: the export targets the last
 Reference a primitive in the semantic layer with the `ref()` helper; it throws
 at author time on a misspelled name, so a typo cannot reach the CSS.
 
+## The OKLCH colour model
+
+The palette is **generated, not transcribed**. `tokens/palette.mjs` holds the
+ten brand colours as the reference anchors and generates around them a neutral
+ramp and three chromatic scales (`purple`, `cyan`, `tangerine`) in **OKLCH** —
+the space where "lighter" and "darker" mean the same thing at every hue and
+chroma.
+
+- **Anchors, not a cage.** The ten brand hex are kept verbatim (`--deep-purple`,
+  `--vibrant-purple`, …) and are the reference point for the scales. The scales
+  are named `--<family>-<step>` (`--purple-600`, `--neutral-950`).
+- **Generated, deterministically.** A family is a hue, a maximum chroma and a
+  small hue drift; a scale is a fixed lightness ramp walked through that model.
+  Chroma is clamped into the sRGB gamut by reducing chroma at constant lightness
+  and hue, so no step is out of gamut and none is a naive RGB blend.
+- **OKLCH is canonical; the emitted value is sRGB hex.** Values are *authored*
+  in OKLCH and emitted as deterministic hex (`tokens/palette.mjs` keeps the
+  OKLCH alongside each hex, and the DTCG export records it). There is no
+  `oklch()` in the CSS because the validator, the Theme Explorer and the tests
+  all resolve colours from hex, and there is no explicit browser baseline to make
+  an `oklch()` fallback sound.
+- `--deep-purple`, `--ink-plum`, `--pale-lavender`, `--vibrant-*` and
+  `--soft-*` remain as named references to the anchors. Every scale step is a
+  primitive too (`--purple-600`), so a role can point at a step as readily as at
+  an anchor.
+
 ## The colour rules the system keeps
 
-The palette is exactly the ten brand colours (color.md §2). Two rules from the
-brand are load-bearing here:
+Two rules from the brand are load-bearing:
 
 - **No status colours.** "The palette does not establish fixed colors for
   clinical observations, evidence, hypotheses, decisions, or system statuses"
   (color.md §4). Nise therefore ships **no** `--color-success`, `--color-danger`,
   `--color-warning`. Errors are carried by text, an icon and a heavier boundary;
   a categorical accent is emphasis, never a verdict.
-- **Approved combinations only.** For every foreground/background pair the
-  system relies on, `tokens/semantic.mjs` records the pair and its minimum ratio
-  in `contrastChecks`, and the validator proves it. The resolved values
-  reproduce the brand's published ratios (White on Vibrant Purple 5.27:1, Ink
-  Plum on Vibrant Cyan 10.83:1, and the Vibrant Purple focus ring at 5.27:1 on
-  White and 4.41:1 on Pale Lavender).
+- **Approved combinations only.** For every foreground/background pair the system
+  relies on, `tokens/semantic.mjs` records the pair and its minimum ratio in
+  `contrastChecks`, and the validator proves it. The check runs under **every**
+  theme (see below); the worst resolved ratios are comfortably above the floors —
+  body text ≥ 15:1, muted text ≥ 5.6:1, action text ≥ 5.4:1, link text ≥ 6.3:1,
+  the focus ring ≥ 4.0:1, and the strong boundary ≥ 3.9:1.
+
+## Themes
+
+The token source defines a **dark** mapping of the same role names in
+`tokens/themes.mjs`; the light contract in `tokens/semantic.mjs` is the base.
+`npm run tokens:build` renders the dark overrides into a `[data-theme="dark"]`
+block plus a `prefers-color-scheme: dark` fallback (gated so an explicit
+`[data-theme="light"]` wins), and `:root { color-scheme: light dark }` is set in
+`src/styles/globals.css`. The validator resolves the same contrast promises under
+both mappings, so a theme cannot ship a broken pair. See `docs/theme.md`.
+
+Storybook exposes a **Theme** toolbar (Light / Dark / System) in
+`.storybook/preview.ts`. It writes the same `data-theme` attribute onto the
+preview document root — Light and Dark set it, System removes it (so the OS
+preference decides). It reuses this one theme mechanism; there is no second
+implementation. Without it the preview simply followed the OS preference, so a
+dark host could not show the light theme.
+
+The story canvas already follows the theme: `globals.css` paints `body` with
+`--color-surface` / `--color-text`. Storybook's **Docs** view renders each story
+in a transparent `.docs-story` block on a page chrome it paints from its own
+light palette, so a dark story would sit on a white panel. `.storybook/preview.css`
+paints **only** that story block with the theme surface — the surrounding docs
+page (heading, arg-types table, code blocks) keeps Storybook's own styling — and
+resolves against the same `data-theme`, no second theme. The Storybook UI itself
+(sidebar, toolbar) is out of scope.
+
+Storybook's **Foundations → Colour** page reads that same source
+(`tokens/palette.mjs`, `tokens/semantic.mjs`, `tokens/themes.mjs`) — it never
+keeps a second colour list. The palette is grouped into the ten brand anchors and
+the four generated scales; the semantic roles are grouped by meaning and follow
+the preview theme, so the Theme toolbar drives them and the reference under each
+role tracks the active mapping.
 
 ## Interaction state tokens
 

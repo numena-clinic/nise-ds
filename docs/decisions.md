@@ -185,6 +185,39 @@ runtime CI pins) is a devDependency, and `tsconfig.json` lists `"node"` in
 `types`. The gate is unchanged and no check is disabled — the type check simply no
 longer depends on an ancestor directory that CI does not have.
 
+**D18 — The palette is generated in OKLCH; the brand hex are anchors, not the palette.**
+The original ten brand colours were a flat list with no ramp between them, so a
+tint, a border, a hover or a dark surface had to be approximated with
+`color-mix()` on two anchors. The palette is now a small OKLCH model
+(`tokens/palette.mjs`): the ten brand hex are kept as named **anchors** (identity
+preserved, exact hex and provenance retained), and around them the system
+generates a neutral ramp plus purple/cyan/tangerine scales — a fixed lightness
+ladder, a family chroma envelope, a slight hue shift, and gamut mapping by
+binary-search chroma reduction to sRGB. Primitives are no longer hand-authored
+in `primitives.mjs`; its colour group re-exports the generated `colorTokens`.
+This trades "the palette is exactly ten literals" for a real ramp, which the
+brand brief invites (color.md §2 is a starting point) and which the semantic and
+component layers need. The semantic layer keeps the *same role names*; the
+component layer is untouched. Values are authored in OKLCH but **emitted as sRGB
+hex**: there is no explicit browserslist, so the `oklch()`-with-hex-fallback
+idiom is unsound (the fallback wins in the engines the fallback is meant to
+serve), and the validator, explorer and tests all resolve hex/rgb. OKLCH is kept
+in `colorMeta` and the DTCG export so the model is visible without shipping a
+possibly-unsupported `oklch()`.
+
+**D19 — Light and dark are two mappings of one contract; dark lives in `tokens/themes.mjs`.**
+Dark is not an inversion of light and not a second token set: it re-points the
+*same* semantic role names (surfaces step down the neutral ramp, text steps up,
+the action brightens so a near-black text reads on it, the focus ring lightens,
+the accent surfaces brighten to carry dark text). It lives in its own source file
+so each role name appears once per file — `scripts/lib/promote.mjs` edits tokens
+by name+line, and two occurrences of `--color-surface` in one file make a
+retarget ambiguous. `npm run tokens:build` emits a `[data-theme="dark"]` block
+and a `prefers-color-scheme` fallback (gated so `[data-theme="light"]` wins);
+`npm run tokens:validate` proves the same `contrastChecks` under both mappings.
+The promotion workflow stays paused for themes: a candidate carries no theme id,
+so dark is changed in the source.
+
 ## Provisional
 
 **P1 — The type scale, weights and line heights.**

@@ -97,7 +97,8 @@ export const INFO_BY_NAME: Record<string, TokenInfo> = Object.fromEntries(
   TOKEN_INFOS.map((t) => [t.name, t]),
 );
 
-/** The ten brand colour primitives — the targets a colour role may point at. */
+/** Colour primitives (brand anchors + generated scales) — the targets a colour
+ * role may point at. */
 export const COLOR_PRIMITIVES: string[] = TOKEN_INFOS.filter(
   (t) => t.layer === "primitive" && t.group === "colour",
 ).map((t) => t.name);

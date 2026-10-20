@@ -5,31 +5,25 @@
 // tokens:build` renders it into src/tokens/tokens.css (the artifact the app
 // ships). Never edit the CSS by hand — it is overwritten.
 //
-// PRIMITIVE = a raw value with no opinion about where it is used. This is the
-// only file that authors a literal (hex, px, ms). Every other layer references
-// these through `var(...)`. See docs/tokens.md.
+// PRIMITIVE = a raw value with no opinion about where it is used. Colour values
+// are generated from the OKLCH palette model (tokens/palette.mjs); the other
+// groups author their literals here. Every other layer references these through
+// `var(...)`. See docs/tokens.md and docs/color.md.
 //
-// Colour provenance: numena-brand docs/visual-identity/color.md §2 — the ten
-// brand colours, values unchanged. The type scale, spacing scale, radii,
-// shadows and durations are the design system's own contribution and are
-// PROVISIONAL (the brand leaves them to the design system).
+// Colour provenance: the ten brand anchors are numena-brand color.md §2, values
+// unchanged (tokens/palette.mjs keeps their published hex and derives their
+// OKLCH). The OKLCH neutral/purple/cyan/tangerine scales are the design system's
+// own contribution, built around those anchors. The type scale, spacing scale,
+// radii, shadows and durations are likewise the design system's own contribution
+// and are PROVISIONAL (the brand leaves them to the design system).
 // ─────────────────────────────────────────────────────────────────────────────
+
+import { colorTokens } from "./palette.mjs";
 
 /** @typedef {{ label: string, note?: string, tokens: Record<string, string> }} Group */
 
-/** Brand palette — foundation, expression, supporting tints (color.md §2). */
-export const color = {
-  "--white": "#FFFFFF",
-  "--deep-purple": "#4C207F",
-  "--ink-plum": "#221A2A",
-  "--pale-lavender": "#EEE9F3",
-  "--vibrant-purple": "#8E36F4",
-  "--vibrant-cyan": "#25E4F8",
-  "--vibrant-tangerine": "#F57A44",
-  "--soft-purple": "#E8D7FD",
-  "--soft-cyan": "#D3FAFE",
-  "--soft-tangerine": "#FDE4DA",
-};
+/** Colour — the ten brand anchors (color.md §2) plus the generated OKLCH scales. */
+export const color = colorTokens;
 
 /** Type families (typography.md §3) plus a provisional scale and weights. */
 export const typography = {
@@ -110,7 +104,7 @@ export const motion = {
 export const primitiveGroups = [
   {
     label: "colour",
-    note: "Brand palette (color.md §2) — the only place hex values are authored.",
+    note: "Brand anchors (color.md §2, unchanged) + OKLCH-generated scales (tokens/palette.mjs).",
     tokens: color,
   },
   {

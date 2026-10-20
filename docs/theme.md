@@ -48,7 +48,7 @@ can be reset, per token or all at once.
 
 | Section | Editable | Read-only |
 | --- | --- | --- |
-| **Colour** | the ten brand primitives (swatch + hex + picker); every colour *role* retargets which primitive it points at | derived colours (`color-mix`, e.g. `--color-text-muted`) — they follow the palette |
+| **Colour** | the colour primitives — brand anchors and generated scale steps (swatch + hex + picker); every colour *role* retargets which primitive it points at | derived colours (`color-mix`, e.g. `--color-scrim`) — they follow the palette |
 | **Type** | sizes, line heights, weights, letter spacing; font families via a constrained select | — |
 | **Space** | the spacing scale, layout measures | — |
 | **Shape** | radii, border widths, control heights, badge heights | component *aliases* (they follow lower layers) |
@@ -93,8 +93,8 @@ The candidate is the only thing that leaves the tool. Its shape:
   "schema": "nise.theme-candidate",
   "version": 1,
   "tokens": [
-    { "name": "--deep-purple", "layer": "primitive", "kind": "value", "value": "#3B1E66", "from": "#4C207F" },
-    { "name": "--color-surface", "layer": "semantic", "kind": "alias", "ref": "--pale-lavender", "from": "var(--white)" }
+    { "name": "--purple-600", "layer": "primitive", "kind": "value", "value": "#3B1E66", "from": "#935DE1" },
+    { "name": "--color-surface", "layer": "semantic", "kind": "alias", "ref": "--neutral-100", "from": "ref(\"--neutral-0\")" }
   ]
 }
 ```
@@ -167,7 +167,9 @@ explorer's config out of that filename keeps the two tools independent.
 
 ## Not built
 
-- No multi-theme / dark mode authoring (the brand is light-only).
+- No theme *authoring*: the token source now defines a dark mapping
+  (`tokens/themes.mjs`), but the explorer edits the light base only — a candidate
+  carries no theme id, so dark is promoted by editing the source, not the tool.
 - No persistent server-side storage — the draft is a convenience in
   `localStorage`, never an applied change.
 - No write-back from the browser; promotion is always the local CLI step.

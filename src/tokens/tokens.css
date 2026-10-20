@@ -10,25 +10,75 @@
      semantic   interface roles → surface, text, border, action, focus, accent
      component  per-component   → control heights, paddings, font sizes
 
-   The token layer is the first thing loaded by the app entry, src/styles/
-   globals.css (which Storybook pulls in via .storybook/preview.ts). Components
-   never read primitives directly — see docs/tokens.md.
+   Colour primitives are generated in OKLCH (tokens/palette.mjs) and emitted as
+   deterministic sRGB hex; light and dark are the same semantic roles mapped onto
+   different grounds. The token layer is the first thing loaded by the app entry,
+   src/styles/globals.css (which Storybook pulls in via .storybook/preview.ts).
+   Components never read primitives directly — see docs/tokens.md and docs/theme.md.
    ============================================================================= */
 
 /* ── Primitive layer ───────────────────────────────────────── */
 :root {
+  /* native control/scrollbar scheme */
+  color-scheme: light;
+
   /* colour */
-  /* Brand palette (color.md §2) — the only place hex values are authored. */
+  /* Brand anchors (color.md §2, unchanged) + OKLCH-generated scales (tokens/palette.mjs). */
   --white: #FFFFFF;
-  --deep-purple: #4C207F;
   --ink-plum: #221A2A;
-  --pale-lavender: #EEE9F3;
+  --deep-purple: #4C207F;
   --vibrant-purple: #8E36F4;
+  --pale-lavender: #EEE9F3;
   --vibrant-cyan: #25E4F8;
   --vibrant-tangerine: #F57A44;
   --soft-purple: #E8D7FD;
   --soft-cyan: #D3FAFE;
   --soft-tangerine: #FDE4DA;
+  --neutral-0: #ffffff;
+  --neutral-50: #faf8fc;
+  --neutral-100: #f2f0f4;
+  --neutral-200: #e0dfe3;
+  --neutral-300: #cdcbd0;
+  --neutral-400: #b5b3b8;
+  --neutral-500: #9b989e;
+  --neutral-600: #817f85;
+  --neutral-700: #69666d;
+  --neutral-800: #514e55;
+  --neutral-900: #37343b;
+  --neutral-950: #211e25;
+  --purple-50: #faf8ff;
+  --purple-100: #f3edff;
+  --purple-200: #e6d8ff;
+  --purple-300: #d6bfff;
+  --purple-400: #c2a0fb;
+  --purple-500: #aa7fef;
+  --purple-600: #935de1;
+  --purple-700: #7d36d1;
+  --purple-800: #621fad;
+  --purple-900: #44097e;
+  --purple-950: #290053;
+  --cyan-50: #f0fcfd;
+  --cyan-100: #dff6f8;
+  --cyan-200: #c1e8ec;
+  --cyan-300: #a0d8dd;
+  --cyan-400: #76c3cb;
+  --cyan-500: #42abb5;
+  --cyan-600: #00919d;
+  --cyan-700: #00767f;
+  --cyan-800: #005b63;
+  --cyan-900: #003d43;
+  --cyan-950: #002529;
+  --tangerine-50: #fff7f4;
+  --tangerine-100: #ffede4;
+  --tangerine-200: #ffd6c1;
+  --tangerine-300: #f7bea0;
+  --tangerine-400: #e9a179;
+  --tangerine-500: #d8804c;
+  --tangerine-600: #c46011;
+  --tangerine-700: #a14c00;
+  --tangerine-800: #7d3b00;
+  --tangerine-900: #552700;
+  --tangerine-950: #341600;
 
   /* typography */
   /* Families from typography.md §3; scale and weights are provisional. */
@@ -98,50 +148,50 @@
 :root {
   /* surface & text */
   /* Roles, not values. Components consume this layer. */
-  --color-surface: var(--white);
-  --color-surface-subtle: var(--pale-lavender);
-  --color-surface-hover: var(--pale-lavender);
-  --color-surface-active: color-mix(in srgb, var(--pale-lavender) 88%, var(--ink-plum));
-  --color-text: var(--ink-plum);
-  --color-text-muted: color-mix(in srgb, var(--ink-plum) 68%, var(--white));
-  --color-text-inverted: var(--white);
-  --color-scrim: color-mix(in srgb, var(--ink-plum) 40%, transparent);
+  --color-surface: var(--neutral-0);
+  --color-surface-subtle: var(--neutral-50);
+  --color-surface-hover: var(--neutral-100);
+  --color-surface-active: var(--neutral-200);
+  --color-text: var(--neutral-950);
+  --color-text-muted: var(--neutral-700);
+  --color-text-inverted: var(--neutral-0);
+  --color-scrim: color-mix(in srgb, var(--neutral-950) 40%, transparent);
 
   /* border */
-  --color-border: color-mix(in srgb, var(--ink-plum) 16%, var(--white));
-  --color-border-strong: color-mix(in srgb, var(--ink-plum) 50%, var(--white));
-  --color-border-hover: color-mix(in srgb, var(--ink-plum) 70%, var(--white));
-  --color-border-error: var(--ink-plum);
+  --color-border: var(--neutral-200);
+  --color-border-strong: var(--neutral-600);
+  --color-border-hover: var(--neutral-700);
+  --color-border-error: var(--neutral-950);
 
   /* action */
   /* The primary interactive role. */
-  --color-action: var(--deep-purple);
-  --color-action-hover: color-mix(in srgb, var(--deep-purple) 88%, var(--ink-plum));
-  --color-action-active: color-mix(in srgb, var(--deep-purple) 78%, var(--ink-plum));
+  --color-action: var(--purple-800);
+  --color-action-hover: var(--purple-900);
+  --color-action-active: var(--purple-950);
   --color-action-text: var(--white);
-  --color-link: var(--deep-purple);
-  --color-link-hover: var(--vibrant-purple);
+  --color-link: var(--purple-700);
+  --color-link-hover: var(--purple-900);
 
   /* focus */
-  --color-focus-ring: var(--vibrant-purple);
+  --color-focus-ring: var(--purple-600);
   --focus-ring-width: var(--border-width-strong);
   --focus-ring-offset: var(--space-1);
 
   /* selected */
-  --color-selected-surface: var(--pale-lavender);
-  --color-selected-text: var(--deep-purple);
+  --color-selected-surface: var(--neutral-100);
+  --color-selected-text: var(--purple-800);
 
   /* categorical accents */
   /* Emphasis only, never a verdict. */
-  --color-accent-purple-surface: var(--vibrant-purple);
+  --color-accent-purple-surface: var(--purple-700);
   --color-accent-purple-text: var(--white);
-  --color-accent-cyan-surface: var(--vibrant-cyan);
+  --color-accent-cyan-surface: var(--cyan-400);
   --color-accent-cyan-text: var(--ink-plum);
-  --color-accent-tangerine-surface: var(--vibrant-tangerine);
+  --color-accent-tangerine-surface: var(--tangerine-400);
   --color-accent-tangerine-text: var(--ink-plum);
-  --color-tint-purple: var(--soft-purple);
-  --color-tint-cyan: var(--soft-cyan);
-  --color-tint-tangerine: var(--soft-tangerine);
+  --color-tint-purple: var(--purple-100);
+  --color-tint-cyan: var(--cyan-100);
+  --color-tint-tangerine: var(--tangerine-100);
   --color-tint-text: var(--ink-plum);
 }
 
@@ -243,4 +293,110 @@
 
   /* state */
   --opacity-disabled: 0.55;
+}
+
+/* ── Dark theme ────────────────────────────────────────────── */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* surface & text */
+  --color-surface: var(--neutral-950);
+  --color-surface-subtle: var(--neutral-900);
+  --color-surface-hover: var(--neutral-800);
+  --color-surface-active: var(--neutral-700);
+  --color-text: var(--neutral-50);
+  --color-text-muted: var(--neutral-400);
+  --color-text-inverted: var(--neutral-950);
+  --color-scrim: color-mix(in srgb, var(--neutral-950) 60%, transparent);
+
+  /* border */
+  --color-border: var(--neutral-800);
+  --color-border-strong: var(--neutral-600);
+  --color-border-hover: var(--neutral-500);
+  --color-border-error: var(--neutral-400);
+
+  /* action */
+  --color-action: var(--purple-500);
+  --color-action-hover: var(--purple-400);
+  --color-action-active: var(--purple-300);
+  --color-action-text: var(--neutral-950);
+  --color-link: var(--purple-300);
+  --color-link-hover: var(--purple-200);
+
+  /* focus */
+  --color-focus-ring: var(--purple-300);
+
+  /* selected */
+  --color-selected-surface: var(--neutral-800);
+  --color-selected-text: var(--purple-200);
+
+  /* categorical accents */
+  --color-accent-purple-surface: var(--purple-300);
+  --color-accent-purple-text: var(--neutral-950);
+  --color-accent-cyan-surface: var(--cyan-300);
+  --color-accent-cyan-text: var(--neutral-950);
+  --color-accent-tangerine-surface: var(--tangerine-300);
+  --color-accent-tangerine-text: var(--neutral-950);
+  --color-tint-purple: var(--purple-900);
+  --color-tint-cyan: var(--cyan-900);
+  --color-tint-tangerine: var(--tangerine-900);
+  --color-tint-text: var(--neutral-50);
+
+  /* elevation */
+  --shadow-sm: 0 2px 4px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 0.55);
+}
+
+/* the OS preference is the default; an explicit [data-theme] wins */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+  /* surface & text */
+  --color-surface: var(--neutral-950);
+  --color-surface-subtle: var(--neutral-900);
+  --color-surface-hover: var(--neutral-800);
+  --color-surface-active: var(--neutral-700);
+  --color-text: var(--neutral-50);
+  --color-text-muted: var(--neutral-400);
+  --color-text-inverted: var(--neutral-950);
+  --color-scrim: color-mix(in srgb, var(--neutral-950) 60%, transparent);
+
+  /* border */
+  --color-border: var(--neutral-800);
+  --color-border-strong: var(--neutral-600);
+  --color-border-hover: var(--neutral-500);
+  --color-border-error: var(--neutral-400);
+
+  /* action */
+  --color-action: var(--purple-500);
+  --color-action-hover: var(--purple-400);
+  --color-action-active: var(--purple-300);
+  --color-action-text: var(--neutral-950);
+  --color-link: var(--purple-300);
+  --color-link-hover: var(--purple-200);
+
+  /* focus */
+  --color-focus-ring: var(--purple-300);
+
+  /* selected */
+  --color-selected-surface: var(--neutral-800);
+  --color-selected-text: var(--purple-200);
+
+  /* categorical accents */
+  --color-accent-purple-surface: var(--purple-300);
+  --color-accent-purple-text: var(--neutral-950);
+  --color-accent-cyan-surface: var(--cyan-300);
+  --color-accent-cyan-text: var(--neutral-950);
+  --color-accent-tangerine-surface: var(--tangerine-300);
+  --color-accent-tangerine-text: var(--neutral-950);
+  --color-tint-purple: var(--purple-900);
+  --color-tint-cyan: var(--cyan-900);
+  --color-tint-tangerine: var(--tangerine-900);
+  --color-tint-text: var(--neutral-50);
+
+  /* elevation */
+  --shadow-sm: 0 2px 4px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 0.55);
+  }
 }

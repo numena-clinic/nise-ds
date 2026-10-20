@@ -34,8 +34,8 @@ A short, non-interactive label: a category, a source type, a count.
 ```
 
 - Radius is `--radius-full` (`--badge-radius`), so the pill shape is a token.
-- Text is `--color-tint-text` (Deep Purple) on the tint surface; `neutral` uses
-  `--color-surface-subtle`. Every tone is a tint of a brand colour, validated
+- Text is `--color-tint-text` on the tint surface; `neutral` uses
+  `--color-surface-subtle`. Every tone is a tint of a brand family, validated
   for contrast.
 
 ## Accessibility

@@ -28,7 +28,10 @@ interface Mix {
 interface Leaf {
   $type?: string;
   $value?: unknown;
-  $extensions?: Record<string, { cssVar?: string; mix?: Mix }>;
+  $extensions?: Record<
+    string,
+    { cssVar?: string; mix?: Mix; oklch?: { l: number; c: number; h: number } }
+  >;
 }
 type Dict = Record<string, unknown>;
 
@@ -89,8 +92,8 @@ describe("DTCG document shape", () => {
     expect(rootExt.source).toBe("tokens/*.mjs");
   });
 
-  it("exports 151 typed tokens and records the 3 css-only tokens (154 total)", () => {
-    expect(leaves).toHaveLength(151);
+  it("exports 196 typed tokens and records the 3 css-only tokens (199 total)", () => {
+    expect(leaves).toHaveLength(196);
     expect(cssOnly).toHaveLength(3);
     expect(leaves.length + cssOnly.length).toBe(Object.keys(allTokens).length);
   });
@@ -251,21 +254,14 @@ describe("value equivalence with the canonical source", () => {
     }
   });
 
-  // Reference: an independent standards-conformant engine. Chrome resolves each
-  // source `color-mix(in srgb, …)` to these sRGB components (getComputedStyle).
-  // The reference is quoted to 6 decimal places, so the tolerance is half a step
-  // (5e-7) — the tightest a 6-dp reference can justify. `--color-border-strong`
-  // lands on an exact .5 channel; its rounding is asserted separately below.
+  // Reference: an independent standards-conformant engine. Chrome resolves the
+  // source `color-mix(in srgb, #211e25 40%, transparent)` to these sRGB
+  // components (getComputedStyle). The reference is quoted to 6 decimal places,
+  // so the tolerance is half a step (5e-7) — the tightest a 6-dp reference can
+  // justify.
   it("derived colours match browser-computed sRGB components (not byte-quantised)", () => {
     const expected: Record<string, [number, number, number, number]> = {
-      "--color-surface-active": [0.837333, 0.816314, 0.858353, 1],
-      "--color-text-muted": [0.410667, 0.389333, 0.432, 1],
-      "--color-border": [0.861333, 0.856314, 0.866353, 1],
-      "--color-border-strong": [0.566667, 0.55098, 0.582353, 1],
-      "--color-border-hover": [0.393333, 0.371373, 0.415294, 1],
-      "--color-action-hover": [0.278275, 0.122667, 0.458039, 1],
-      "--color-action-active": [0.261804, 0.120314, 0.424706, 1],
-      "--color-scrim": [0.133333, 0.101961, 0.164706, 0.4],
+      "--color-scrim": [0.129412, 0.117647, 0.145098, 0.4],
     };
     for (const [name, [er, eg, eb, ea]] of Object.entries(expected)) {
       const found = leaves.find(({ leaf }) => cssVarOf(leaf) === name);
@@ -277,18 +273,16 @@ describe("value equivalence with the canonical source", () => {
     }
   });
 
-  // `--color-border-strong`'s green channel is exactly 140.5/255 before
-  // rounding. The DTCG component keeps that precise value (6-dp), whereas the
-  // 8-bit CSS hex serialization rounds the half up: Math.round(140.5) = 141 →
-  // 0x8d. The precise component and the rounded hex must not be conflated.
-  it("keeps the half-channel border-strong precise, distinct from its 8-bit hex", () => {
-    const found = leaves.find(
-      ({ leaf }) => cssVarOf(leaf) === "--color-border-strong",
-    );
-    const v = found?.leaf.$value as { components: number[]; hex: string };
-    expect(v.components[1]).toBeCloseTo(140.5 / 255, DOT);
-    expect(v.components[1]).not.toBeCloseTo(141 / 255, DOT);
-    expect(v.hex.slice(3, 5)).toBe("8d");
+  it("preserves the scrim's alpha and channels to full 6-dp precision", () => {
+    const found = leaves.find(({ leaf }) => cssVarOf(leaf) === "--color-scrim");
+    const v = found?.leaf.$value as {
+      components: number[];
+      alpha?: number;
+      hex: string;
+    };
+    expect(v.alpha).toBeCloseTo(0.4, DOT);
+    expect(v.components).toEqual([srgb6(33), srgb6(30), srgb6(37)]);
+    expect(v.hex).toBe("#211e25");
   });
 });
 
@@ -296,14 +290,7 @@ describe("extension metadata", () => {
   it("precomputes each derived colour and keeps its mix recipe", () => {
     const derived = leaves.filter(({ leaf }) => leaf.$extensions?.[NS]?.mix);
     expect(derived.map(({ leaf }) => cssVarOf(leaf)).sort()).toEqual([
-      "--color-action-active",
-      "--color-action-hover",
-      "--color-border",
-      "--color-border-hover",
-      "--color-border-strong",
       "--color-scrim",
-      "--color-surface-active",
-      "--color-text-muted",
     ]);
     for (const { leaf } of derived) {
       expect(leaf.$type).toBe("color");
@@ -314,10 +301,23 @@ describe("extension metadata", () => {
     }
   });
 
+  it("records the canonical OKLCH alongside each generated colour", () => {
+    const purple = leaves.find(
+      ({ leaf }) => cssVarOf(leaf) === "--purple-600",
+    );
+    const oklch = purple?.leaf.$extensions?.[NS]?.oklch;
+    expect(oklch).toBeDefined();
+    expect(oklch!.h).toBeGreaterThan(280);
+    expect(oklch!.h).toBeLessThan(310);
+    // anchors carry it too
+    const anchor = leaves.find(({ leaf }) => cssVarOf(leaf) === "--deep-purple");
+    expect(anchor?.leaf.$extensions?.[NS]?.oklch).toBeDefined();
+  });
+
   it("scrim keeps its hue at 40% alpha (premultiplied colour-mix)", () => {
     const scrim = leaves.find(({ leaf }) => cssVarOf(leaf) === "--color-scrim");
     const v = scrim?.leaf.$value as { components: number[]; alpha?: number };
-    expect(v.components).toEqual([srgb6(34), srgb6(26), srgb6(42)]);
+    expect(v.components).toEqual([srgb6(33), srgb6(30), srgb6(37)]);
     expect(v.alpha).toBeCloseTo(0.4, DOT);
   });
 
