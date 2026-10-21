@@ -15,7 +15,7 @@ function status(): HTMLElement {
 }
 
 function switchTab(label: string) {
-  fireEvent.click(screen.getByRole("tab", { name: label }));
+  fireEvent.click(screen.getByRole("button", { name: label }));
 }
 
 describe("Theme Explorer", () => {

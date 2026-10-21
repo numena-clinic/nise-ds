@@ -34,7 +34,7 @@
   width: var(--choice-size);
   height: var(--choice-size);
   border: var(--border-width-strong) solid var(--color-border-strong);
-  border-radius: var(--checkbox-radius, var(--radius-sm));
+  border-radius: var(--checkbox-radius, var(--radius-xl));
   background-color: var(--color-surface);
   transition: border-color var(--duration-fast) var(--ease-standard),
     background-color var(--duration-fast) var(--ease-standard);

@@ -79,17 +79,18 @@ every promised colour pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/to
 ## Theming
 
 The **Theme Explorer** (`npm run dev`) lets a designer change the tokens and see
-real components re-theme live — a tabbed token editor on the left, and a
-**Catalogue** / **Tokens** preview on the right with a Phone / Tablet / Desktop
-toggle — then export a versioned *candidate*. Promotion is a local, explicit,
-reviewable command — `npm run theme:apply` — that edits the token source,
-rebuilds and validates, and rolls back if the contrast promises break. It never
-writes from the browser and never commits. See [`docs/theme.md`](docs/theme.md).
+real components re-theme live — a sidebar of Foundations, Components and Patterns
+pages, a visual token editor over the active foundation, and a live preview with
+a Phone / Tablet / Desktop toggle — then export a versioned *candidate*. Promotion
+is a local, explicit, reviewable command — `npm run theme:apply` — that edits the
+token source, rebuilds and validates, and rolls back if the contrast promises
+break. It never writes from the browser and never commits. See
+[`docs/theme.md`](docs/theme.md).
 
-The catalogue previews the **Nise components themselves** — the same ones an
-application ships — so what you see is what the token change will actually
-produce. Every component is plain CSS over tokens (decision D2); there is no
-second library or CSS toolchain behind the preview (D13).
+The component and pattern pages preview the **Nise components themselves** — the
+same ones an application ships — so what you see is what the token change will
+actually produce. Every component is plain CSS over tokens (decision D2); there
+is no second library or CSS toolchain behind the preview (D13).
 
 ## Definition of done
 

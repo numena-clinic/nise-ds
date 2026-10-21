@@ -227,7 +227,14 @@ first pass.
 
 **P2 — Spacing, radii, shadows, durations.**
 A 4px spacing base, five radii, two shadows, three durations. Reasonable
-defaults, not brand mandates.
+defaults, not brand mandates. Radius roles were retuned by user direction
+(2026-10-20), mapping an external three-knob scheme onto the existing scale
+rather than importing its token names: interactive fields and buttons use
+`--radius-sm` (4px), selectors (Checkbox, Select trigger/content) use
+`--radius-xl` (16px), boxes (Card, Dialog) use `--radius-md` (8px), and
+`--border-width` is a 0.5px hairline (`--border-width-strong` stays 2px so
+control boundaries and focus rings keep their weight). The knobs that had no
+nise counterpart (`--depth`, `--noise`, control `--size-*`) were not adopted.
 
 **P3 — The icon set.**
 A seed, not a catalogue: the grid, stroke rule and four sizes are fixed by

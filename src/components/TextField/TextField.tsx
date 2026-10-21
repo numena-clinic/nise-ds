@@ -23,7 +23,7 @@
    rendered. `required` maps to the native attribute and an aria-hidden marker,
    so the label reads cleanly.
 
-   Radius is declared at the point of use: `var(--input-radius, var(--radius-md))`.
+   Radius is declared at the point of use: `var(--input-radius, var(--radius-sm))`.
    ============================================================================= */
 
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from "react";

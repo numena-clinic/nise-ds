@@ -119,9 +119,12 @@ npm run verify           # the gate — run before saying you are done
   it locally — dry-run by default, rebuilds + validates, rolls back on failure,
   never commits. Keep `scripts/lib/promote.mjs` free of I/O side effects so it
   stays unit-testable.
-- The panel is a tabbed visual editor (Colour / Type / Space / Shape / Motion)
-  with palette and roles split apart; the preview has a **Catalogue** view (the
-  Nise components) and a **Tokens** view (the reference graph), each with a
+- The parameter pane is a visual editor over the active foundation section
+  (Colour / Type / Space / Shape / Motion), opened by the sidebar — there are no
+  tabs in the pane; the sidebar IS the section switcher. The preview is a
+  **sidebar-driven page system**: Foundations (each section — Colour, Typography,
+  Space, Shape, Motion — drives the pane, plus a Token graph page), Components
+  (one page per family) and Patterns (composed combinations), each with a
   Phone / Tablet / Desktop toggle. The preview wrapper class
   (`.nise-explorer__preview`), the `data-nise-theme` marker, the labelled token
   inputs and the `.nise-swatch-card--locked` cards are load-bearing for

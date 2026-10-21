@@ -15,7 +15,7 @@
   text-align: left;
   background-color: var(--color-surface);
   border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--select-radius, var(--radius-md));
+  border-radius: var(--select-radius, var(--radius-xl));
   cursor: pointer;
   transition: border-color var(--duration-fast) var(--ease-standard);
 }
@@ -64,7 +64,7 @@
   padding: var(--space-1);
   background-color: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
   animation: nise-select-in var(--duration-fast) var(--ease-standard);
 }

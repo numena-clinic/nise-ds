@@ -33,21 +33,14 @@ interface Props {
   overrides: Overrides;
   onChange: (name: string, o: Override) => void;
   onReset: (name: string) => void;
+  /** Which section is open. Owned by App so the sidebar drives it. */
+  tab: Section;
 }
-
-const TABS: { id: Section; label: string }[] = [
-  { id: "color", label: "Colour" },
-  { id: "typography", label: "Type" },
-  { id: "space", label: "Space" },
-  { id: "shape", label: "Shape" },
-  { id: "motion", label: "Motion" },
-];
 
 const matches = (e: { name: string; group: string }, q: string) =>
   q === "" || e.name.toLowerCase().includes(q) || e.group.toLowerCase().includes(q);
 
-export function TokenPanel({ overrides, onChange, onReset }: Props) {
-  const [tab, setTab] = useState<Section>("color");
+export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
   const [query, setQuery] = useState("");
   const bySection = useMemo(() => editablesBySection(), []);
   const tokens = experimentalTokens(overrides);
@@ -85,29 +78,7 @@ export function TokenPanel({ overrides, onChange, onReset }: Props) {
         />
       </div>
 
-      <div className="nise-panel__tabs" role="tablist" aria-label="Token sections">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            id={`tab-${t.id}`}
-            aria-selected={tab === t.id}
-            aria-controls={`panel-${t.id}`}
-            className={`nise-panel__tab ${tab === t.id ? "nise-panel__tab--active" : ""}`}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      <div
-        role="tabpanel"
-        id={`panel-${tab}`}
-        aria-labelledby={`tab-${tab}`}
-        className="nise-panel__body"
-      >
+      <div className="nise-panel__body">
         {tab === "color" ? (
           <div className="nise-panel__stack">
             <section aria-labelledby="grp-palette">

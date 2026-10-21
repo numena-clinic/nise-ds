@@ -81,7 +81,7 @@ export const layout = {
 };
 
 export const border = {
-  "--border-width": "1px",
+  "--border-width": "0.5px",
   "--border-width-strong": "2px",
 };
 

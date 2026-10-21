@@ -1,7 +1,7 @@
 @import "../../styles/field.css";
 
 /* The text input itself. Radius is declared here with a fallback so one field
-   can be re-rounded without a token: var(--input-radius, var(--radius-md)). */
+   can be re-rounded without a token: var(--input-radius, var(--radius-sm)). */
 
 .nise-field__control {
   width: 100%;
@@ -11,7 +11,7 @@
   color: var(--color-text);
   background-color: var(--color-surface);
   border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--input-radius, var(--radius-md));
+  border-radius: var(--input-radius, var(--radius-sm));
   transition: border-color var(--duration-fast) var(--ease-standard);
 }
 

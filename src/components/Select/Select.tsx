@@ -19,7 +19,7 @@
       --color-surface, --color-surface-subtle, --color-surface-hover, --color-text,
       --color-text-muted, --color-border-strong, --color-border-hover, --color-focus-ring,
       --color-border-error,
-      --color-selected-surface, --color-selected-text, --shadow-md, --radius-md, --border-width,
+      --color-selected-surface, --color-selected-text, --shadow-md, --radius-xl, --radius-sm, --border-width,
       --focus-ring-width, --opacity-disabled, --duration-fast, --ease-standard
 
    Error handling matches TextField: text + icon + a heavier boundary, never

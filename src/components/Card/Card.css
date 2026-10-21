@@ -7,7 +7,7 @@
   color: var(--color-text);
   background-color: var(--color-surface);
   border: var(--card-border-width) solid var(--color-border);
-  border-radius: var(--card-radius, var(--radius-lg));
+  border-radius: var(--card-radius, var(--radius-md));
   box-shadow: var(--shadow-sm);
 }
 

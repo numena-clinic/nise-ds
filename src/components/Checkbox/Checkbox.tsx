@@ -15,11 +15,11 @@
        → --space-*, literal px
      --color-action, --color-action-text, --color-surface, --color-border-strong,
      --color-text, --color-text-muted, --color-focus-ring, --focus-ring-width,
-     --border-width-strong, --radius-sm, --opacity-disabled, --duration-fast,
+     --border-width-strong, --radius-xl, --opacity-disabled, --duration-fast,
      --ease-standard
 
    Radius is declared at the point of use: `var(--checkbox-radius,
-   var(--radius-sm))`, so a surface can re-round one control without a token.
+   var(--radius-xl))`, so a surface can re-round one control without a token.
 
    Accessibility: a visible label is required and wraps the input, so clicking
    the text toggles the control. The focus ring is drawn on the painted box from

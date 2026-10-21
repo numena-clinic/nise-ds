@@ -175,7 +175,7 @@
   --measure-form: 32rem;
 
   /* border */
-  --border-width: 1px;
+  --border-width: 0.5px;
   --border-width-strong: 2px;
 
   /* elevation */

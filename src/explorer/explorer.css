@@ -44,11 +44,7 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-md);
-  background-color: var(--color-action);
-  color: var(--color-action-text);
-  font-family: var(--font-serif);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  background-color: var(--color-surface-subtle);
 }
 
 .nise-explorer__title {
@@ -129,6 +125,77 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
 }
+
+/* ── sidebar (docs index) ──────────────────────────────────────────────────── */
+
+.nise-explorer__sidebar {
+  flex: 0 0 200px;
+  align-self: stretch;
+  position: sticky;
+  top: var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-height: calc(100vh - var(--space-24));
+  overflow-y: auto;
+}
+
+.nise-explorer__sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nise-explorer__sidebar-title {
+  margin: 0;
+  padding-inline: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-muted);
+}
+
+.nise-explorer__sidebar-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nise-explorer__sidebar-link {
+  display: block;
+  inline-size: 100%;
+  text-align: left;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-explorer__sidebar-link:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.nise-explorer__sidebar-link[aria-current="page"] {
+  background-color: var(--color-surface-active);
+  border-color: var(--color-border);
+  font-weight: var(--font-weight-medium);
+}
+
+.nise-explorer__sidebar-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
 
 .nise-explorer__panel {
   display: flex;
@@ -641,40 +708,6 @@
 }
 
 .nise-panel__search-input:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-focus-ring);
-  outline-offset: var(--focus-ring-offset);
-}
-
-.nise-panel__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  padding: var(--space-1);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-subtle);
-}
-
-.nise-panel__tab {
-  flex: 1 1 auto;
-  padding: var(--space-2) var(--space-3);
-  border: var(--border-width) solid transparent;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--color-text-muted);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-}
-
-.nise-panel__tab--active {
-  background: var(--color-surface);
-  border-color: var(--color-border);
-  color: var(--color-text);
-}
-
-.nise-panel__tab:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
 }
@@ -1413,6 +1446,214 @@
 }
 
 .nise-ref__tag--live {
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ── preview page frame ────────────────────────────────────────────────────── */
+
+.nise-explorer__page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.nise-explorer__page-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-2xl);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text);
+}
+
+.nise-explorer__page-lead {
+  margin: 0;
+  max-width: var(--measure-prose);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── foundation reference pieces (space / shape / motion pages) ───────────── */
+
+.nise-pv__scale {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.nise-pv__scale-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.nise-pv__scale-name {
+  flex: 0 0 140px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+}
+
+.nise-pv__scale-track {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.nise-pv__scale-bar {
+  display: block;
+  height: var(--space-3);
+  max-inline-size: 100%;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-action);
+}
+
+.nise-pv__scale-value {
+  flex: 0 0 100px;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.nise-pv__line {
+  flex: 1 1 auto;
+  display: block;
+  border-style: solid;
+  border-color: var(--color-border-strong);
+  min-inline-size: 0;
+}
+
+.nise-pv__shapes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.nise-pv__shape {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: flex-start;
+}
+
+.nise-pv__shape-card {
+  display: block;
+  inline-size: var(--space-16);
+  block-size: var(--space-12);
+  background-color: var(--color-surface-subtle);
+  border: var(--border-width) solid var(--color-border-strong);
+}
+
+.nise-pv__motion-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text);
+  font-size: var(--font-size-xs);
+  transition: background-color var(--duration-medium) var(--ease-entrance),
+    color var(--duration-medium) var(--ease-entrance);
+}
+
+.nise-pv__motion-chip:hover,
+.nise-pv__motion-chip:focus-visible {
+  background-color: var(--color-selected-surface);
+  color: var(--color-selected-text);
+}
+
+/* ── colour page (palette + semantic roles, Storybook-style) ──────────────── */
+
+.nise-pv__colour-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.nise-pv__colour-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nise-pv__colour-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.nise-pv__colour-note {
+  margin: 0;
+  max-width: var(--measure-prose);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.nise-pv__role-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4);
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-md);
+}
+
+.nise-pv__colour-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* A scale read left→right as one ramp, so lightness compares step for step. */
+.nise-pv__ramp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nise-pv__ramp-track {
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.nise-pv__ramp-step {
+  flex: 1 1 0;
+  height: var(--space-16);
+}
+
+.nise-pv__ramp-step--anchor {
+  outline: var(--border-width-strong) solid var(--color-text);
+  outline-offset: calc(-1 * var(--border-width-strong));
+}
+
+.nise-pv__ramp-labels {
+  display: flex;
+}
+
+.nise-pv__ramp-label {
+  flex: 1 1 0;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.nise-pv__ramp-anchor {
+  display: block;
   color: var(--color-text);
   font-weight: var(--font-weight-medium);
 }

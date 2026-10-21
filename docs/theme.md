@@ -25,28 +25,35 @@ carries your changes. Nothing is written to disk while you work — a browser ta
 must not author source files. When you are happy, you export a **candidate** and
 promote it from the command line.
 
-The preview has two views, each with a Phone / Tablet / Desktop width, and a
-**Light / Dark toggle** that picks which theme mapping everything reads:
+The preview is a **sidebar-driven page system**. The sidebar indexes every page;
+the selected page renders on the canvas, each with a Phone / Tablet / Desktop
+width and a **Light / Dark toggle** that picks which theme mapping everything
+reads:
 
-- **Catalogue** — a dense set of Nise specimens covering the whole component set
-  (buttons, badges, cards, form fields, choice controls, sliders, tabs, tables,
-  overlays). This is the "what does this palette look like on real components?"
-  answer.
-- **Tokens** — the reference graph: primitive → semantic → component, column by
-  column, each row showing the live resolved value under your current edits and
-  the selected mapping.
+- **Foundations** — one page per editable section (**Colour**, **Typography**,
+  **Space**, **Shape**, **Motion**). Opening a foundation page also drives the
+  parameter pane, so the two never disagree; the **Token graph** page is the
+  reference graph (primitive → semantic → component, column by column) with the
+  live resolved value under your current edits.
+- **Components** — one page per component family (button, badge, card, text
+  field, select, checkbox, radio, switch, slider, tabs, table, tooltip, dialog).
+  This is the "what does this palette look like on real components?" answer.
+- **Patterns** — composed combinations (form, assessment, queue, metrics,
+  preferences, discharge, information review).
 
-The catalogue renders the **Nise components themselves** — the same ones an
-application ships — plus the `InformationReview` composition. There is no
-separate library behind the preview: it shows what ships.
+The component and pattern pages render the **Nise components themselves** — the
+same ones an application ships. There is no separate library behind the preview:
+it shows what ships. The parameter pane appears only on foundation pages: a
+component page is a documentation view, so return to Foundations to edit.
 
 ## What you can edit
 
-The panel is a tabbed editor — **Colour / Type / Space / Shape / Motion** — with
-a search box that filters across the active tab. In Colour, the palette and the
-roles that point at it are split into two groups, because they are different
-edits (change a value vs. re-point an alias). A change is marked and can be
-reset, per token or all at once.
+The panel is a visual editor over the active foundation section — **Colour /
+Type / Space / Shape / Motion** — opened by the sidebar, with a search box that
+filters across the active section. In Colour, the palette and the roles that
+point at it are split into two groups, because they are different edits (change
+a value vs. re-point an alias). A change is marked and can be reset, per token or
+all at once.
 
 | Section | Editable | Read-only |
 | --- | --- | --- |
@@ -74,8 +81,8 @@ wrapper, never on `:root`. The token layer cascades exactly as it does in an app
 so changing one primitive flows through every semantic and component token that
 depends on it — live — while the explorer's own chrome is untouched.
 
-The **Light / Dark toggle** chooses which mapping the preview, the Tokens view
-and the contrast re-check read. Light is the base you edit; dark is the same
+The **Light / Dark toggle** chooses which mapping the preview, the Token graph
+page and the contrast re-check read. Light is the base you edit; dark is the same
 role names mapped onto `tokens/themes.mjs`. The mechanism is the same scoped
 custom properties: besides your overrides, the wrapper pins every token that
 differs between themes to its value under the selected mode — so the preview
@@ -171,8 +178,8 @@ src/explorer/
   theme/tokens.ts          token introspection: forms, groups, editability
   theme/theme.ts           overrides, preview resolution, contrast, candidate
   theme/color.ts           hex ⇄ hsl, contrast-on, derived from tokens
-  components/              TokenPanel, ColorControls, Preview, Catalogue,
-                           TokenReference, ReviewPanel
+  components/              TokenPanel, ColorControls, Preview, Sidebar, pages,
+                           specimen, TokenReference, ReviewPanel
 tokens/color.mjs           shared colour maths (validator + explorer)
 scripts/apply-theme.mjs    promotion CLI
 scripts/lib/promote.mjs    pure promotion helpers
