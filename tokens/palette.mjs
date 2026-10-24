@@ -143,20 +143,13 @@ export const families = {
   tangerine: { hue: 45, maxChroma: 0.176, hueShift: 10 },
 };
 
-/** The neutral family: a faint brand-plum tint, chroma rising toward the dark end.
+/** The neutral family: based directly on the pale-lavender (#EEE9F3) and ink-plum
+ * (#221A2A) axis.
  *
- * The hue is the brand's own: 305° sits between ink-plum (306.9°) and
- * dark-ground (305.1°), so every neutral is tonally related to the brand ink.
- * The curve keeps it a NEUTRAL, not a tint: chroma peaks at .016 on the dark
- * end — less than half ink-plum's .032, so the ramp's dark steps read as the
- * brand's shadow without BEING the brand (neutral-950 is #211E25, the brand ink
- * is #221A2A; ΔE2000 5.95) — and falls to ≈ .006 at the light steps, so page
- * surfaces and borders carry no visible purple cast. The brand ink itself is
- * not a ramp step: the light theme's text IS `--ink-plum` (D22), and the
- * ramp's dark steps back the dark content and the scrim. The dark ground/panel
- * anchors stay outside the ramp entirely (they are ladder values, not curve
- * steps). */
-export const neutral = { hue: 305, maxChroma: 0.016 };
+ * Hue is 307° (the shared hue of pale-lavender at 308.3° and ink-plum at 306.9°).
+ * Chroma and lightness smoothly bridge the pale-lavender surface ladder at the
+ * light end down to ink-plum at the dark end (neutral-950 = #221a2a). */
+export const neutral = { hue: 307, maxChroma: 0.0321 };
 
 /**
  * Generate one scale: an OKLCH colour per step, gamut-mapped to sRGB hex.
@@ -338,10 +331,11 @@ export const scales = {
       if (l >= 0.96) return 0.010;
       if (l >= 0.92) return 0.017;
       if (l >= 0.88) return 0.023;
-      return neutral.maxChroma * (0.35 + 0.65 * (1 - l));
+      const t = Math.min(1, Math.max(0, (0.892 - l) / (0.892 - 0.235)));
+      return 0.023 + t * (neutral.maxChroma - 0.023);
     },
     () => neutral.hue,
-    { 50: 0.962, 100: 0.929, 200: 0.892 },
+    { 50: 0.962, 100: 0.929, 200: 0.892, 950: 0.235 },
   ),
   purple: familyScale(families.purple, scaleSteps.purple),
   cyan: familyScale(families.cyan, scaleSteps.cyan),

@@ -261,7 +261,7 @@ describe("value equivalence with the canonical source", () => {
   // justify.
   it("derived colours match browser-computed sRGB components (not byte-quantised)", () => {
     const expected: Record<string, [number, number, number, number]> = {
-      "--color-scrim": [0.129412, 0.117647, 0.145098, 0.4],
+      "--color-scrim": [0.133333, 0.101961, 0.164706, 0.4],
     };
     for (const [name, [er, eg, eb, ea]] of Object.entries(expected)) {
       const found = leaves.find(({ leaf }) => cssVarOf(leaf) === name);
@@ -281,8 +281,8 @@ describe("value equivalence with the canonical source", () => {
       hex: string;
     };
     expect(v.alpha).toBeCloseTo(0.4, DOT);
-    expect(v.components).toEqual([srgb6(33), srgb6(30), srgb6(37)]);
-    expect(v.hex).toBe("#211e25");
+    expect(v.components).toEqual([srgb6(34), srgb6(26), srgb6(42)]);
+    expect(v.hex).toBe("#221a2a");
   });
 });
 
@@ -318,7 +318,7 @@ describe("extension metadata", () => {
   it("scrim keeps its hue at 40% alpha (premultiplied colour-mix)", () => {
     const scrim = leaves.find(({ leaf }) => cssVarOf(leaf) === "--color-scrim");
     const v = scrim?.leaf.$value as { components: number[]; alpha?: number };
-    expect(v.components).toEqual([srgb6(33), srgb6(30), srgb6(37)]);
+    expect(v.components).toEqual([srgb6(34), srgb6(26), srgb6(42)]);
     expect(v.alpha).toBeCloseTo(0.4, DOT);
   });
 

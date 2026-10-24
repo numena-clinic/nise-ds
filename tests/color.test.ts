@@ -131,13 +131,13 @@ describe("derived semantic colours (regression)", () => {
   const cases: Record<string, string> = {
     "--color-base-hover": "#eae5f1",
     "--color-base-active": "#dfd8e8",
-    "--color-text-muted": "#69666d",
+    "--color-text-muted": "#6c6375",
     "--color-border": "#dfd8e8",
-    "--color-border-strong": "#817f85",
-    "--color-border-hover": "#69666d",
+    "--color-border-strong": "#847c8d",
+    "--color-border-hover": "#6c6375",
     "--color-primary-hover": "#44097e",
     "--color-primary-active": "#290053",
-    "--color-scrim": "rgba(33, 30, 37, 0.4)",
+    "--color-scrim": "rgba(34, 26, 42, 0.4)",
   };
 
   for (const [name, expected] of Object.entries(cases)) {
@@ -168,7 +168,7 @@ describe("oklch round-trip", () => {
 
   it("resolves a generated scale step to its emitted hex", () => {
     expect(expand("--purple-600", allTokens)).toBe("#935de1");
-    expect(expand("--neutral-950", allTokens)).toBe("#211e25");
+    expect(expand("--neutral-950", allTokens)).toBe("#221a2a");
   });
 });
 
