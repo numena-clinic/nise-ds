@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { FoundationId, FoundationPage, PageRenderContext } from "./types";
 import { ALL_TOKENS, INFO_BY_NAME, LAYERS, isAnchorRole } from "../theme/tokens";
 import { resolve } from "../theme/theme";
-import { brandAnchors, groundAnchors, scales } from "../../../tokens/palette.mjs";
+import { brandAnchors, groundAnchors } from "../../../tokens/palette.mjs";
 
 interface Anchor {
   name: string;
@@ -41,13 +41,6 @@ const ANCHOR_CATEGORIES: { label: string; note?: string; tokens: string[] }[] = 
   },
 ].filter((group) => group.tokens.length > 0);
 
-/** Each scale family as an ordered ramp, light → dark. */
-const SCALE_FAMILIES: { label: string; tokens: string[] }[] = (
-  Object.entries(scales) as Array<[string, Record<string, { hex: string }>]>
-).map(([family, scale]) => ({
-  label: family.charAt(0).toUpperCase() + family.slice(1),
-  tokens: Object.entries(scale).map(([step]) => `--${family}-${step}`),
-}));
 
 /** The semantic colour roles, grouped by meaning, in authored order. */
 const ROLE_GROUPS: { label: string; note?: string; tokens: string[] }[] = LAYERS.filter(
@@ -111,31 +104,6 @@ function SwatchGrid({
   );
 }
 
-/** A scale read left→right as one ramp, so lightness compares step for step.
- * Steps carrying a brand anchor show the published name under the label. */
-function Ramp({ tokens, map }: { tokens: string[]; map: Readonly<Record<string, string>> }) {
-  return (
-    <div className="nise-pv__ramp">
-      <div className="nise-pv__ramp-track">
-        {tokens.map((name) => (
-          <span
-            key={name}
-            className="nise-pv__ramp-step"
-            style={{ background: `var(${name})` }}
-            title={`${name} · ${resolve(name, map)}`}
-          />
-        ))}
-      </div>
-      <div className="nise-pv__ramp-labels">
-        {tokens.map((name) => (
-          <span key={name} className="nise-pv__ramp-label">
-            {name.replace(/^--[a-z]+-/, "")}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function ColourSection({
   title,
@@ -197,19 +165,6 @@ function ColourPage({ map }: PageRenderContext) {
         note="The pinned ladder the dark theme reads from: the page (--dark-ground) and the strong panel (--dark-panel)."
       >
         <SwatchGrid tokens={groundAnchorNames} map={map} />
-      </ColourSection>
-
-      <ColourSection
-        title="Primitive scale ramps"
-        note="The underlying ramps in OKLCH (neutral, purple, cyan, tangerine) and authored operational scales (mint, citron, pink, blue). Every surfaced step is referenced by a semantic role above."
-      >
-        <div className="nise-pv__colour-groups">
-          {SCALE_FAMILIES.map((family) => (
-            <ColourSection key={family.label} title={`${family.label} scale`}>
-              <Ramp tokens={family.tokens} map={map} />
-            </ColourSection>
-          ))}
-        </div>
       </ColourSection>
     </>
   );

@@ -64,14 +64,13 @@ npm run verify           # the gate — run before saying you are done
   interface error is text + an icon + a heavier boundary first (color.md §4).
   They read from the authored ramps above; tangerine is not warning and cyan is
   not info. Do not add a fifth family.
-- **The base and emphasis roles read the brand's own anchors** (D22): the page
+- **The base and emphasis roles read the brand's anchors and active palette** (D22): the page
   is `--white` in light, the body text `--ink-plum`, the secondary
-  `--vibrant-purple`, the accent `--vibrant-tangerine`. There is no second copy
-  of those values in the ramps.
-- **`--color-accent` is a fill-only role.** #F57A44 is 2.71:1 as text on a light
-  ground. Use it as a fill under `--color-accent-content`, or use
-  `--color-tint-tangerine` for a wash; a component that needs tangerine as a
-  text colour wants a status role.
+  `--vibrant-purple`, the accent `--accent-violet`. Brand anchors like `--vibrant-tangerine`
+  and `--vibrant-cyan` provide identity and categorical tint washes (`--color-tint-*`).
+- **`--color-accent` is a fill role.** `--accent-violet` (#AB62ED) paired with
+  `--color-accent-content` (`--ink-plum`, #221A2A) achieves a WCAG AA 4.56:1 contrast ratio.
+  For subtle washes, use `--color-tint-tangerine` or `--color-tint-purple`.
 - **The palette is small on purpose.** `scaleSteps` in `tokens/palette.mjs` is
   the authoritative list of the steps each family surfaces — every surfaced step
   must be read by a role, and a role may only point at a surfaced step. Add a

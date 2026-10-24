@@ -123,25 +123,61 @@ const Section = ({ title, note, children }: { title: string; note?: string; chil
   </section>
 );
 
+const foundationFamilies = ["neutral", "purple"];
+const statusFamilies = ["mint", "citron", "pink", "blue"];
+const tintFamilies = ["cyan", "tangerine"];
+
 const PaletteView = () => (
   <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
     <Section
       title="Brand anchors"
-      note="The ten brand hex, unchanged (numena-brand color.md §2). Artwork and marketing surfaces use these directly; product components do not — they use the Semantic roles story below (docs/tokens.md rule 2)."
+      note="The ten brand hex, unchanged (numena-brand color.md §2). Artwork and marketing surfaces use these directly; product components use the Semantic roles story."
     >
       <ChipGrid chips={anchorChips} />
     </Section>
     <Section
       title="Dark ground anchors"
-      note="The pinned ladder the dark theme reads from: the page, the brand ink as the raised step, the strong panel. The dark page is --dark-ground (decisions.md P4)."
+      note="The pinned ladder the dark theme reads from: the page (--dark-ground) and the strong panel (--dark-panel)."
     >
       <ChipGrid chips={groundChips} />
     </Section>
-    {scaleFamilies.map((family) => (
-      <Section key={family.label} title={`${family.label} scale`} note={family.note}>
-        <Ramp chips={family.chips} />
-      </Section>
-    ))}
+    <Section
+      title="Foundation ramps"
+      note="The continuous OKLCH tonal scales for surfaces, text, and primary purple emphasis."
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+        {scaleFamilies
+          .filter((f) => foundationFamilies.includes(f.label.toLowerCase()))
+          .map((family) => (
+            <div key={family.label} style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+              <div style={{ fontSize: "var(--font-size-xs)", fontWeight: "var(--font-weight-semibold)" }}>
+                {family.label}
+              </div>
+              <Ramp chips={family.chips} />
+            </div>
+          ))}
+      </div>
+    </Section>
+    <Section
+      title="Operational status primitives"
+      note="Authored color steps pinned for status roles: Success (Mint), Warning (Citron), Error (Pink), and Info (Blue)."
+    >
+      <ChipGrid
+        chips={scaleFamilies
+          .filter((f) => statusFamilies.includes(f.label.toLowerCase()))
+          .flatMap((f) => f.chips)}
+      />
+    </Section>
+    <Section
+      title="Categorical tint primitives"
+      note="Authored steps for subtle background washes: Cyan and Tangerine."
+    >
+      <ChipGrid
+        chips={scaleFamilies
+          .filter((f) => tintFamilies.includes(f.label.toLowerCase()))
+          .flatMap((f) => f.chips)}
+      />
+    </Section>
   </div>
 );
 

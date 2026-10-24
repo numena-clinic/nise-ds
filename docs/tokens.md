@@ -137,8 +137,8 @@ are fixed and immutable. Several directly back core semantic roles (decisions.md
 | `--ink-plum` | `#221A2A` | `--color-base-content` (Light), `--color-neutral` (Light), `--color-base-200` (Dark) |
 | `--deep-purple` | `#4C207F` | `--color-primary` (Light) |
 | `--vibrant-purple` | `#8E36F4` | `--color-secondary` (Light) |
-| `--pale-lavender` | `#EEE9F3` | `--color-base-300` (Light) |
-| `--vibrant-tangerine`| `#F57A44` | `--color-accent` (Light & Dark) |
+| `--pale-lavender` | `#EEE9F3` | Brand foundation anchor, identity background |
+| `--vibrant-tangerine`| `#F57A44` | Brand anchor, tint source |
 | `--dark-ground` | `#17121D` | `--color-base-100` (Dark) |
 | `--dark-panel` | `#2D2238` | `--color-base-300` (Dark) |
 | `--vibrant-cyan` | `#25E4F8` | Marketing & identity; tint source |
