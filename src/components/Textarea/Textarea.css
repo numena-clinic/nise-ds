@@ -2,7 +2,7 @@
 
 /* The multi-line control itself. Radius is declared here with a fallback so one
    field can be re-rounded without a token: var(--textarea-radius,
-   var(--radius-sm)). The control grows past its minimum when text wraps;
+   var(--radius-md)). The control grows past its minimum when text wraps;
    widening is native through resize: vertical. */
 
 .nise-textarea__control {
@@ -16,7 +16,7 @@
   color: var(--color-base-content);
   background-color: var(--color-base-100);
   border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--textarea-radius, var(--radius-sm));
+  border-radius: var(--textarea-radius, var(--radius-md));
   resize: vertical;
   transition: border-color var(--duration-fast) var(--ease-standard);
 }

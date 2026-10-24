@@ -42,18 +42,18 @@ const Section = ({ title, note, children }: { title: string; note?: string; chil
 );
 
 const RADII = [
-  { name: "--radius-sm", value: radii["--radius-sm"], usage: "Interactive fields, buttons, checkboxes, input controls" },
-  { name: "--radius-md", value: radii["--radius-md"], usage: "Cards, dialog boxes, alert panels, popovers" },
-  { name: "--radius-lg", value: radii["--radius-lg"], usage: "Large containers, nested clinical panels, sheet drawers" },
-  { name: "--radius-xl", value: radii["--radius-xl"], usage: "Modal containers, prominent hero callouts" },
-  { name: "--radius-full", value: radii["--radius-full"], usage: "Badges, status pills, circular avatars, toggle switches" },
+  { name: "--radius-sm", value: radii["--radius-sm"], usage: "Checkboxes, compact controls" },
+  { name: "--radius-md", value: radii["--radius-md"], usage: "Buttons, inputs, cards, popovers" },
+  { name: "--radius-lg", value: radii["--radius-lg"], usage: "Dialogs, drawers, larger panels" },
+  { name: "--radius-xl", value: radii["--radius-xl"], usage: "Prominent containers, hero surfaces" },
+  { name: "--radius-full", value: radii["--radius-full"], usage: "Pills, badges, circular avatars" },
 ];
 
 const RadiusScaleView = () => (
   <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
     <Section
       title="Corner Radius Scale"
-      note="Declared at the point of use with fallbacks (decisions.md D9): var(--button-radius, var(--radius-sm))."
+      note="Declared at the point of use with fallbacks (decisions.md D9): var(--button-radius, var(--radius-md))."
     >
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-4)" }}>
         {RADII.map((r) => (
@@ -235,7 +235,15 @@ const meta: Meta = {
       description: {
         component:
           "Shape and geometry foundations in Nise DS: radius steps (`--radius-sm` to `--radius-full`), " +
-          "border boundary weights, and ink-plum shadows (`--shadow-sm`, `--shadow-md`, `--shadow-lip`).",
+          "border boundary weights, and ink-plum shadows (`--shadow-sm`, `--shadow-md`, `--shadow-lip`).\n\n" +
+          "### Corner Radius Scale\n\n" +
+          "| Token | Value | Target Roles |\n" +
+          "| :--- | :--- | :--- |\n" +
+          "| `--radius-sm` | `4px` | Checkboxes, compact controls |\n" +
+          "| `--radius-md` | `8px` | Buttons, inputs, cards, popovers |\n" +
+          "| `--radius-lg` | `12px` | Dialogs, drawers, larger panels |\n" +
+          "| `--radius-xl` | `16px` | Prominent containers, hero surfaces |\n" +
+          "| `--radius-full` | `9999px` | Pills, badges, circular avatars |",
       },
     },
   },

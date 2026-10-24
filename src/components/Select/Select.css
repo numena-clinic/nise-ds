@@ -1,8 +1,8 @@
 @import "../../styles/field.css";
 
 /* The trigger reads as a text field; the popup is a floating surface. So the
-   trigger takes the field's radius (`--radius-sm`, the TextField default) and
-   the menu takes the surface radius (`--radius-md`, as Dialog and Tooltip). */
+   trigger takes the field's radius (`--radius-md`, the TextField default) and
+   the menu takes the surface radius (`--radius-md`, as popovers). */
 
 .nise-select__trigger {
   display: inline-flex;
@@ -17,7 +17,7 @@
   text-align: left;
   background-color: var(--color-base-100);
   border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--select-radius, var(--radius-sm));
+  border-radius: var(--select-radius, var(--radius-md));
   cursor: pointer;
   transition: border-color var(--duration-fast) var(--ease-standard);
 }

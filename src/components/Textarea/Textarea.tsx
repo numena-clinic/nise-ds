@@ -24,7 +24,7 @@
    marker, so the label reads cleanly.
 
    Radius is declared at the point of use: `var(--textarea-radius,
-   var(--radius-sm))`.
+   var(--radius-md))`.
    ============================================================================= */
 
 import {

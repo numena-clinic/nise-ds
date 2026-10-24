@@ -15,7 +15,7 @@
      --opacity-disabled, --duration-fast, --ease-standard, --border-width
 
    Radius is declared at the point of use as `var(--button-radius,
-   var(--radius-sm))`, so a surface can re-round one button without a new token.
+   var(--radius-md))`, so a surface can re-round one button without a new token.
 
    Accessibility: a real <button>; disabled buttons are inert (native
    disabled); `loading` sets aria-busy and blocks re-activation, and its spinner

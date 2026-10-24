@@ -166,7 +166,16 @@ are fixed and immutable. Several directly back core semantic roles (decisions.md
    an icon + a heavier boundary first, colour last.
 4. **Radius is declared at the point of use.** Components write
    `border-radius: var(--button-radius, var(--radius-md))` so instances can be adjusted
-   locally while defaulting to the scale primitive.
+   locally while defaulting to the scale primitive:
+
+   | Token | Value | Target Roles |
+   | :--- | :--- | :--- |
+   | `--radius-sm` | `4px` | Checkboxes, compact controls |
+   | `--radius-md` | `8px` | Buttons, inputs, cards, popovers |
+   | `--radius-lg` | `12px` | Dialogs, drawers, larger panels |
+   | `--radius-xl` | `16px` | Prominent containers, hero surfaces |
+   | `--radius-full` | `9999px` | Pills, badges, circular avatars |
+
 
 ---
 

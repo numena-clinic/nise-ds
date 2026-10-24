@@ -4,7 +4,7 @@
   justify-content: center;
   gap: var(--button-gap);
   border: var(--border-width) solid transparent;
-  border-radius: var(--button-radius, var(--radius-sm));
+  border-radius: var(--button-radius, var(--radius-md));
   font-family: var(--font-sans);
   font-weight: var(--font-weight-medium);
   line-height: 1;

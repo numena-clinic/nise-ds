@@ -154,8 +154,7 @@ Typography follows a standard `xs` to `4xl` ramp based on Inter. Brand guideline
 real layout testing.
 
 **P2 — Spacing and Radii scale.**  
-A 4px spacing grid (`--space-1` = 4px up to `--space-16` = 64px) and five radius steps (`--radius-none` to
-`--radius-full`), with controls using `--radius-sm` (4px) and cards/dialogs using `--radius-md` (8px).
+A 4px spacing grid (`--space-1` = 4px up to `--space-24` = 96px) and five radius steps: `--radius-sm` (4px: checkboxes, compact controls), `--radius-md` (8px: buttons, inputs, cards, popovers), `--radius-lg` (12px: dialogs, drawers, larger panels), `--radius-xl` (16px: prominent containers, hero surfaces), and `--radius-full` (9999px: pills, badges, circular avatars).
 
 **P3 — Iconography set.**  
 A 24px grid with 1.5px stroke weight. Icons are added on demand as needed by clinical workflows.

@@ -24,7 +24,7 @@
       --duration-fast, --ease-standard, --border-width
 
    Radius is declared at the point of use as `var(--button-radius,
-   var(--radius-sm))`, so a surface can re-round one toggle without a new token.
+   var(--radius-md))`, so a surface can re-round one toggle without a new token.
 
    Accessibility: a real <button type="button">; `aria-pressed` always reflects
    the state (controlled or uncontrolled); the focus ring is drawn from
