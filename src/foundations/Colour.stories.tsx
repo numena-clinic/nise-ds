@@ -291,6 +291,12 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const SemanticRoles: Story = { render: () => <SemanticRolesView /> };
+export const SemanticRoles: Story = {
+  tags: ["!autodocs"],
+  render: () => <SemanticRolesView />,
+};
 
-export const Palette: Story = { render: () => <PaletteView /> };
+export const Palette: Story = {
+  tags: ["!autodocs"],
+  render: () => <PaletteView />,
+};

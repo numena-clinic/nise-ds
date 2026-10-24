@@ -256,7 +256,23 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const TypeScale: Story = { render: () => <TypeScaleView /> };
-export const FontFamilies: Story = { render: () => <FontFamiliesView /> };
-export const FontWeights: Story = { render: () => <FontWeightsView /> };
-export const EditorialSpecimen: Story = { render: () => <EditorialSpecimenView /> };
+export const TypeScale: Story = {
+  tags: ["!autodocs"],
+  render: () => <TypeScaleView />,
+};
+
+export const FontFamilies: Story = {
+  tags: ["!autodocs"],
+  render: () => <FontFamiliesView />,
+};
+
+export const FontWeights: Story = {
+  tags: ["!autodocs"],
+  render: () => <FontWeightsView />,
+};
+
+export const EditorialSpecimen: Story = {
+  tags: ["!autodocs"],
+  render: () => <EditorialSpecimenView />,
+};
+

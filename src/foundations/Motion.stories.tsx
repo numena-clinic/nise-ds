@@ -185,5 +185,13 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Durations: Story = { render: () => <DurationsView /> };
-export const Easings: Story = { render: () => <EasingsView /> };
+export const Durations: Story = {
+  tags: ["!autodocs"],
+  render: () => <DurationsView />,
+};
+
+export const Easings: Story = {
+  tags: ["!autodocs"],
+  render: () => <EasingsView />,
+};
+

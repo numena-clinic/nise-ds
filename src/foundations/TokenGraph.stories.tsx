@@ -366,5 +366,13 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const LayerArchitecture: Story = { render: () => <LayerArchitectureView /> };
-export const ReferenceExplorer: Story = { render: () => <ReferenceExplorerView /> };
+export const LayerArchitecture: Story = {
+  tags: ["!autodocs"],
+  render: () => <LayerArchitectureView />,
+};
+
+export const ReferenceExplorer: Story = {
+  tags: ["!autodocs"],
+  render: () => <ReferenceExplorerView />,
+};
+

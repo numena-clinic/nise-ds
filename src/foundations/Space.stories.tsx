@@ -189,5 +189,13 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const SpacingScale: Story = { render: () => <SpacingScaleView /> };
-export const LayoutSpecimens: Story = { render: () => <LayoutSpecimensView /> };
+export const SpacingScale: Story = {
+  tags: ["!autodocs"],
+  render: () => <SpacingScaleView />,
+};
+
+export const LayoutSpecimens: Story = {
+  tags: ["!autodocs"],
+  render: () => <LayoutSpecimensView />,
+};
+

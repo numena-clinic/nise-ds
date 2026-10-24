@@ -244,6 +244,18 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const RadiusScale: Story = { render: () => <RadiusScaleView /> };
-export const BordersAndDividers: Story = { render: () => <BordersView /> };
-export const ShadowsAndElevation: Story = { render: () => <ElevationsView /> };
+export const RadiusScale: Story = {
+  tags: ["!autodocs"],
+  render: () => <RadiusScaleView />,
+};
+
+export const BordersAndDividers: Story = {
+  tags: ["!autodocs"],
+  render: () => <BordersView />,
+};
+
+export const ShadowsAndElevation: Story = {
+  tags: ["!autodocs"],
+  render: () => <ElevationsView />,
+};
+
