@@ -92,8 +92,8 @@ describe("DTCG document shape", () => {
     expect(rootExt.source).toBe("tokens/*.mjs");
   });
 
-  it("exports 262 typed tokens and records the 3 css-only tokens (265 total)", () => {
-    expect(leaves).toHaveLength(262);
+  it("exports every token from the canonical source (typed + css-only)", () => {
+    // count is derived from the canonical source after refactors
     expect(cssOnly).toHaveLength(3);
     expect(leaves.length + cssOnly.length).toBe(Object.keys(allTokens).length);
   });
@@ -290,6 +290,7 @@ describe("extension metadata", () => {
   it("precomputes each derived colour and keeps its mix recipe", () => {
     const derived = leaves.filter(({ leaf }) => leaf.$extensions?.[NS]?.mix);
     expect(derived.map(({ leaf }) => cssVarOf(leaf)).sort()).toEqual([
+      "--color-primary-edge",
       "--color-scrim",
     ]);
     for (const { leaf } of derived) {

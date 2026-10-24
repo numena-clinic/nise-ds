@@ -1,0 +1,31 @@
+/* Nise Design System — Label.
+   The standalone control label: the same typography the shared field skeleton
+   gives the labelled controls (--font-size-sm at md, --font-size-xs at sm, so
+   they pair with --control-font-size and its small variants), the marker colour
+   for required, the muted tone for a supporting hint. */
+
+.nise-label {
+  display: inline-flex;
+  gap: var(--field-label-gap);
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-base-content);
+  line-height: var(--line-height-snug);
+}
+
+.nise-label--md {
+  font-size: var(--font-size-sm);
+}
+
+.nise-label--sm {
+  font-size: var(--font-size-xs);
+}
+
+.nise-label__required {
+  color: var(--color-link);
+}
+
+.nise-label__hint {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+}

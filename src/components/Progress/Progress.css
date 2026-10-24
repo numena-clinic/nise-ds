@@ -1,0 +1,38 @@
+.nise-progress {
+  display: flex;
+  width: 100%;
+  height: var(--progress-height);
+  overflow: hidden;
+  background-color: var(--color-base-200);
+  border-radius: var(--progress-radius, var(--radius-full));
+}
+
+/* A value always shows something, even just past the start. */
+.nise-progress[data-state="determinate"] .nise-progress__fill {
+  min-width: var(--progress-height);
+}
+
+.nise-progress__fill {
+  width: 0;
+  min-width: 0;
+  background-color: var(--color-primary);
+  border-radius: inherit;
+  transition: width var(--duration-medium) var(--ease-standard);
+}
+
+/* Indeterminate: one block of fixed width sweeping the track. The transform is
+   of the fill only, so the track never moves its bounds during the loop. */
+.nise-progress[data-state="indeterminate"] .nise-progress__fill {
+  width: 100%;
+  animation: nise-progress-indeterminate var(--duration-slow) var(--ease-standard) infinite;
+}
+
+@keyframes nise-progress-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}

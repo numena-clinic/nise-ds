@@ -146,6 +146,60 @@ export const table = register({
   "--table-row-gap": ref("--space-1"),
 });
 
+/** Wave A surface/status components (alerts, avatars, meta row pieces). */
+export const alert = register({
+  "--alert-padding": ref("--space-4"),
+  "--alert-gap": ref("--space-3"),
+});
+
+export const avatar = register({
+  "--avatar-size": ref("--control-height-md"),
+  "--avatar-font-size": ref("--font-size-sm"),
+});
+
+export const breadcrumb = register({
+  "--breadcrumb-gap": ref("--space-2"),
+  "--breadcrumb-font-size": ref("--font-size-sm"),
+});
+
+export const kbd = register({
+  "--kbd-height": "24px",
+  "--kbd-padding-x": ref("--space-2"),
+  "--kbd-font-size": ref("--font-size-xs"),
+});
+
+export const progress = register({
+  "--progress-height": "8px",
+});
+
+export const separator = register({
+  "--separator-thickness": "1px",
+});
+
+export const textarea = register({
+  "--textarea-padding-y": ref("--space-2"),
+  "--textarea-min-height": "96px",
+});
+
+export const toggleGroup = register({
+  "--toggle-group-gap": ref("--space-1"),
+});
+
+export const pagination = register({
+  "--pagination-gap": ref("--space-1"),
+});
+
+export const empty = register({
+  "--empty-padding": ref("--space-8"),
+  "--empty-gap": ref("--space-3"),
+});
+
+export const timeline = register({
+  "--timeline-dot": "10px",
+  "--timeline-gap": ref("--space-4"),
+  "--timeline-rail": ref("--border-width-strong"),
+});
+
 /** Disabled controls keep their role but drop opacity (iconography.md §4). */
 export const state = {
   "--opacity-disabled": "0.55",
@@ -167,6 +221,17 @@ export const componentGroups = [
   { label: "tooltip", tokens: tooltip },
   { label: "dialog", tokens: dialog },
   { label: "table", tokens: table },
+  { label: "alert", tokens: alert },
+  { label: "avatar", tokens: avatar },
+  { label: "breadcrumb", tokens: breadcrumb },
+  { label: "kbd", tokens: kbd },
+  { label: "progress", tokens: progress },
+  { label: "separator", tokens: separator },
+  { label: "textarea", tokens: textarea },
+  { label: "toggle-group", tokens: toggleGroup },
+  { label: "pagination", tokens: pagination },
+  { label: "empty", tokens: empty },
+  { label: "timeline", tokens: timeline },
   { label: "state", tokens: state },
 ];
 

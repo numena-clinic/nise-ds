@@ -33,27 +33,49 @@ npm run verify           # the gate — run before saying you are done
   anchors, not the whole palette). Four families are **generated** — `neutral`,
   `purple`, `cyan`, `tangerine` — from a shared lightness curve; four are
   **authored** (pinned to published candidate values, no interpolation may move
-  a pin) — `mint`, `citron`, `pink`, `teal` — plus two pinned dark-ground
+  a pin) — `mint`, `citron`, `pink`, `blue` — plus two pinned dark-ground
   anchors, `--dark-ground` / `--dark-panel`. `primitives.mjs` re-exports its
   `colorTokens`; do not hand-author a colour primitive. Themes live in
   `tokens/themes.mjs` (light is the base, dark re-points the same role names).
-- Three layers, downward references only: primitive → semantic → component.
-  `tokens/validate.mjs` rejects a reference that points the wrong way. A
-  primitive may not contain `var()` or `color-mix()`; a semantic token may only
-  reference primitives; a component token may reference primitives, semantics or
-  other component tokens.
+- Four layers, downward references only: primitive → semantic → themes →
+  component. A theme is not a second token set — it re-points the *same* role
+  names onto another ground (`tokens/themes.mjs`). `tokens/validate.mjs` rejects
+  a reference that points the wrong way. A primitive may not contain `var()` or
+  `color-mix()`; a semantic token may only reference primitives; a component
+  token may reference primitives, semantics or other component tokens.
 - Use `ref()` (semantic layer) to reference a primitive — it throws at author
   time on a typo.
 - **No raw colours and no off-token `px`.** `npm run check:usage` fails on raw
   colour literals and on `px` values on spacing/radius/type properties.
-- **No verdict colours.** Accents are categorical, not verdicts, and an interface
-  error is text + an icon + a heavier boundary first (color.md §4). The one
-  carve-out is **decisions.md P4**, provisional and user-directed: four
-  *operational* role families exist — `--color-success/warning/error/info` with
-  a `-surface` and `-content` each — for machine states only (saved, failed,
-  caution, unsaved), never clinical or epistemic meaning. They read from the
-  authored ramps above; tangerine is not warning and cyan is not info. Do not
-  add a fifth, and do not let a status colour imply a clinical judgement.
+- **The role vocabulary is daisyUI-shaped and there is one name per role**
+  (decisions.md D20). Surfaces: `--color-base-100/200/300`, `--color-base-content`,
+  `--color-base-hover`, `--color-base-active`. Fills: `--color-primary`,
+  `--color-secondary`, `--color-accent`, `--color-neutral`, each with a
+  `-content`; the primary also carries `-hover`/`-active` and `-edge` (the
+  fill's own darker rim, D23). Status:
+  `--color-success/warning/error/info`, each with a `-content`. Supporting:
+  `--color-text-muted`, `--color-border{,-strong,-hover,-error}`,
+  `--color-focus-ring`, `--color-scrim`, `--color-selected-{surface,text}`,
+  `--color-link{,-hover}`, `--color-tint-{purple,cyan,tangerine}`. There are no
+  aliases — do not reintroduce `--color-surface`, `--color-text` or
+  `--color-action`.
+- **Status colours are first-class (D5 is superseded).** They report a machine
+  state, never a clinical judgement, and colour is never the only signal: an
+  interface error is text + an icon + a heavier boundary first (color.md §4).
+  They read from the authored ramps above; tangerine is not warning and cyan is
+  not info. Do not add a fifth family.
+- **The base and emphasis roles read the brand's own anchors** (D22): the page
+  is `--white` in light, the body text `--ink-plum`, the secondary
+  `--vibrant-purple`, the accent `--vibrant-tangerine`. There is no second copy
+  of those values in the ramps.
+- **`--color-accent` is a fill-only role.** #F57A44 is 2.71:1 as text on a light
+  ground. Use it as a fill under `--color-accent-content`, or use
+  `--color-tint-tangerine` for a wash; a component that needs tangerine as a
+  text colour wants a status role.
+- **The palette is small on purpose.** `scaleSteps` in `tokens/palette.mjs` is
+  the authoritative list of the steps each family surfaces — every surfaced step
+  must be read by a role, and a role may only point at a surfaced step. Add a
+  step only when a role needs it.
 - When a component needs to rely on a colour pair, add it to `contrastChecks` in
   `tokens/semantic.mjs` and let the validator prove the ratio.
 - Component-specific values go in the component layer; radius is the exception —
@@ -76,15 +98,19 @@ npm run verify           # the gate — run before saying you are done
 - Accessibility: a visible label always; never colour alone; `aria-describedby`
   only points at rendered ids; decorative icons `aria-hidden`. Prefer a primitive
   (Radix) for ARIA-heavy patterns and native HTML otherwise.
-- Thirteen components now. Radix backs `Select`, `Slider`, `Tabs`, `Dialog` and
-  `Tooltip`; the rest are native HTML (`Button`, `TextField`, `Checkbox`,
-  `Radio`, `Switch`, `Badge`, `Card`, `Table`). Add a Radix package only when it
-  earns its place (D6); record the reason in `docs/decisions.md`.
+- Twenty-nine components now. Radix backs `Select`, `Slider`, `Tabs`, `Dialog` and
+  `Tooltip`; the rest are native HTML (`Alert`, `AspectRatio`, `Avatar`, `Badge`,
+  `Breadcrumb`, `Button`, `Card`, `Checkbox`, `Collapsible`, `Empty`, `Kbd`,
+  `Label`, `Pagination`, `Progress`, `Radio`, `Separator`, `Skeleton`, `Switch`,
+  `Table`, `TextField`, `Textarea`, `Timeline`, `Toggle`, `ToggleGroup`). Add a
+  Radix package only when it earns its place (D6); record the reason in
+  `docs/decisions.md`.
 
 ## Tests
 
 - `tests/components.test.tsx` — behaviour (roles, names, states) for every component.
 - `tests/a11y.test.tsx` — axe over rendered components, closed and open.
+- `tests/geometry.test.ts` — switch knob and slider thumb proportional geometry.
 - `tests/theme.test.ts` / `tests/promote.test.ts` — the theme model, candidate
   format, and the promotion planner (pure).
 - `tests/usage.test.ts` — the token-boundary scanner (`scripts/lib/token-usage.mjs`).
@@ -129,6 +155,13 @@ npm run verify           # the gate — run before saying you are done
   (`.nise-explorer__preview`), the `data-nise-theme` marker, the labelled token
   inputs and the `.nise-swatch-card--locked` cards are load-bearing for
   `tests/explorer.test.tsx` — keep them.
+- **An anchor card names the roles it drives** (`.nise-color__drives`), a role
+  reading an anchor is marked (`.nise-pv__swatch-tag`, "· brand anchor"), and a
+  role's editor shows its **dark mapping** target beside the light one. Since
+  D22 the page, the panel, the body text, the neutral, the primary, the
+  secondary and the accent all read a brand anchor, so "immutable" has a
+  consequence worth showing. The anchor readership is the **light base** (D19) —
+  the dark mapping is a separate authored file, not a darkened copy.
 
 ## Docs
 
@@ -148,5 +181,5 @@ When you change something a doc describes, update the doc: `docs/tokens.md`,
   not come back. Every component is plain CSS over tokens (D2).
 - Write a colour outside the token set — raw hex, an off-scale `px`, or a family
   that is not in `palette.mjs`. The token boundary is enforced everywhere, with
-  no path exemptions (D13). The four operational families in P4 are the complete
-  status vocabulary; do not add a role or a fifth family beside them.
+  no path exemptions (D13). The four status families in the palette are the
+  complete status vocabulary; do not add a role or a fifth family beside them.

@@ -38,7 +38,7 @@ A bordered surface that groups related content under a heading.
 
 - Rendered as a `<section>`; header/footer are `<header>`/`<footer>`.
 - Padding `--card-padding` and gap `--card-gap` → `--space-*`.
-- Heading is serif (`--font-serif`); the surface is `--color-surface` with a
+- Heading is serif (`--font-serif`); the surface is `--color-base-100` with a
   `--color-border` boundary and `--shadow-sm`.
 - Radius via `var(--card-radius, var(--radius-lg))`.
 

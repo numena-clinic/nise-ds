@@ -9,11 +9,17 @@
    ============================================================================= */
 
 .nise-explorer {
+  /* The chrome's own height constant: the top bar. The sidebar's sticky
+     offset and its viewport-bound height both hang off it, so the page fits
+     the viewport exactly instead of overflowing by the height of the chrome
+     it is meant to leave room for. */
+  --nise-explorer-topbar-h: 73px;
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-surface-subtle);
-  color: var(--color-text);
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
 }
 
 /* ── top bar ───────────────────────────────────────────────────────────────── */
@@ -26,8 +32,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
+  min-height: var(--nise-explorer-topbar-h);
   padding: var(--space-4) var(--space-6);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   border-bottom: var(--border-width) solid var(--color-border);
 }
 
@@ -44,7 +51,7 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-md);
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-base-200);
 }
 
 .nise-explorer__title {
@@ -79,8 +86,8 @@
   padding: 0 var(--control-padding-x);
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  color: var(--color-text);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   cursor: pointer;
@@ -88,17 +95,17 @@
 }
 
 .nise-explorer__btn:hover:not(:disabled) {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-base-hover);
 }
 
 .nise-explorer__btn--primary {
-  background-color: var(--color-action);
-  color: var(--color-action-text);
-  border-color: var(--color-action);
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+  border-color: var(--color-primary);
 }
 
 .nise-explorer__btn--primary:hover:not(:disabled) {
-  background-color: var(--color-action-hover);
+  background-color: var(--color-primary-hover);
 }
 
 .nise-explorer__btn:disabled {
@@ -121,22 +128,25 @@
   flex-direction: column;
   gap: var(--space-4);
   padding: var(--space-5);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
 }
 
 /* ── sidebar (docs index) ──────────────────────────────────────────────────── */
 
+/* The sidebar sticks flush under the top bar and never grows past the
+   viewport: what is left of the viewport after the bar and the main's
+   padding is the height it may use. */
 .nise-explorer__sidebar {
   flex: 0 0 200px;
   align-self: stretch;
   position: sticky;
-  top: var(--space-16);
+  top: var(--nise-explorer-topbar-h);
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
-  max-height: calc(100vh - var(--space-24));
+  max-height: calc(100vh - var(--nise-explorer-topbar-h) - var(--space-12));
   overflow-y: auto;
 }
 
@@ -174,7 +184,7 @@
   border: var(--border-width) solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--color-text);
+  color: var(--color-base-content);
   font: inherit;
   font-size: var(--font-size-sm);
   cursor: pointer;
@@ -182,11 +192,11 @@
 }
 
 .nise-explorer__sidebar-link:hover {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-base-hover);
 }
 
 .nise-explorer__sidebar-link[aria-current="page"] {
-  background-color: var(--color-surface-active);
+  background-color: var(--color-base-active);
   border-color: var(--color-border);
   font-weight: var(--font-weight-medium);
 }
@@ -228,7 +238,7 @@
   font-family: var(--font-sans);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-explorer__row {
@@ -289,8 +299,8 @@
   padding: 0 var(--space-2);
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  color: var(--color-text);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
   font-size: var(--font-size-sm);
 }
 
@@ -307,12 +317,12 @@
   padding: 0;
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
 }
 
 .nise-explorer__error {
   font-size: var(--font-size-xs);
-  color: var(--color-text);
+  color: var(--color-base-content);
   padding-left: var(--space-2);
   border-left: var(--border-width-strong) solid var(--color-border-strong);
 }
@@ -364,7 +374,7 @@
   flex-direction: column;
   gap: var(--space-8);
   padding: var(--space-8);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
 }
@@ -392,13 +402,13 @@
 
 .nise-pv__lead {
   font-size: var(--font-size-lg);
-  color: var(--color-text);
+  color: var(--color-base-content);
   max-width: var(--measure-prose);
 }
 
 .nise-pv__body {
   font-size: var(--font-size-md);
-  color: var(--color-text);
+  color: var(--color-base-content);
   max-width: var(--measure-prose);
 }
 
@@ -430,7 +440,7 @@
 
 .nise-pv__swatch-name {
   font-size: var(--font-size-xs);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-pv__swatch-value {
@@ -487,7 +497,7 @@
   flex-direction: column;
   gap: var(--space-5);
   padding: var(--space-6);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   border-left: var(--border-width) solid var(--color-border);
   box-shadow: var(--shadow-md);
 }
@@ -615,7 +625,7 @@
 }
 
 .nise-explorer__contrast-flag {
-  color: var(--color-text);
+  color: var(--color-base-content);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -626,7 +636,7 @@
   padding: var(--space-3);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-base-200);
   font-size: var(--font-size-xs);
   white-space: pre;
 }
@@ -636,8 +646,8 @@
   padding: var(--space-2);
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  color: var(--color-text);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
   font-size: var(--font-size-sm);
   resize: vertical;
 }
@@ -701,8 +711,8 @@
   padding: var(--space-2) var(--space-3);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: var(--color-base-100);
+  color: var(--color-base-content);
   font: inherit;
   font-size: var(--font-size-sm);
 }
@@ -824,7 +834,7 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-3);
-  background: var(--color-surface);
+  background: var(--color-base-100);
 }
 
 .nise-swatch-card--changed {
@@ -836,12 +846,40 @@
    words, so "fixed" never rests on colour alone. */
 .nise-swatch-card--locked {
   border-style: dashed;
-  background: var(--color-surface-subtle);
+  background: var(--color-base-200);
 }
 
 .nise-color__badge {
   align-self: flex-start;
   padding: var(--space-1) var(--space-2);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* What an anchor actually drives — the roles that read it. Words, not colour:
+   the point is that "immutable" has a consequence worth naming. */
+.nise-color__drives {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.nise-color__drives-list {
+  color: var(--color-base-content);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* A role reading a brand anchor carries the same fact in the editor. */
+.nise-color__meta-flag {
+  color: var(--color-text-muted);
+}
+
+/* The "brand" tag on a role swatch in the Colour page. */
+.nise-pv__swatch-tag {
+  margin-left: var(--space-1);
+  padding: 0 var(--space-1);
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
@@ -903,7 +941,7 @@
   white-space: nowrap;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-color__meta {
@@ -938,8 +976,8 @@
   padding-inline: var(--space-2);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: var(--color-base-100);
+  color: var(--color-base-content);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: var(--font-size-xs);
   text-transform: uppercase;
@@ -1027,7 +1065,7 @@
 
 .nise-color__palette-swatch--selected {
   box-shadow:
-    0 0 0 var(--border-width-strong) var(--color-surface),
+    0 0 0 var(--border-width-strong) var(--color-base-100),
     0 0 0 calc(var(--border-width-strong) * 2) var(--color-focus-ring);
 }
 
@@ -1038,8 +1076,8 @@
   padding-inline: var(--space-2);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: var(--color-base-100);
+  color: var(--color-base-content);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: var(--font-size-xs);
 }
@@ -1067,7 +1105,7 @@
   padding: var(--space-1);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface-subtle);
+  background: var(--color-base-200);
 }
 
 .nise-preview__seg {
@@ -1083,9 +1121,9 @@
 }
 
 .nise-preview__seg--on {
-  background: var(--color-surface);
+  background: var(--color-base-100);
   border-color: var(--color-border);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-preview__seg:focus-visible {
@@ -1151,6 +1189,12 @@
   gap: var(--space-4);
 }
 
+.nise-catalogue__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .nise-catalogue__cell {
   margin: 0;
   display: flex;
@@ -1178,7 +1222,7 @@
 .nise-catalogue__body {
   margin: 0;
   font-size: var(--font-size-sm);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-catalogue__head {
@@ -1199,8 +1243,8 @@
   padding: var(--space-1) var(--space-3);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-full);
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: var(--color-base-100);
+  color: var(--color-base-content);
   font-size: var(--font-size-xs);
   text-decoration: none;
   transition: background var(--duration-fast) var(--ease-standard),
@@ -1208,7 +1252,7 @@
 }
 
 .nise-catalogue__index-link:hover {
-  background: var(--color-surface-subtle);
+  background: var(--color-base-200);
   border-color: var(--color-border-strong);
 }
 
@@ -1240,12 +1284,12 @@
   padding: var(--space-1) var(--space-2);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-full);
-  background: var(--color-surface);
+  background: var(--color-base-100);
 }
 
 .nise-catalogue__token-name {
   font-size: var(--font-size-xs);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-catalogue__form {
@@ -1274,7 +1318,7 @@
   padding: var(--space-3) var(--space-4);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
+  background: var(--color-base-100);
 }
 
 .nise-catalogue__queue-main {
@@ -1286,7 +1330,7 @@
 .nise-catalogue__queue-title {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-catalogue__queue-meta {
@@ -1315,13 +1359,13 @@
   padding: var(--space-4);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: var(--color-surface-subtle);
+  background: var(--color-base-200);
 }
 
 .nise-catalogue__metric-value {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-catalogue__metric-label {
@@ -1346,7 +1390,7 @@
 .nise-catalogue__switch-title {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-catalogue__switch-desc {
@@ -1420,12 +1464,12 @@
 }
 
 .nise-ref__row:nth-child(odd) {
-  background: var(--color-surface-subtle);
+  background: var(--color-base-200);
 }
 
 .nise-ref__name {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: var(--color-text);
+  color: var(--color-base-content);
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -1446,7 +1490,7 @@
 }
 
 .nise-ref__tag--live {
-  color: var(--color-text);
+  color: var(--color-base-content);
   font-weight: var(--font-weight-medium);
 }
 
@@ -1463,7 +1507,7 @@
   font-family: var(--font-serif);
   font-size: var(--font-size-2xl);
   letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-explorer__page-lead {
@@ -1494,7 +1538,7 @@
   flex: 0 0 140px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: var(--font-size-xs);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-pv__scale-track {
@@ -1509,7 +1553,7 @@
   height: var(--space-3);
   max-inline-size: 100%;
   border-radius: var(--radius-sm);
-  background-color: var(--color-action);
+  background-color: var(--color-primary);
 }
 
 .nise-pv__scale-value {
@@ -1548,7 +1592,7 @@
   display: block;
   inline-size: var(--space-16);
   block-size: var(--space-12);
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-base-200);
   border: var(--border-width) solid var(--color-border-strong);
 }
 
@@ -1558,8 +1602,8 @@
   padding: var(--space-2) var(--space-3);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-sm);
-  background-color: var(--color-surface-subtle);
-  color: var(--color-text);
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
   font-size: var(--font-size-xs);
   transition: background-color var(--duration-medium) var(--ease-entrance),
     color var(--duration-medium) var(--ease-entrance);
@@ -1590,7 +1634,7 @@
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-pv__colour-note {
@@ -1605,7 +1649,7 @@
   flex-direction: column;
   gap: var(--space-5);
   padding: var(--space-4);
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-base-200);
   border-radius: var(--radius-md);
 }
 
@@ -1634,7 +1678,7 @@
 }
 
 .nise-pv__ramp-step--anchor {
-  outline: var(--border-width-strong) solid var(--color-text);
+  outline: var(--border-width-strong) solid var(--color-base-content);
   outline-offset: calc(-1 * var(--border-width-strong));
 }
 
@@ -1654,6 +1698,6 @@
 
 .nise-pv__ramp-anchor {
   display: block;
-  color: var(--color-text);
+  color: var(--color-base-content);
   font-weight: var(--font-weight-medium);
 }

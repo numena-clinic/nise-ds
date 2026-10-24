@@ -17,8 +17,7 @@
      --badge-height-{sm,md}, --badge-padding-x-{sm,md}, --badge-font-size-{sm,md},
      --badge-gap, --badge-radius
        → --space-*, --font-size-*, --radius-full
-     --color-surface-subtle, --color-text, --color-tint-{purple,cyan,tangerine},
-     --color-tint-text
+     --color-base-200, --color-base-content, --color-tint-{purple,cyan,tangerine}
    ============================================================================= */
 
 import type { ReactNode } from "react";

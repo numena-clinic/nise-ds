@@ -8,7 +8,7 @@
 .nise-slider__label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-slider__hint {
@@ -17,6 +17,9 @@
   margin-top: calc(-1 * var(--space-1));
 }
 
+/* `align-items: center` does two jobs: it centres the track in the root, and
+   it puts the static position of the absolutely-positioned thumb wrapper on
+   the root's centre line — which is where the thumb is centred from. */
 .nise-slider__root {
   position: relative;
   display: flex;
@@ -41,16 +44,23 @@
   position: absolute;
   height: 100%;
   border-radius: var(--radius-full);
-  background-color: var(--color-action);
+  background-color: var(--color-primary);
 }
 
+/* Radix positions the thumb's wrapper at the value point (the wrapper is a
+   zero-size box on the root's centre line) and the thumb inside it must be
+   centred on that point. Without the translate the thumb hangs below the rail
+   and off to the right. */
 .nise-slider__thumb {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: var(--slider-thumb-size);
   height: var(--slider-thumb-size);
   border-radius: var(--radius-full);
   border: var(--border-width-strong) solid var(--color-border-strong);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   box-shadow: var(--shadow-sm);
   transition:
     border-color var(--duration-fast) var(--ease-standard),

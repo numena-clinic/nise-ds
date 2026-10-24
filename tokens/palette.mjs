@@ -13,7 +13,7 @@
 //   2. Scales, two kinds. Four families are GENERATED from a lightness curve
 //      plus a family-specific chroma curve (one neutral ramp, and purple/cyan/
 //      tangerine as the identity and supporting accents). Four more are
-//      AUTHORED: mint, citron, pink and teal are the operational families
+//      AUTHORED: mint, citron, pink and blue are the operational families
 //      (success / warning / error / info), and their published candidate values
 //      are pinned as anchors with the steps between them interpolated in OKLCH —
 //      never a naive interpolation between two hexes, and never a re-generation
@@ -73,7 +73,7 @@ export function oklchOf(hex) {
 // the strongest panel — pink-500 is 5.26:1 on --dark-panel and only 2.86:1 on
 // neutral-800, which is why this is authored rather than reusing the ramp.
 //
-// `--color-surface` in the dark theme IS --dark-ground, so the page and
+// `--color-base-100` in the dark theme IS --dark-ground, so the page and
 // base-100 are one value in both themes (see tokens/themes.mjs).
 //
 // @type {{ name: string, hex: string, role: string, provenance: string }[]}
@@ -107,9 +107,6 @@ export const lightnessSteps = {
   900: 0.33,
   950: 0.24,
 };
-
-export const chromaticSteps = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"];
-export const neutralSteps = ["0", ...chromaticSteps];
 
 /**
  * A chroma envelope: 0 at the L extremes, peaking near mid-lightness. This is
@@ -147,11 +144,14 @@ export const families = {
  * The hue is the brand's own: 305° sits between ink-plum (306.9°) and
  * dark-ground (305.1°), so every neutral is tonally related to the brand ink.
  * The curve keeps it a NEUTRAL, not a tint: chroma peaks at .016 on the dark
- * end — less than half ink-plum's .032, which is why neutral-950 (#211E25)
- * reads near the brand (#221A2A) without being it (ΔE ≈ .019, different bytes,
- * different chroma) — and falls to ≈ .006 at the light steps, so page surfaces
- * and borders carry no visible purple cast. The dark ground/panel anchors stay
- * outside the ramp entirely (they are ladder values, not curve steps). */
+ * end — less than half ink-plum's .032, so the ramp's dark steps read as the
+ * brand's shadow without BEING the brand (neutral-950 is #211E25, the brand ink
+ * is #221A2A; ΔE2000 5.95) — and falls to ≈ .006 at the light steps, so page
+ * surfaces and borders carry no visible purple cast. The brand ink itself is
+ * not a ramp step: the light theme's text IS `--ink-plum` (D22), and the
+ * ramp's dark steps back the dark content and the scrim. The dark ground/panel
+ * anchors stay outside the ramp entirely (they are ladder values, not curve
+ * steps). */
 export const neutral = { hue: 305, maxChroma: 0.016 };
 
 /**
@@ -177,7 +177,7 @@ export function generateScale(steps, chromaAt, hueAt) {
 // ── authored ramps ───────────────────────────────────────────────────────────
 //
 // The operational families (mint = success, citron = warning, pink = error,
-// teal = info) are NOT generated from the shared lightness curve. Their
+// blue = info) are NOT generated from the shared lightness curve. Their
 // published candidates are deliberately uneven — a bright neon accent at one
 // end and a near-black surface at the other, with a different lightness per
 // hue — so the curve would move them. Instead each family PINS its candidates
@@ -275,18 +275,25 @@ export const functionalFamilies = {
     900: "#5B2043",
     950: "#351629",
   },
-  /** info — the cyan family pushed bluer at every step, related to the brand's
-   * vibrant-cyan by design and never a replacement for it. The separation is
-   * real in the deep steps the light theme reads (teal-800 vs cyan-700,
-   * ΔE .060) but tiny at 500 (ΔE .019, inside a JND) — there the roles, not
-   * the values, keep them apart. Measured; see decisions.md P4. */
-  teal: {
-    50: "#E5FBFF",
-    200: "#B1F7FF",
-    500: "#45E8FF",
-    700: "#087F99",
-    900: "#164653",
-    950: "#142831",
+  /** info — a true blue, NOT a second cyan. The family this replaces was a cyan
+   *  pushed a few degrees bluer: its 500 step sat at hue 209°, four degrees
+   *  from the brand's vibrant-cyan at 206°, and in the dark theme — where
+   *  `secondary` was the brand's vibrant-cyan and `info` was this family's
+   *  vivid step — the two read as one colour (ΔE2000 1.9, far inside a
+   *  just-noticeable difference; 8.9 in the light theme). The house rule "cyan
+   *  is not info" was met in name and broken in practice. These pins are a
+   *  genuine blue (hue 245°–258°), so `info` is far from the cyan that still
+   *  tints the page (`--color-tint-cyan`) and far from every fill role in both
+   *  themes. The secondary is no longer cyan at all (D22), but the cyan
+   *  family still carries a categorical role, so the family stays blue.
+   *  Measured; see decisions.md D21 and D22. */
+  blue: {
+    50: "#F0F8FF",
+    200: "#C6E4FF",
+    500: "#80C5FF",
+    700: "#2B75B9",
+    900: "#143B69",
+    950: "#0C2345",
   },
 };
 
@@ -295,28 +302,54 @@ export const authoredFamilies = new Set(Object.keys(functionalFamilies));
 
 
 // ── the scales ───────────────────────────────────────────────────────────────
+//
+// A ramp is generated over the shared lightness curve, but only the steps the
+// semantic layer reads are SURFACED as primitives. This is the point of the
+// small palette: a consumer does not browse a 12-step scale, it reads a role
+// that points at one step. `scaleSteps` is the authoritative list, and it is
+// exactly what tokens/semantic.mjs and tokens/themes.mjs reference. Add a step
+// here only when a role needs it.
 
-function familyScale({ hue, maxChroma, hueShift }) {
+function familyScale({ hue, maxChroma, hueShift }, steps) {
   return generateScale(
-    chromaticSteps,
+    steps,
     (l) => maxChroma * chromaEnvelope(l),
     (l) => hue + hueShift * (0.5 - l),
   );
 }
 
+/** Steps surfaced per family (the steps the semantic layer reads).
+ *
+ * A step is surfaced ONLY when a role reads it, and a role may only point at a
+ * surfaced step — so this list is the palette's surface area, not a wishlist.
+ * Three steps left the list with the semantic re-pointing (D22): neutral-0
+ * (the page is the brand `--white`, so the ramp no longer needs its own
+ * white), cyan-700 and tangerine-700 (the secondary and accent roles now sit
+ * on the brand anchors `--vibrant-purple` and `--vibrant-tangerine`). */
+export const scaleSteps = {
+  neutral: ["50", "100", "200", "400", "500", "600", "700", "800", "950"],
+  purple: ["100", "200", "300", "400", "500", "600", "700", "800", "900", "950"],
+  cyan: ["100", "900"],
+  tangerine: ["100", "900"],
+  mint: ["500", "700", "950"],
+  citron: ["500", "800", "950"],
+  pink: ["500", "700", "950"],
+  blue: ["500", "700", "950"],
+};
+
 export const scales = {
   neutral: generateScale(
-    neutralSteps,
+    scaleSteps.neutral,
     (l) => neutral.maxChroma * (0.35 + 0.65 * (1 - l)),
     () => neutral.hue,
   ),
-  purple: familyScale(families.purple),
-  cyan: familyScale(families.cyan),
-  tangerine: familyScale(families.tangerine),
-  mint: authoredScale(functionalFamilies.mint, chromaticSteps),
-  citron: authoredScale(functionalFamilies.citron, chromaticSteps),
-  pink: authoredScale(functionalFamilies.pink, chromaticSteps),
-  teal: authoredScale(functionalFamilies.teal, chromaticSteps),
+  purple: familyScale(families.purple, scaleSteps.purple),
+  cyan: familyScale(families.cyan, scaleSteps.cyan),
+  tangerine: familyScale(families.tangerine, scaleSteps.tangerine),
+  mint: authoredScale(functionalFamilies.mint, scaleSteps.mint),
+  citron: authoredScale(functionalFamilies.citron, scaleSteps.citron),
+  pink: authoredScale(functionalFamilies.pink, scaleSteps.pink),
+  blue: authoredScale(functionalFamilies.blue, scaleSteps.blue),
 };
 
 // ── the token map the build consumes ─────────────────────────────────────────

@@ -13,8 +13,9 @@
    Tokens consumed (component layer → semantic → primitive):
      --choice-size, --choice-gap, --choice-group-gap
        → --space-*, literal px
-     --color-action, --color-action-text, --color-surface, --color-border-strong,
-     --color-text, --color-text-muted, --color-focus-ring, --focus-ring-width,
+     --color-primary, --color-primary-content, --color-primary-hover,
+     --color-base-100, --color-base-content, --color-border-strong, --color-border-hover,
+     --color-text-muted, --color-focus-ring, --focus-ring-width,
      --border-width-strong, --radius-xl, --opacity-disabled, --duration-fast,
      --ease-standard
 

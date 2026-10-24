@@ -226,6 +226,90 @@ export function contrast(fg, bg) {
   return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
 }
 
+/** sRGB { r, g, b } (0–255) to CIE L*a*b* (D65). */
+export function srgbToLab({ r, g, b }) {
+  const c = [r, g, b].map((v) => {
+    const s = v / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  const x = (0.4124 * c[0] + 0.3576 * c[1] + 0.1805 * c[2]) / 0.95047;
+  const y = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  const z = (0.0193 * c[0] + 0.1192 * c[1] + 0.9505 * c[2]) / 1.08883;
+  const f = (v) => (v > 0.008856 ? Math.cbrt(v) : 7.787 * v + 16 / 116);
+  return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))];
+}
+
+/**
+ * CIEDE2000 colour difference between two CIE L*a*b* triples.
+ *
+ * Contrast says whether a foreground can be read on a background. It says
+ * nothing about whether two FILLS are the same colour — which is a separate
+ * question, and one a design system has to answer: a status badge that paints
+ * the same colour as a secondary button is a defect no contrast ratio catches.
+ * ΔE2000 is the standard perceptual metric for that; the plain Lab ΔE
+ * under-weights hue differences between two saturated colours at similar
+ * lightness, which is exactly the shape of the collision it has to catch.
+ *
+ * The formulation is Sharma, Wu & Dalal (2005), and the hue term is folded
+ * into [0, 360) before it is differenced — atan2 returns negative angles for
+ * the third and fourth quadrants, and an un-normalised hue silently reports
+ * two clearly different colours as identical.
+ */
+export function deltaE2000Lab([L1, a1, b1], [L2, a2, b2]) {
+  const rad = (deg) => (deg * Math.PI) / 180;
+  const C1 = Math.hypot(a1, b1);
+  const C2 = Math.hypot(a2, b2);
+  const Cbar = (C1 + C2) / 2;
+  const G = 0.5 * (1 - Math.sqrt(Cbar ** 7 / (Cbar ** 7 + 25 ** 7)));
+  const ap1 = (1 + G) * a1;
+  const ap2 = (1 + G) * a2;
+  const Cp1 = Math.hypot(ap1, b1);
+  const Cp2 = Math.hypot(ap2, b2);
+  const hue = (a, b) => {
+    if (a === 0 && b === 0) return 0;
+    const h = (Math.atan2(b, a) * 180) / Math.PI;
+    return h >= 0 ? h : h + 360;
+  };
+  const hp1 = hue(ap1, b1);
+  const hp2 = hue(ap2, b2);
+  const dL = L2 - L1;
+  const dC = Cp2 - Cp1;
+  let dh = 0;
+  if (Cp1 * Cp2 !== 0) {
+    dh = hp2 - hp1;
+    if (dh > 180) dh -= 360;
+    else if (dh < -180) dh += 360;
+  }
+  const dH = 2 * Math.sqrt(Cp1 * Cp2) * Math.sin(rad(dh) / 2);
+  const Lbar = (L1 + L2) / 2;
+  const Cpbar = (Cp1 + Cp2) / 2;
+  let hbar;
+  if (Cp1 * Cp2 === 0) hbar = hp1 + hp2;
+  else if (Math.abs(hp1 - hp2) <= 180) hbar = (hp1 + hp2) / 2;
+  else if (hp1 + hp2 < 360) hbar = (hp1 + hp2 + 360) / 2;
+  else hbar = (hp1 + hp2 - 360) / 2;
+  const T =
+    1 -
+    0.17 * Math.cos(rad(hbar - 30)) +
+    0.24 * Math.cos(rad(2 * hbar)) +
+    0.32 * Math.cos(rad(3 * hbar + 6)) -
+    0.2 * Math.cos(rad(4 * hbar - 63));
+  const dTheta = 30 * Math.exp(-(((hbar - 275) / 25) ** 2));
+  const Rc = 2 * Math.sqrt(Cpbar ** 7 / (Cpbar ** 7 + 25 ** 7));
+  const Sl = 1 + (0.015 * (Lbar - 50) ** 2) / Math.sqrt(20 + (Lbar - 50) ** 2);
+  const Sc = 1 + 0.045 * Cpbar;
+  const Sh = 1 + 0.015 * Cpbar * T;
+  const Rt = -Math.sin(rad(2 * dTheta)) * Rc;
+  return Math.sqrt(
+    (dL / Sl) ** 2 + (dC / Sc) ** 2 + (dH / Sh) ** 2 + Rt * (dC / Sc) * (dH / Sh),
+  );
+}
+
+/** CIEDE2000 colour difference between two sRGB { r, g, b } colours. */
+export function deltaE2000(fg, bg) {
+  return deltaE2000Lab(srgbToLab(fg), srgbToLab(bg));
+}
+
 /**
  * Premultiplied-alpha mix of two {r,g,b,a} at fraction `p` of `a`, per CSS
  * Color 5 §3.5. Returned channels are unrounded (0–255 float), so callers can

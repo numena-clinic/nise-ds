@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 import { layers, allTokens, layerOf, themes, primitives } from "./index.mjs";
 import { contrastChecks } from "./semantic.mjs";
 import { renderCss } from "./emit.mjs";
-import { expand, parseColor, contrast } from "./color.mjs";
+import { expand, parseColor, contrast, deltaE2000 } from "./color.mjs";
 import { refsOf, findCycles } from "./graph.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -130,7 +130,55 @@ for (const [themeId, map] of Object.entries(themeTokens)) {
   }
 }
 
-// ── 5: reproducibility ───────────────────────────────────────────────────────
+// ── 5: role distinguishability, in every theme ───────────────────────────────
+//
+// Contrast proves a foreground can be read on a background. It says nothing
+// about two FILLS being the same colour — a different question, and one the
+// system has to answer: a status badge that paints the colour of a secondary
+// button is a defect no contrast ratio can see. `--color-info` once sat
+// ΔE2000 2.9 from `--color-secondary` in the dark theme, because the info
+// family was a cyan and the dark secondary IS the brand's cyan.
+//
+// Every role that paints a fill must be separable from every other, in each
+// theme. The floor is a just-noticeable difference with room to spare: below
+// ~10, two saturated colours read as the same colour on screen.
+
+const FILL_ROLES = [
+  "--color-primary",
+  "--color-secondary",
+  "--color-accent",
+  "--color-success",
+  "--color-warning",
+  "--color-error",
+  "--color-info",
+];
+const MIN_DELTA_E = 10;
+
+const distinctRows = [];
+for (const [themeId, map] of Object.entries(themeTokens)) {
+  for (let i = 0; i < FILL_ROLES.length; i += 1) {
+    for (let j = i + 1; j < FILL_ROLES.length; j += 1) {
+      const a = FILL_ROLES[i];
+      const b = FILL_ROLES[j];
+      const colorA = parseColor(expand(a, map, [a], fail));
+      const colorB = parseColor(expand(b, map, [b], fail));
+      if (!colorA || !colorB) {
+        fail(`distinguishability (${themeId}): could not resolve ${a} / ${b}`);
+        continue;
+      }
+      const delta = deltaE2000(colorA, colorB);
+      const ok = delta + 1e-9 >= MIN_DELTA_E;
+      distinctRows.push({ themeId, a, b, delta, ok });
+      if (!ok) {
+        fail(
+          `distinguishability (${themeId}): ${a} and ${b} are the same colour (ΔE2000 ${delta.toFixed(1)}, needs ${MIN_DELTA_E})`,
+        );
+      }
+    }
+  }
+}
+
+// ── 6: reproducibility ───────────────────────────────────────────────────────
 
 let committed = null;
 try {
@@ -146,7 +194,7 @@ if (committed !== null && committed !== renderCss()) {
 
 const tokenCount = Object.keys(allTokens).length;
 console.log(
-  `tokens:validate — ${tokenCount} tokens across ${layers.length} layers, ${themes.length} theme(s)\n`,
+  `tokens:validate — ${tokenCount} tokens across ${layers.length} token layers + ${themes.length} theme layer(s)\n`,
 );
 for (const themeId of Object.keys(themeTokens)) {
   console.log(`contrast promises — ${themeId}:`);
@@ -155,6 +203,14 @@ for (const themeId of Object.keys(themeTokens)) {
     console.log(
       `  [${mark}] ${row.ratio.toFixed(2).padStart(6)}:1 (min ${row.min})  ${row.fg} on ${row.bg} — ${row.why}`,
     );
+  }
+  const rows = distinctRows.filter((x) => x.themeId === themeId);
+  const closest = rows.reduce((a, b) => (b.delta < a.delta ? b : a));
+  console.log(
+    `role distinguishability — ${themeId}: ${rows.length} pairs, closest ${closest.a} / ${closest.b} at ΔE2000 ${closest.delta.toFixed(1)} (min ${MIN_DELTA_E})`,
+  );
+  for (const row of rows) {
+    if (!row.ok) console.log(`  [FAIL] ${row.a} / ${row.b} — ΔE2000 ${row.delta.toFixed(1)}`);
   }
 }
 

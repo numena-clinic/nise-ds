@@ -32,8 +32,8 @@ body {
   font-family: var(--font-sans);
   font-size: var(--font-size-md);
   line-height: var(--line-height-normal);
-  color: var(--color-text);
-  background-color: var(--color-surface);
+  color: var(--color-base-content);
+  background-color: var(--color-base-100);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -51,7 +51,7 @@ h6 {
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 h1 {
@@ -104,7 +104,7 @@ textarea {
 
 ::selection {
   background-color: var(--color-tint-purple);
-  color: var(--color-tint-text);
+  color: var(--color-base-content);
 }
 
 /* Motion is reduced to nothing when the user asks for it

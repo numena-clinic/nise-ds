@@ -44,12 +44,16 @@ hint or error
 
 - Trigger height `--select-height` → `--control-height-md` (40px); padding,
   font size and item height come from the same `--control-*` slots.
+- The trigger reads as a text field, so it takes the field radius
+  `var(--select-radius, var(--radius-sm))` — the same as `TextField` — and its
+  border is `--color-border-strong`.
 - The open menu is a floating surface: `--shadow-md`, `--radius-md`,
-  `--color-surface`.
-- The reserved 16px indicator slot holds the check; the selected item is a tinted
-  tile (`--color-selected-surface`) with a distinct action foreground
-  (`--color-selected-text`) — selection is shown by **tile and foreground**, not
-  colour alone (iconography.md §4).
+  `--color-base-100`.
+- The reserved 16px indicator slot holds the check. The check is drawn in
+  `--color-selected-text` — the **same foreground as the selected item's text**,
+  so the mark and the label read as one signal — and the item is set in
+  `--font-weight-medium`. Selection is therefore carried by an icon and a
+  weight, not by colour alone (iconography.md §4).
 - The chevron is `ChevronDownIcon size={20}` — the brand's default icon size.
 
 ## Accessibility

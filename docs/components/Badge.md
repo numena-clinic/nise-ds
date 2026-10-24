@@ -11,15 +11,13 @@ A short, non-interactive label: a category, a source type, a count.
 
 - To carry an action — a badge is never interactive.
 - **To carry a verdict.** `tone` is categorical emphasis from the brand's support
-  tints; it is not a status. The palette "does not establish fixed colors for
-  clinical observations, evidence, hypotheses, decisions, or system statuses"
+  tints; it is not a status. A categorical accent is emphasis, never a verdict
   (color.md §4), and an icon or label must not "deliver a verdict"
   (iconography.md §5). A badge meaning "improving" or "at risk" is a misuse —
   the wording would be doing the work anyway, with colour implying a judgement
-  the system has not made. The operational roles added by decisions.md P4 are
-  for machine states (saved, failed) and are deliberately not offered as `tone`
-  options; a clinical reading of a tinted badge is exactly what both rules
-  exist to prevent.
+  the system has not made. The status roles (success / warning / error / info)
+  report a machine state and are deliberately not offered as `tone` options; a
+  clinical reading of a tinted badge is exactly what the rule exists to prevent.
 
 ## Props
 
@@ -37,8 +35,8 @@ A short, non-interactive label: a category, a source type, a count.
 ```
 
 - Radius is `--radius-full` (`--badge-radius`), so the pill shape is a token.
-- Text is `--color-tint-text` on the tint surface; `neutral` uses
-  `--color-surface-subtle`. Every tone is a tint of a brand family, validated
+- Text is `--color-base-content` on the tint surface; `neutral` uses
+  `--color-base-200`. Every tone is a tint of a brand family, validated
   for contrast.
 
 ## Accessibility

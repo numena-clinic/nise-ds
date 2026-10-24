@@ -1,9 +1,9 @@
 .nise-tooltip__content {
   padding: var(--tooltip-padding-y) var(--tooltip-padding-x);
   border-radius: var(--radius-md);
-  border: var(--border-width) solid var(--color-border-strong);
-  background-color: var(--color-surface);
-  color: var(--color-text);
+  border: var(--border-width) solid var(--color-border);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
   font-family: var(--font-sans);
   font-size: var(--tooltip-font-size);
   line-height: var(--line-height-snug);

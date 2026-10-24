@@ -9,10 +9,23 @@
 
 import type { ReactNode } from "react";
 import {
+  Alert,
+  AspectRatio,
+  Avatar,
   Badge,
+  Breadcrumb,
+  BreadcrumbEllipsis,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
   Button,
   Card,
   Checkbox,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Dialog,
   DialogClose,
   DialogContent,
@@ -21,8 +34,21 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Empty,
+  Kbd,
+  Label,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  Progress,
   Radio,
   Select,
+  Separator,
+  Skeleton,
   Slider,
   Switch,
   Table,
@@ -30,14 +56,20 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Textarea,
   TextField,
+  Timeline,
+  TimelineItem,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
   TooltipContent,
   TooltipRoot,
   TooltipTrigger,
 } from "../../index";
 import { CheckIcon, InfoIcon, PlusIcon } from "../../icons";
 import { InformationReview } from "../../compositions/InformationReview";
-import { ALL_TOKENS, LAYERS } from "../theme/tokens";
+import { ALL_TOKENS, INFO_BY_NAME, LAYERS, isAnchorRole } from "../theme/tokens";
 import { resolve } from "../theme/theme";
 import { Block, Cell, Column, Row } from "./specimen";
 import { brandAnchors, colorMeta, groundAnchors, oklchOf, scales } from "../../../tokens/palette.mjs";
@@ -210,20 +242,43 @@ const sortedTokens = (pattern: RegExp) =>
       return na - nb || a.localeCompare(b);
     });
 
-function SwatchGrid({ tokens, map }: { tokens: string[]; map: Readonly<Record<string, string>> }) {
+/** A role is "brand-backed" when it reads a brand anchor rather than a ramp
+ *  step: the page, the body text, the secondary, the accent and the primary
+ *  do (D22), and their value is fixed by numena-brand. */
+function isBrandBacked(name: string): string | null {
+  const ref = INFO_BY_NAME[name]?.ref;
+  return isAnchorRole(name, ref) ? "brand" : null;
+}
+
+function SwatchGrid({
+  tokens,
+  map,
+  mark,
+}: {
+  tokens: string[];
+  map: Readonly<Record<string, string>>;
+  /** Optional tag for a token — "brand" when the role reads a brand anchor. */
+  mark?: (name: string) => string | null;
+}) {
   return (
     <ul className="nise-pv__swatches">
-      {tokens.map((name) => (
-        <li key={name} className="nise-pv__swatch">
-          <span
-            className="nise-explorer__swatch nise-pv__swatch-chip"
-            style={{ background: `var(${name})` }}
-            aria-hidden="true"
-          />
-          <span className="nise-pv__swatch-name">{name.replace(/^--color-/, "")}</span>
-          <code className="nise-pv__swatch-value">{resolve(name, map)}</code>
-        </li>
-      ))}
+      {tokens.map((name) => {
+        const tag = mark?.(name) ?? null;
+        return (
+          <li key={name} className="nise-pv__swatch">
+            <span
+              className="nise-explorer__swatch nise-pv__swatch-chip"
+              style={{ background: `var(${name})` }}
+              aria-hidden="true"
+            />
+            <span className="nise-pv__swatch-name">
+              {name.replace(/^--color-/, "")}
+              {tag ? <span className="nise-pv__swatch-tag">{tag}</span> : null}
+            </span>
+            <code className="nise-pv__swatch-value">{resolve(name, map)}</code>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -312,7 +367,7 @@ function ColourPage({ map }: PageRenderContext) {
 
       <ColourSection
         title="Brand anchors"
-        note="The ten brand hex, unchanged (numena-brand color.md §2). Artwork and marketing surfaces use these directly; product components use the semantic roles below."
+        note="The ten brand hex, unchanged (numena-brand color.md §2). Since D22 six of them are load-bearing — white paints the page, the ink paints the body text, and the pale lavender, the deep purple, the vibrant purple and the tangerine paint the panel, the primary, the secondary and the accent fills — so the interface is literally the brand's own colours. The remaining anchors are for artwork and marketing surfaces; product components use the semantic roles below, and a role tagged 'brand' reads an anchor."
       >
         <div className="nise-pv__role-groups">
           {ANCHOR_CATEGORIES.map((group) => (
@@ -351,12 +406,12 @@ function ColourPage({ map }: PageRenderContext) {
 
       <ColourSection
         title="Semantic roles"
-        note="One contract of role names, grouped by meaning; each resolves against the palette above under your current edits and the selected mapping."
+        note="One contract of role names, grouped by meaning; each resolves against the palette above under your current edits and the selected mapping. A role tagged 'brand' reads a brand anchor — the value is fixed by numena-brand, though the role itself can be re-pointed."
       >
         <div className="nise-pv__role-groups">
           {ROLE_GROUPS.map((group) => (
             <ColourSection key={group.label} title={group.label} note={group.note}>
-              <SwatchGrid tokens={group.tokens} map={map} />
+              <SwatchGrid tokens={group.tokens} map={map} mark={isBrandBacked} />
             </ColourSection>
           ))}
         </div>
@@ -488,10 +543,10 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         title="Button"
         note="three variants, three sizes"
         tokens={[
-          "--color-action",
-          "--color-action-hover",
-          "--color-action-text",
-          "--color-text",
+          "--color-primary",
+          "--color-primary-hover",
+          "--color-primary-content",
+          "--color-base-content",
           "--color-border-strong",
           "--radius-sm",
           "--control-height-md",
@@ -544,11 +599,11 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         title="Badge"
         note="categorical tones, never verdicts"
         tokens={[
-          "--color-text",
-          "--color-accent-purple-surface",
-          "--color-accent-purple-text",
-          "--color-accent-cyan-surface",
-          "--color-accent-tangerine-surface",
+          "--color-base-200",
+          "--color-base-content",
+          "--color-tint-purple",
+          "--color-tint-cyan",
+          "--color-tint-tangerine",
           "--badge-radius",
         ]}
       >
@@ -579,7 +634,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="card"
         title="Card"
         note="heading, description, actions, footer"
-        tokens={["--color-surface", "--color-border", "--color-text", "--radius-md", "--card-padding", "--card-gap"]}
+        tokens={["--color-base-100", "--color-border", "--color-base-content", "--radius-md", "--card-padding", "--card-gap"]}
       >
         <Row>
           <Cell label="with footer">
@@ -619,11 +674,11 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         title="TextField"
         note="label always visible"
         tokens={[
-          "--color-surface",
+          "--color-base-100",
           "--color-border-strong",
           "--color-border-hover",
           "--color-focus-ring",
-          "--color-text",
+          "--color-base-content",
           "--color-text-muted",
           "--input-height",
         ]}
@@ -659,7 +714,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="select"
         title="Select"
         note="portalled options inherit the scoped theme"
-        tokens={["--color-surface", "--color-border-strong", "--color-border-hover", "--color-focus-ring", "--select-height"]}
+        tokens={["--color-base-100", "--color-border-strong", "--color-border-hover", "--color-focus-ring", "--select-height"]}
       >
         <Row>
           <Cell label="default">
@@ -700,7 +755,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="checkbox"
         title="Checkbox"
         note="never colour alone"
-        tokens={["--color-action", "--color-surface", "--color-border-strong", "--color-focus-ring", "--choice-size"]}
+        tokens={["--color-primary", "--color-base-100", "--color-border-strong", "--color-focus-ring", "--choice-size"]}
       >
         <Row>
           <Cell label="default">
@@ -723,7 +778,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="radio"
         title="Radio"
         note="one choice from a named group"
-        tokens={["--color-action", "--color-surface", "--color-border-strong", "--color-focus-ring", "--choice-size"]}
+        tokens={["--color-primary", "--color-base-100", "--color-border-strong", "--color-focus-ring", "--choice-size"]}
       >
         <Row>
           <Cell label="group">
@@ -747,7 +802,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="switch"
         title="Switch"
         note="an immediate binary setting"
-        tokens={["--color-action", "--color-surface", "--color-border-strong", "--color-focus-ring", "--switch-width"]}
+        tokens={["--color-primary", "--color-base-100", "--color-border-strong", "--color-focus-ring", "--switch-width"]}
       >
         <Row>
           <Cell label="off">
@@ -770,7 +825,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="slider"
         title="Slider"
         note="Radix-backed; keyboard and pointer"
-        tokens={["--color-action", "--color-border", "--slider-track-height", "--slider-thumb-size", "--color-focus-ring"]}
+        tokens={["--color-primary", "--color-border", "--slider-track-height", "--slider-thumb-size", "--color-focus-ring"]}
       >
         <Row>
           <Cell label="with label">
@@ -793,7 +848,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="tabs"
         title="Tabs"
         note="roving tabindex from Radix"
-        tokens={["--color-surface-subtle", "--color-text", "--color-text-muted", "--tab-padding-x", "--tab-height"]}
+        tokens={["--color-base-200", "--color-base-content", "--color-text-muted", "--tab-padding-x", "--tab-height"]}
       >
         <Tabs defaultValue="all">
           <TabsList>
@@ -818,7 +873,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="tooltip"
         title="Tooltip"
         note="supplemental, never load-bearing"
-        tokens={["--color-surface", "--color-border", "--tooltip-padding-x"]}
+        tokens={["--color-base-100", "--color-border", "--tooltip-padding-x"]}
       >
         <Row>
           <Cell label="on an icon button">
@@ -847,7 +902,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         id="dialog"
         title="Dialog"
         note="modal confirmation"
-        tokens={["--color-scrim", "--color-surface", "--color-border-strong", "--dialog-width", "--dialog-padding"]}
+        tokens={["--color-scrim", "--color-base-100", "--color-border-strong", "--dialog-width", "--dialog-padding"]}
       >
         <Row>
           <Cell label="confirm">
@@ -886,9 +941,9 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         title="Table"
         note="small datasets, real table semantics"
         tokens={[
-          "--color-surface",
+          "--color-base-100",
           "--color-border",
-          "--color-text",
+          "--color-base-content",
           "--color-text-muted",
           "--table-cell-padding-x",
           "--table-cell-padding-y",
@@ -898,10 +953,600 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
           caption="Colour roles and their literal values"
           header={["Token", "Layer", "Value"]}
           rows={[
-            { key: "action", cells: ["--color-action", "semantic", "var(--deep-purple)"] },
+            { key: "action", cells: ["--color-primary", "semantic", "var(--deep-purple)"] },
             { key: "radius", cells: ["--radius-md", "primitive", "8px"] },
           ]}
         />
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-alert",
+    label: "Alert",
+    title: "Alert",
+    note: "machine-state banner — info, success, warning, error",
+    render: () => (
+      <Block
+        id="alert"
+        title="Alert"
+        note="machine-state banner — info, success, warning, error"
+        tokens={[
+          "--color-info",
+          "--color-success",
+          "--color-warning",
+          "--color-error",
+          "--color-base-100",
+          "--color-base-content",
+          "--alert-padding",
+        ]}
+      >
+        <Column>
+          <Alert variant="info" title="Session export scheduled">
+            The PDF will be ready in your downloads folder within a minute.
+          </Alert>
+          <Alert variant="success" title="Note saved">
+            All changes have been committed to the record.
+          </Alert>
+          <Alert variant="warning" title="Draft unsaved">
+            Close or navigate away will discard unsaved changes.
+          </Alert>
+          <Alert variant="error" title="Sync failed">
+            The record could not be pushed. Check your connection and retry.
+          </Alert>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-avatar",
+    label: "Avatar",
+    title: "Avatar",
+    note: "person identity — image with initials fallback",
+    render: () => (
+      <Block
+        id="avatar"
+        title="Avatar"
+        note="person identity — image with initials fallback"
+        tokens={[
+          "--color-tint-purple",
+          "--color-base-content",
+          "--radius-full",
+          "--control-height-sm",
+          "--control-height-md",
+          "--control-height-lg",
+        ]}
+      >
+        <Row>
+          <Cell label="small">
+            <Avatar fallback="AM" size="sm" />
+          </Cell>
+          <Cell label="medium">
+            <Avatar fallback="MC" size="md" />
+          </Cell>
+          <Cell label="large">
+            <Avatar fallback="JS" size="lg" />
+          </Cell>
+          <Cell label="with image">
+            <Avatar src="/avatar.png" alt="Amina Mensah" fallback="AM" size="md" />
+          </Cell>
+        </Row>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-progress",
+    label: "Progress",
+    title: "Progress",
+    note: "determinate and indeterminate meter",
+    render: () => (
+      <Block
+        id="progress"
+        title="Progress"
+        note="determinate and indeterminate meter"
+        tokens={[
+          "--color-primary",
+          "--color-base-200",
+          "--progress-height",
+          "--radius-full",
+        ]}
+      >
+        <Column>
+          <Progress value={40} max={100} aria-label="Session export — 40%" />
+          <Progress value={75} max={100} aria-label="Upload — 75%" />
+          <Progress value={null} aria-label="Syncing record…" />
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-skeleton",
+    label: "Skeleton",
+    title: "Skeleton",
+    note: "loading placeholder — aria-hidden, never the sole loading signal",
+    render: () => (
+      <Block
+        id="skeleton"
+        title="Skeleton"
+        note="loading placeholder — aria-hidden, never the sole loading signal"
+        tokens={[
+          "--color-base-200",
+          "--duration-slow",
+          "--ease-standard",
+          "--skeleton-radius",
+        ]}
+      >
+        <Column>
+          <Skeleton style={{ width: "100%", height: "var(--control-height-md)" }} />
+          <Skeleton style={{ width: "60%", height: "var(--control-height-md)" }} />
+          <Skeleton style={{ width: "80%", height: "var(--space-8)" }} />
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-separator",
+    label: "Separator",
+    title: "Separator",
+    note: "hairline between sections",
+    render: () => (
+      <Block
+        id="separator"
+        title="Separator"
+        note="hairline between sections"
+        tokens={["--color-border", "--separator-thickness"]}
+      >
+        <Column>
+          <span>Session details</span>
+          <Separator />
+          <span>Attachments</span>
+          <Separator />
+          <span>History</span>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-kbd",
+    label: "Kbd",
+    title: "Kbd",
+    note: "keyboard shortcut label",
+    render: () => (
+      <Block
+        id="kbd"
+        title="Kbd"
+        note="keyboard shortcut label"
+        tokens={[
+          "--color-base-200",
+          "--color-base-content",
+          "--color-border",
+          "--kbd-height",
+          "--kbd-padding-x",
+          "--kbd-font-size",
+          "--radius-sm",
+        ]}
+      >
+        <Row>
+          <Cell label="single key">
+            <Kbd>⌘</Kbd>
+          </Cell>
+          <Cell label="combo">
+            <span style={{ display: "flex", gap: "var(--space-1)", alignItems: "center" }}>
+              <Kbd>⌘</Kbd>
+              <Kbd>K</Kbd>
+            </span>
+          </Cell>
+          <Cell label="save shortcut">
+            <span style={{ display: "flex", gap: "var(--space-1)", alignItems: "center" }}>
+              <Kbd>⌘</Kbd>
+              <Kbd>S</Kbd>
+            </span>
+          </Cell>
+        </Row>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-label",
+    label: "Label",
+    title: "Label",
+    note: "field label — pairs with a form control",
+    render: () => (
+      <Block
+        id="label"
+        title="Label"
+        note="field label — pairs with a form control"
+        tokens={[
+          "--color-base-content",
+          "--color-text-muted",
+          "--font-size-sm",
+          "--font-size-xs",
+          "--font-weight-medium",
+        ]}
+      >
+        <Column>
+          <Label htmlFor="demo-label-sm" size="sm">Small label</Label>
+          <Label htmlFor="demo-label-md">Default label</Label>
+          <Label htmlFor="demo-label-req" required>Required field</Label>
+          <Label htmlFor="demo-label-hint" hint="How the client would like to be addressed.">
+            Preferred name
+          </Label>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-textarea",
+    label: "Textarea",
+    title: "Textarea",
+    note: "multi-line text control — same field skeleton as TextField",
+    render: () => (
+      <Block
+        id="textarea"
+        title="Textarea"
+        note="multi-line text control — same field skeleton as TextField"
+        tokens={[
+          "--color-base-100",
+          "--color-border-strong",
+          "--color-border-hover",
+          "--color-focus-ring",
+          "--color-base-content",
+          "--textarea-min-height",
+        ]}
+      >
+        <Row>
+          <Cell label="default">
+            <Textarea label="Session notes" defaultValue="Client reported improved sleep patterns over the past fortnight." />
+          </Cell>
+          <Cell label="error">
+            <Textarea label="Clinical observations" error="Notes are required before signing off." />
+          </Cell>
+          <Cell label="disabled">
+            <Textarea label="Archived notes" defaultValue="Locked after discharge." disabled />
+          </Cell>
+        </Row>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-breadcrumb",
+    label: "Breadcrumb",
+    title: "Breadcrumb",
+    note: "navigational hierarchy",
+    render: () => (
+      <Block
+        id="breadcrumb"
+        title="Breadcrumb"
+        note="navigational hierarchy"
+        tokens={[
+          "--color-link",
+          "--color-link-hover",
+          "--color-text-muted",
+          "--color-base-content",
+          "--font-size-sm",
+        ]}
+      >
+        <Column>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">Workspace</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">Maya Calderón</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Session 4</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">Workspace</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbEllipsis />
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Session 4</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-pagination",
+    label: "Pagination",
+    title: "Pagination",
+    note: "page navigation for record lists",
+    render: () => (
+      <Block
+        id="pagination"
+        title="Pagination"
+        note="page navigation for record lists"
+        tokens={[
+          "--color-text-muted",
+          "--color-base-hover",
+          "--color-base-content",
+          "--color-tint-purple",
+          "--color-focus-ring",
+          "--button-height-sm",
+          "--radius-sm",
+        ]}
+      >
+        <Column>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious href="#" />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">1</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#" isActive>2</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">3</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">12</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext href="#" />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-collapsible",
+    label: "Collapsible",
+    title: "Collapsible",
+    note: "disclosure region — details/summary native",
+    render: () => (
+      <Block
+        id="collapsible"
+        title="Collapsible"
+        note="disclosure region — details/summary native"
+        tokens={[
+          "--color-base-content",
+          "--color-base-hover",
+          "--color-focus-ring",
+          "--radius-sm",
+          "--space-2",
+        ]}
+      >
+        <Column>
+          <Collapsible>
+            <CollapsibleTrigger>Advanced export options</CollapsibleTrigger>
+            <CollapsibleContent>
+              <Column>
+                <Checkbox label="Include archived notes" />
+                <Checkbox label="Redact personally identifiable fields" defaultChecked />
+              </Column>
+            </CollapsibleContent>
+          </Collapsible>
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger>Clinical history</CollapsibleTrigger>
+            <CollapsibleContent>
+              <p style={{ margin: 0, fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)" }}>
+                Four sessions completed. Next review in two weeks.
+              </p>
+            </CollapsibleContent>
+          </Collapsible>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-empty",
+    label: "Empty",
+    title: "Empty",
+    note: "empty state — no records yet",
+    render: () => (
+      <Block
+        id="empty"
+        title="Empty"
+        note="empty state — no records yet"
+        tokens={[
+          "--color-tint-purple",
+          "--color-base-content",
+          "--color-text-muted",
+          "--empty-padding",
+          "--empty-gap",
+          "--radius-full",
+        ]}
+      >
+        <Row>
+          <Cell label="no sessions">
+            <Empty
+              title="No sessions recorded"
+              description="Add the first session note to start building this client's record."
+              action={<Button size="sm">Add session</Button>}
+            />
+          </Cell>
+          <Cell label="no results">
+            <Empty
+              title="No results"
+              description="Try adjusting your search filters."
+            />
+          </Cell>
+        </Row>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-timeline",
+    label: "Timeline",
+    title: "Timeline",
+    note: "vertical event history",
+    render: () => (
+      <Block
+        id="timeline"
+        title="Timeline"
+        note="vertical event history"
+        tokens={[
+          "--color-primary",
+          "--color-tint-purple",
+          "--color-border",
+          "--color-base-content",
+          "--color-text-muted",
+          "--timeline-dot",
+          "--timeline-gap",
+          "--timeline-rail",
+        ]}
+      >
+        <Column>
+          <Timeline>
+            <TimelineItem variant="done" title="Intake form completed" meta="12 Mar · Amina Mensah" />
+            <TimelineItem variant="done" title="Session 1 — note saved" meta="19 Mar · Amina Mensah" />
+            <TimelineItem variant="current" title="Session 2 — in progress" meta="26 Mar" />
+            <TimelineItem variant="upcoming" title="Session 3 — scheduled" meta="9 Apr" />
+          </Timeline>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-toggle",
+    label: "Toggle",
+    title: "Toggle",
+    note: "pressed/unpressed toolbar control",
+    render: () => (
+      <Block
+        id="toggle"
+        title="Toggle"
+        note="pressed/unpressed toolbar control"
+        tokens={[
+          "--color-selected-surface",
+          "--color-selected-text",
+          "--color-primary",
+          "--color-base-hover",
+          "--button-height-md",
+          "--button-padding-x-md",
+        ]}
+      >
+        <Row>
+          <Cell label="unpressed">
+            <Toggle>Bold</Toggle>
+          </Cell>
+          <Cell label="pressed">
+            <Toggle defaultPressed>Italic</Toggle>
+          </Cell>
+          <Cell label="small">
+            <Toggle size="sm" defaultPressed>Filter</Toggle>
+          </Cell>
+          <Cell label="large">
+            <Toggle size="lg">Expand</Toggle>
+          </Cell>
+          <Cell label="disabled">
+            <Toggle disabled>Locked</Toggle>
+          </Cell>
+        </Row>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-togglegroup",
+    label: "ToggleGroup",
+    title: "ToggleGroup",
+    note: "single or multi-selection toolbar group",
+    render: () => (
+      <Block
+        id="togglegroup"
+        title="ToggleGroup"
+        note="single or multi-selection toolbar group"
+        tokens={[
+          "--color-selected-surface",
+          "--color-selected-text",
+          "--color-primary",
+          "--color-base-hover",
+          "--radius-sm",
+        ]}
+      >
+        <Column>
+          <ToggleGroup type="single" label="View mode" defaultValue="note">
+            <ToggleGroupItem value="note">Session note</ToggleGroupItem>
+            <ToggleGroupItem value="summary">Summary</ToggleGroupItem>
+            <ToggleGroupItem value="history">History</ToggleGroupItem>
+          </ToggleGroup>
+          <ToggleGroup type="multi" label="Overlay layers" defaultValue={["transcript"]}>
+            <ToggleGroupItem value="transcript">Transcript</ToggleGroupItem>
+            <ToggleGroupItem value="annotations">Annotations</ToggleGroupItem>
+            <ToggleGroupItem value="flags">Flags</ToggleGroupItem>
+          </ToggleGroup>
+        </Column>
+      </Block>
+    ),
+  },
+  {
+    id: "cmp-aspectratio",
+    label: "AspectRatio",
+    title: "AspectRatio",
+    note: "reserved frame for charts and media",
+    render: () => (
+      <Block
+        id="aspectratio"
+        title="AspectRatio"
+        note="reserved frame for charts and media"
+        tokens={["--color-tint-cyan", "--radius-md"]}
+      >
+        <Row>
+          <Cell label="16 / 9">
+            <div style={{ width: 240 }}>
+              <AspectRatio ratio={16 / 9}>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: "var(--color-tint-cyan)",
+                    borderRadius: "var(--radius-md)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "var(--font-size-sm)",
+                    color: "var(--color-base-content)",
+                  }}
+                >
+                  16 : 9
+                </div>
+              </AspectRatio>
+            </div>
+          </Cell>
+          <Cell label="4 / 3">
+            <div style={{ width: 240 }}>
+              <AspectRatio ratio={4 / 3}>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: "var(--color-tint-purple)",
+                    borderRadius: "var(--radius-md)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "var(--font-size-sm)",
+                    color: "var(--color-base-content)",
+                  }}
+                >
+                  4 : 3
+                </div>
+              </AspectRatio>
+            </div>
+          </Cell>
+        </Row>
       </Block>
     ),
   },
@@ -923,14 +1568,14 @@ export const PATTERN_PAGES: SpecimenPage[] = [
         title="Session note"
         note="a composed intake form demonstrating fields, borders and states"
         tokens={[
-          "--color-surface",
+          "--color-base-100",
           "--color-border-strong",
           "--color-border-hover",
           "--color-border-error",
-          "--color-action",
-          "--color-action-hover",
-          "--color-action-text",
-          "--color-text",
+          "--color-primary",
+          "--color-primary-hover",
+          "--color-primary-content",
+          "--color-base-content",
           "--color-text-muted",
           "--control-height-md",
           "--field-gap",
@@ -979,18 +1624,18 @@ export const PATTERN_PAGES: SpecimenPage[] = [
         title="Assessment rating"
         note="diagnostic severity score, symptom tabs and choice controls"
         tokens={[
-          "--color-surface",
-          "--color-surface-hover",
-          "--color-surface-active",
-          "--color-action",
-          "--color-action-hover",
-          "--color-action-text",
+          "--color-base-100",
+          "--color-base-hover",
+          "--color-base-active",
+          "--color-primary",
+          "--color-primary-hover",
+          "--color-primary-content",
           "--color-border-strong",
           "--color-border-hover",
           "--color-focus-ring",
           "--color-selected-surface",
           "--color-selected-text",
-          "--color-text",
+          "--color-base-content",
           "--color-text-muted",
           "--color-tint-purple",
           "--color-tint-cyan",
@@ -1069,12 +1714,12 @@ export const PATTERN_PAGES: SpecimenPage[] = [
         title="Review queue"
         note="a compact list of items with actions"
         tokens={[
-          "--color-surface",
-          "--color-surface-hover",
+          "--color-base-100",
+          "--color-base-hover",
           "--color-border",
-          "--color-text",
+          "--color-base-content",
           "--color-text-muted",
-          "--color-accent-cyan-surface",
+          "--color-tint-cyan",
         ]}
       >
         <Column>
@@ -1121,8 +1766,8 @@ export const PATTERN_PAGES: SpecimenPage[] = [
         title="Summary"
         note="a small dashboard of metrics"
         tokens={[
-          "--color-surface-subtle",
-          "--color-text",
+          "--color-base-200",
+          "--color-base-content",
           "--color-text-muted",
           "--font-size-3xl",
           "--font-size-xs",
@@ -1157,7 +1802,7 @@ export const PATTERN_PAGES: SpecimenPage[] = [
         title="Preferences"
         note="a preferences panel with controls"
         tokens={[
-          "--color-surface",
+          "--color-base-100",
           "--color-border",
           "--color-selected-surface",
           "--color-focus-ring",
@@ -1206,13 +1851,13 @@ export const PATTERN_PAGES: SpecimenPage[] = [
         title="Case discharge"
         note="critical action workflow with boundary confirmation and modal"
         tokens={[
-          "--color-surface",
+          "--color-base-100",
           "--color-border-error",
           "--color-border-strong",
           "--color-border-hover",
-          "--color-action",
-          "--color-action-hover",
-          "--color-text",
+          "--color-primary",
+          "--color-primary-hover",
+          "--color-base-content",
           "--color-text-muted",
           "--color-focus-ring",
           "--dialog-padding",
@@ -1280,16 +1925,16 @@ export const PATTERN_PAGES: SpecimenPage[] = [
         title="Information review"
         note="the complete Numena reference clinical workspace composition"
         tokens={[
-          "--color-surface",
-          "--color-surface-subtle",
-          "--color-surface-hover",
+          "--color-base-100",
+          "--color-base-200",
+          "--color-base-hover",
           "--color-border",
           "--color-border-strong",
-          "--color-action",
-          "--color-action-hover",
+          "--color-primary",
+          "--color-primary-hover",
           "--color-selected-surface",
           "--color-selected-text",
-          "--color-text",
+          "--color-base-content",
           "--color-text-muted",
           "--color-focus-ring",
         ]}

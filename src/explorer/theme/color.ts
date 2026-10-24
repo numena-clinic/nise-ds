@@ -6,7 +6,6 @@
 // source.
 
 import { hexToRgb } from "../../../tokens/color.mjs";
-import { ALL_TOKENS } from "./tokens";
 
 export interface Rgb {
   r: number;
@@ -84,19 +83,4 @@ export function hslToHex({ h, s, l }: Hsl): string {
       .padStart(2, "0")
       .toUpperCase();
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-}
-
-/** Readable label for a lightness band — used to pick ink or inverted text. */
-export function luminanceOf(hex: string): number {
-  const { r, g, b } = hexToRgb(normalizeHex(hex)) as Rgb;
-  const f = (v: number) => {
-    const c = v / 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
-}
-
-/** Ink or inverted text, whichever reads better on this surface. */
-export function contrastOn(hex: string): string {
-  return luminanceOf(hex) > 0.45 ? ALL_TOKENS["--ink-plum"]! : ALL_TOKENS["--white"]!;
 }

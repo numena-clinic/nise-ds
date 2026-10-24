@@ -8,8 +8,8 @@
   height: var(--input-height);
   padding-inline: var(--input-padding-x);
   font-size: var(--input-font-size);
-  color: var(--color-text);
-  background-color: var(--color-surface);
+  color: var(--color-base-content);
+  background-color: var(--color-base-100);
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--input-radius, var(--radius-sm));
   transition: border-color var(--duration-fast) var(--ease-standard);

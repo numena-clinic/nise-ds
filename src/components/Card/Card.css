@@ -4,8 +4,8 @@
   gap: var(--card-gap);
   padding: var(--card-padding);
   font-family: var(--font-sans);
-  color: var(--color-text);
-  background-color: var(--color-surface);
+  color: var(--color-base-content);
+  background-color: var(--color-base-100);
   border: var(--card-border-width) solid var(--color-border);
   border-radius: var(--card-radius, var(--radius-md));
   box-shadow: var(--shadow-sm);

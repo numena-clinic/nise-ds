@@ -1,6 +1,8 @@
 @import "../../styles/field.css";
 
-/* The trigger reads as a text field; the popup is a floating surface. */
+/* The trigger reads as a text field; the popup is a floating surface. So the
+   trigger takes the field's radius (`--radius-sm`, the TextField default) and
+   the menu takes the surface radius (`--radius-md`, as Dialog and Tooltip). */
 
 .nise-select__trigger {
   display: inline-flex;
@@ -11,11 +13,11 @@
   height: var(--select-height);
   padding-inline: var(--select-padding-x);
   font-size: var(--select-font-size);
-  color: var(--color-text);
+  color: var(--color-base-content);
   text-align: left;
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--select-radius, var(--radius-xl));
+  border-radius: var(--select-radius, var(--radius-sm));
   cursor: pointer;
   transition: border-color var(--duration-fast) var(--ease-standard);
 }
@@ -48,12 +50,12 @@
 .nise-select__chevron {
   display: inline-flex;
   flex-shrink: 0;
-  color: var(--color-text);
+  color: var(--color-base-content);
   transition: color var(--duration-fast) var(--ease-standard);
 }
 
 .nise-select__trigger:hover:not(:disabled) .nise-select__chevron {
-  color: var(--color-action);
+  color: var(--color-primary);
 }
 
 /* popup */
@@ -62,9 +64,9 @@
   min-width: var(--radix-select-trigger-width);
   max-height: var(--radix-select-content-available-height);
   padding: var(--space-1);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   animation: nise-select-in var(--duration-fast) var(--ease-standard);
 }
@@ -81,7 +83,7 @@
   min-height: var(--select-item-height);
   padding-inline: var(--space-2);
   font-size: var(--select-font-size);
-  color: var(--color-text);
+  color: var(--color-base-content);
   border-radius: var(--radius-sm);
   cursor: pointer;
   outline: none;
@@ -90,7 +92,7 @@
 }
 
 .nise-select__item[data-highlighted] {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-base-hover);
 }
 
 .nise-select__item[data-state="checked"] {
@@ -112,7 +114,9 @@
 .nise-select__indicator {
   display: inline-flex;
   flex-shrink: 0;
-  color: var(--color-action);
+  /* The check carries the same foreground as the selected item's text, so the
+     mark and the label read as one signal. */
+  color: var(--color-selected-text);
 }
 
 @keyframes nise-select-in {

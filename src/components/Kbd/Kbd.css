@@ -1,0 +1,14 @@
+.nise-kbd {
+  display: inline-flex;
+  align-items: center;
+  height: var(--kbd-height);
+  padding-inline: var(--kbd-padding-x);
+  font-family: var(--font-sans);
+  font-size: var(--kbd-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  color: var(--color-base-content);
+  background-color: var(--color-base-200);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--kbd-radius, var(--radius-sm));
+}

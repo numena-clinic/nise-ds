@@ -58,8 +58,8 @@ describe("planPromotion (against the real token source)", () => {
   it("recognises editable and non-editable tokens", () => {
     expect(isPrimitiveLiteral("--deep-purple")).toBe(true);
     expect(isPrimitiveLiteral("--purple-600")).toBe(true);
-    expect(isColorRole("--color-surface")).toBe(true);
-    expect(isColorRole("--color-action")).toBe(true);
+    expect(isColorRole("--color-base-100")).toBe(true);
+    expect(isColorRole("--color-primary")).toBe(true);
     expect(isColorRole("--color-scrim")).toBe(false);
     expect(isColorRole("--focus-ring-width")).toBe(false);
   });
@@ -82,10 +82,10 @@ describe("planPromotion (against the real token source)", () => {
     const plan = planPromotion(root, {
       schema: "nise.theme-candidate",
       version: 1,
-      tokens: [{ name: "--color-surface", layer: "semantic", kind: "alias", ref: "--soft-purple" }],
+      tokens: [{ name: "--color-base-100", layer: "semantic", kind: "alias", ref: "--soft-purple" }],
     });
     expect(plan.errors).toEqual([]);
-    expect(plan.files[TOKEN_FILES.semantic]).toContain('"--color-surface": ref("--soft-purple"),');
+    expect(plan.files[TOKEN_FILES.semantic]).toContain('"--color-base-100": ref("--soft-purple"),');
   });
 
   it("plans a component literal edit", () => {
@@ -105,7 +105,7 @@ describe("planPromotion (against the real token source)", () => {
       tokens: [
         { name: "--nope", layer: "primitive", kind: "value", value: "#000000" },
         { name: "--color-scrim", layer: "semantic", kind: "alias", ref: "--neutral-950" },
-        { name: "--color-action", layer: "semantic", kind: "alias", ref: "--space-3" },
+        { name: "--color-primary", layer: "semantic", kind: "alias", ref: "--space-3" },
       ],
     });
     expect(plan.errors).toHaveLength(3);

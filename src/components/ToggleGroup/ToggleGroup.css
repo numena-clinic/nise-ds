@@ -1,0 +1,84 @@
+/* Nise Design System — ToggleGroup.
+   The container is an inline-flex row on --toggle-group-gap. Each item mirrors
+   Toggle's two states: a ghost-like rest tile carrying --color-primary, and the
+   pressed selection on the validated pair (--color-selected-surface /
+   --color-selected-text) — pressed and unpressed differ by tile AND tile-text,
+   never colour alone. Sizes and radius reuse the button slots. */
+
+.nise-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--toggle-group-gap);
+  font-family: var(--font-sans);
+}
+
+.nise-toggle-group__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  background-color: transparent;
+  color: var(--color-primary);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--button-radius, var(--radius-sm));
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-toggle-group__item:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.nise-toggle-group__item:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+
+/* sizes */
+.nise-toggle-group__item--sm {
+  height: var(--button-height-sm);
+  padding-inline: var(--button-padding-x-sm);
+  font-size: var(--button-font-size-sm);
+}
+
+.nise-toggle-group__item--md {
+  height: var(--button-height-md);
+  padding-inline: var(--button-padding-x-md);
+  font-size: var(--button-font-size-md);
+}
+
+.nise-toggle-group__item--lg {
+  height: var(--button-height-lg);
+  padding-inline: var(--button-padding-x-lg);
+  font-size: var(--button-font-size-lg);
+}
+
+/* states */
+.nise-toggle-group__item:hover:not(:disabled) {
+  background-color: var(--color-base-hover);
+}
+
+.nise-toggle-group__item:active:not(:disabled) {
+  background-color: var(--color-base-active);
+}
+
+/* Pressed stays the selection on hover and active: the rules below override
+   the generic hover above by later order. */
+.nise-toggle-group__item--pressed {
+  background-color: var(--color-selected-surface);
+  color: var(--color-selected-text);
+}
+
+.nise-toggle-group__item--pressed:hover:not(:disabled),
+.nise-toggle-group__item--pressed:active:not(:disabled) {
+  background-color: var(--color-selected-surface);
+}

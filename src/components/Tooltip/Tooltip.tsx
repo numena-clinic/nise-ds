@@ -7,7 +7,7 @@
    preview) keep the popup inside its wrapper. Requires a `TooltipProvider`.
 
    Tokens consumed: --tooltip-padding-x, --tooltip-padding-y, --tooltip-font-size,
-   plus --color-surface, --color-text, --border-width, --color-border-strong
+   plus --color-base-100, --color-base-content, --border-width, --color-border-strong
    and radius/shadow from primitives.
    ============================================================================= */
 

@@ -42,10 +42,10 @@ describe("findCycles", () => {
     expect(
       findCycles({
         "--deep-purple": "#4C207F",
-        "--color-action": "var(--deep-purple)",
-        "--color-action-hover": "color-mix(in srgb, var(--color-action) 82%, var(--white))",
+        "--color-primary": "var(--deep-purple)",
+        "--color-primary-hover": "color-mix(in srgb, var(--color-primary) 82%, var(--white))",
         "--white": "#ffffff",
-        "--button-bg": "var(--color-action)",
+        "--button-bg": "var(--color-primary)",
         "--button-bg-hover": "var(--button-bg)",
       }),
     ).toEqual([]);

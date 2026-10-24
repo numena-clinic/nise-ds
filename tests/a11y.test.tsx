@@ -2,6 +2,40 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
+import { Alert } from "../src/components/Alert";
+import { AspectRatio } from "../src/components/AspectRatio";
+import { Avatar } from "../src/components/Avatar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../src/components/Breadcrumb";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../src/components/Collapsible";
+import { Empty } from "../src/components/Empty";
+import { Kbd } from "../src/components/Kbd";
+import { Label } from "../src/components/Label";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../src/components/Pagination";
+import { Progress } from "../src/components/Progress";
+import { Separator } from "../src/components/Separator";
+import { Skeleton } from "../src/components/Skeleton";
+import { Textarea } from "../src/components/Textarea";
+import { Timeline, TimelineItem } from "../src/components/Timeline";
+import { Toggle } from "../src/components/Toggle";
+import { ToggleGroup, ToggleGroupItem } from "../src/components/ToggleGroup";
 import { Badge } from "../src/components/Badge";
 import { Button } from "../src/components/Button";
 import { Card } from "../src/components/Card";
@@ -159,6 +193,172 @@ describe("accessibility (axe)", () => {
     );
     await userEvent.hover(screen.getByRole("button", { name: "More info" }));
     await screen.findByRole("tooltip");
+    await expectNoViolations();
+  });
+
+  it("Alert", async () => {
+    render(
+      <Alert variant="warning" title="Draft unsaved">
+        Save the session draft before leaving the page.
+      </Alert>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Avatar", async () => {
+    render(<Avatar fallback="AM" size="md" />);
+    await expectNoViolations();
+  });
+
+  it("Avatar with named image", async () => {
+    render(<Avatar src="/avatar.png" alt="Amina Mensah" fallback="AM" />);
+    await expectNoViolations();
+  });
+
+  it("Breadcrumb", async () => {
+    render(
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/clients">Clients</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Session notes</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Kbd", async () => {
+    render(<Kbd>Enter</Kbd>);
+    await expectNoViolations();
+  });
+
+  it("Progress (determinate and indeterminate)", async () => {
+    render(
+      <>
+        <Progress value={68} aria-label="Upload progress" />
+        <Progress value={null} aria-label="Exporting session recording" />
+      </>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Skeleton", async () => {
+    render(<Skeleton />);
+    await expectNoViolations();
+  });
+
+  it("Separator", async () => {
+    render(
+      <div style={{ height: "40px", display: "flex" }}>
+        <Separator />
+        <Separator orientation="vertical" />
+      </div>,
+    );
+    await expectNoViolations();
+  });
+
+  it("AspectRatio", async () => {
+    render(
+      <AspectRatio aria-label="Session scan">
+        <p>Scan preview</p>
+      </AspectRatio>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Toggle", async () => {
+    render(<Toggle>Show same-client history</Toggle>);
+    await expectNoViolations();
+  });
+
+  it("ToggleGroup single", async () => {
+    render(
+      <ToggleGroup type="single" label="Session view" defaultValue="summary">
+        <ToggleGroupItem value="summary">Summary</ToggleGroupItem>
+        <ToggleGroupItem value="objectives">Objectives</ToggleGroupItem>
+      </ToggleGroup>,
+    );
+    await expectNoViolations();
+  });
+
+  it("ToggleGroup multi", async () => {
+    render(
+      <ToggleGroup type="multi" label="Session filters">
+        <ToggleGroupItem value="intake">Intake</ToggleGroupItem>
+        <ToggleGroupItem value="follow-up">Follow-up</ToggleGroupItem>
+      </ToggleGroup>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Textarea with hint", async () => {
+    render(<Textarea label="Session notes" hint="Record what was said and done." />);
+    await expectNoViolations();
+  });
+
+  it("Label associated with an input", async () => {
+    render(
+      <>
+        <Label htmlFor="session-note">Session note</Label>
+        <input id="session-note" />
+      </>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Pagination", async () => {
+    render(
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#prev" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#p2" isActive={true}>
+              2
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#next" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Empty", async () => {
+    render(
+      <Empty
+        title="No sessions yet"
+        description="Sessions recorded in the chart will appear here."
+      />,
+    );
+    await expectNoViolations();
+  });
+
+  it("Timeline", async () => {
+    render(
+      <Timeline aria-label="Session history">
+        <TimelineItem title="Session note saved" meta="10:24" variant="done" />
+        <TimelineItem title="Assessment scheduled" meta="14:00" />
+      </Timeline>,
+    );
+    await expectNoViolations();
+  });
+
+  it("Collapsible", async () => {
+    render(
+      <Collapsible defaultOpen>
+        <CollapsibleTrigger>Advanced export options</CollapsibleTrigger>
+        <CollapsibleContent>Includes the anonymised sequence check.</CollapsibleContent>
+      </Collapsible>,
+    );
     await expectNoViolations();
   });
 });

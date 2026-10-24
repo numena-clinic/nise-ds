@@ -9,7 +9,7 @@
      --field-gap, --field-label-gap, --field-message-font-size
      --input-height, --input-padding-x, --input-font-size
        → --control-* → --space-3, --font-size-md
-      --color-surface, --color-text, --color-text-muted, --color-border-strong,
+      --color-base-100, --color-base-content, --color-text-muted, --color-border-strong,
       --color-border-hover, --color-border-error, --color-focus-ring, --focus-ring-width,
       --border-width-strong, --opacity-disabled
 

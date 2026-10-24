@@ -85,10 +85,14 @@ export const border = {
   "--border-width-strong": "2px",
 };
 
-/** One elevation for cards, one for floating surfaces. */
+/** One elevation for cards, one for floating surfaces, and a hard 1px lip for
+ *  a solid button that has to read as a physical edge rather than a glow. The
+ *  lip is the brand ink at 25% — the system's black — offset 1px down with no
+ *  blur, so it draws a line under the control instead of a halo. */
 export const elevation = {
   "--shadow-sm": "0 1px 2px rgb(34 26 42 / 0.06)",
   "--shadow-md": "0 4px 16px rgb(34 26 42 / 0.08)",
+  "--shadow-lip": "0 1px 0 rgb(34 26 42 / 0.25)",
 };
 
 /** Temporal restraint (motion-generative-patterns.md, Motion principles §04). */

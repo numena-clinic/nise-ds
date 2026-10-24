@@ -1,0 +1,80 @@
+/* Nise Design System — Toggle.
+   A two-state pressed button. The pressed state is a selection drawn from the
+   validated pair (--color-selected-surface / --color-selected-text), not a
+   status; pressed and unpressed differ by tile AND tile-text. Sizes and radius
+   reuse the button slots so a toggle can sit beside a Button in a toolbar. */
+
+.nise-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  background-color: transparent;
+  color: var(--color-primary);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--button-radius, var(--radius-sm));
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-toggle:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.nise-toggle:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+
+/* sizes */
+.nise-toggle--sm {
+  height: var(--button-height-sm);
+  padding-inline: var(--button-padding-x-sm);
+  font-size: var(--button-font-size-sm);
+}
+
+.nise-toggle--md {
+  height: var(--button-height-md);
+  padding-inline: var(--button-padding-x-md);
+  font-size: var(--button-font-size-md);
+}
+
+.nise-toggle--lg {
+  height: var(--button-height-lg);
+  padding-inline: var(--button-padding-x-lg);
+  font-size: var(--button-font-size-lg);
+}
+
+/* states */
+/* Rest is a ghost-like tile: the transparent fill keeps the surface visible and
+   the label carries the primary voice. */
+.nise-toggle:hover:not(:disabled) {
+  background-color: var(--color-base-hover);
+}
+
+.nise-toggle:active:not(:disabled) {
+  background-color: var(--color-base-active);
+}
+
+/* Pressed is the selection: the validated selected pair, tile and tile-text
+   together, with no further marks. The hover and active rules below override
+   the generic hover above on later order, so a pressed tile never takes a
+   hover shade. */
+.nise-toggle--pressed {
+  background-color: var(--color-selected-surface);
+  color: var(--color-selected-text);
+}
+
+.nise-toggle--pressed:hover:not(:disabled),
+.nise-toggle--pressed:active:not(:disabled) {
+  background-color: var(--color-selected-surface);
+}

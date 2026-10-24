@@ -15,6 +15,7 @@ import {
   DERIVED_TOKENS,
   EDITABLES,
   IMMUTABLE_TOKENS,
+  anchorRoles,
   editablesBySection,
   type EditableToken,
   type Section,
@@ -23,6 +24,7 @@ import {
   experimentalTokens,
   isChanged,
   resolve,
+  darkTarget,
   type Override,
   type Overrides,
 } from "../theme/theme";
@@ -44,6 +46,7 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
   const [query, setQuery] = useState("");
   const bySection = useMemo(() => editablesBySection(), []);
   const tokens = experimentalTokens(overrides);
+  const darkTokens = useMemo(() => experimentalTokens(overrides, "dark"), [overrides]);
 
   const colourTokens = bySection.color ?? {};
   const palette = Object.values(colourTokens).flat().filter((e) => e.kind === "value");
@@ -88,6 +91,12 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
                   authored primitives · {locked.length} brand anchors fixed
                 </span>
               </h2>
+              <p className="nise-panel__hint">
+                An anchor names the roles it drives — in the light base, which is what the dark
+                mapping re-points. Since D22 the page, the panel, the body text, the neutral, the
+                primary, the secondary and the accent all read an anchor, so those are the
+                interface&rsquo;s own colours.
+              </p>
               <div className="nise-panel__cards">
                 {locked.filter((t) => matches(t, visible)).map((t) => (
                   <LockedAnchorCard
@@ -95,6 +104,7 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
                     name={t.name}
                     raw={t.raw}
                     resolved={resolve(t.name, tokens)}
+                    roles={anchorRoles(t.name)}
                   />
                 ))}
                 {palette.filter((e) => matches(e, visible)).map((e) => (
@@ -126,6 +136,7 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
                     changed={isChanged(e.name, overrides[e.name])}
                     onChange={(ref) => onChange(e.name, { kind: "alias", ref })}
                     onReset={() => onReset(e.name)}
+                    dark={darkTarget(e.name, darkTokens)}
                   />
                 ))}
               </div>
@@ -183,7 +194,8 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
 
       <p className="nise-panel__foot">
         {EDITABLES.length} editable tokens. The {locked.length} brand anchors are fixed by
-        numena-brand and cannot be edited here. Changes stay local until you promote a candidate
+        numena-brand and cannot be edited here — but a role that reads one can still be
+        re-pointed at another primitive. Changes stay local until you promote a candidate
         with <code>theme:apply</code>.
       </p>
     </div>

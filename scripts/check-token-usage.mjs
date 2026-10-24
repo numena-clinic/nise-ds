@@ -1,6 +1,7 @@
 // Enforces the token boundary across the source tree. `npm run check:usage`.
 //
-// This CLI walks src/ and delegates every decision to the pure scanner in
+// This CLI walks the code that consumes tokens — src/ and .storybook/ — and
+// delegates every decision to the pure scanner in
 // scripts/lib/token-usage.mjs (unit-tested in tests/usage.test.ts), which fails
 // when component code:
 //   1. references a token that does not exist (a typo, or a token never built)
@@ -27,6 +28,10 @@ import { GENERATED, scanSource } from "./lib/token-usage.mjs";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 const srcDir = resolve(root, "src");
+// The Storybook preview paints the theme onto the docs canvas, so it consumes
+// the same roles as src/ and is held to the same boundary. Leaving it out is
+// how a renamed role survived here while every other consumer was migrated.
+const scanRoots = [srcDir, resolve(root, ".storybook")];
 
 // The Theme Explorer renders the PRIMITIVE and semantic layers themselves (it is
 // the token editor), and the generated layer is a primitive artifact — both
@@ -48,7 +53,7 @@ function walk(dir) {
 }
 
 const problems = [];
-for (const file of walk(srcDir)) {
+for (const file of scanRoots.flatMap((dir) => walk(dir))) {
   const rel = relative(root, file);
   if (GENERATED.includes(rel)) continue;
 
@@ -66,4 +71,8 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  ✗ ${p}`);
   process.exit(1);
 }
-console.log(`check:usage — token usage is clean across ${relative(root, srcDir)}`);
+console.log(
+  `check:usage — token usage is clean across ${scanRoots
+    .map((dir) => relative(root, dir))
+    .join(", ")}`,
+);

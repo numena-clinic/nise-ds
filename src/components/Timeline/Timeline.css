@@ -1,0 +1,77 @@
+.nise-timeline {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--timeline-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-sans);
+}
+
+.nise-timeline__item {
+  position: relative;
+  padding-left: calc(var(--timeline-dot) + var(--space-3));
+}
+
+.nise-timeline__item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: var(--space-1);
+  width: var(--timeline-dot);
+  height: var(--timeline-dot);
+  box-sizing: content-box;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--timeline-radius, var(--radius-full));
+  background-color: var(--color-tint-purple);
+}
+
+/* The connector is drawn per item so it stays token-parameterised and
+   self-aligning: from below the dot to above the next item's dot. */
+.nise-timeline__item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--timeline-dot) / 2 - var(--timeline-rail) / 2);
+  top: calc(var(--timeline-dot) + var(--space-1));
+  bottom: calc(-1 * (var(--timeline-gap) + var(--space-1)));
+  width: var(--timeline-rail);
+  background-color: var(--color-border);
+}
+
+.nise-timeline__item--done::before {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
+
+.nise-timeline__item--current::before {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  outline: var(--focus-ring-width) solid var(--color-tint-purple);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.nise-timeline__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.nise-timeline__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
+  color: var(--color-base-content);
+}
+
+.nise-timeline__meta {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.nise-timeline__body {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+  color: var(--color-text-muted);
+}

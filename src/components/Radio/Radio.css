@@ -4,7 +4,7 @@
   gap: var(--choice-gap);
   font-family: var(--font-sans);
   cursor: pointer;
-  color: var(--color-text);
+  color: var(--color-base-content);
   -webkit-user-select: none;
   user-select: none;
 }
@@ -35,14 +35,14 @@
   height: var(--choice-size);
   border: var(--border-width-strong) solid var(--color-border-strong);
   border-radius: var(--radius-full);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   transition: border-color var(--duration-fast) var(--ease-standard),
     background-color var(--duration-fast) var(--ease-standard);
 }
 
 .nise-radio__input:checked + .nise-radio__box {
-  background-color: var(--color-surface);
-  border-color: var(--color-action);
+  background-color: var(--color-base-100);
+  border-color: var(--color-primary);
 }
 
 .nise-radio:hover:not(.nise-radio--disabled) .nise-radio__box {
@@ -50,11 +50,11 @@
 }
 
 .nise-radio:hover:not(.nise-radio--disabled) .nise-radio__input:checked + .nise-radio__box {
-  border-color: var(--color-action-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .nise-radio:hover:not(.nise-radio--disabled) .nise-radio__input:checked + .nise-radio__box::after {
-  background-color: var(--color-action-hover);
+  background-color: var(--color-primary-hover);
 }
 
 .nise-radio__input:focus-visible + .nise-radio__box {
@@ -67,7 +67,7 @@
   position: absolute;
   inset: var(--space-1);
   border-radius: var(--radius-full);
-  background-color: var(--color-action);
+  background-color: var(--color-primary);
   opacity: 0;
   transition: opacity var(--duration-fast) var(--ease-standard);
 }
@@ -86,7 +86,7 @@
 .nise-radio__label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-radio__hint {

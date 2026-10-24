@@ -51,10 +51,10 @@ describe("token classification", () => {
   });
 
   it("reads a semantic colour role as a retargetable alias", () => {
-    const t = INFO_BY_NAME["--color-surface"]!;
+    const t = INFO_BY_NAME["--color-base-100"]!;
     expect(t.form).toBe("alias");
-    expect(t.ref).toBe("--neutral-0");
-    const e = EDITABLE_BY_NAME["--color-surface"]!;
+    expect(t.ref).toBe("--white");
+    const e = EDITABLE_BY_NAME["--color-base-100"]!;
     expect(e.kind).toBe("alias");
     expect(e.options).toEqual(COLOR_PRIMITIVES);
   });
@@ -79,7 +79,7 @@ describe("token classification", () => {
   });
 
   it("only lets a colour role point at a colour primitive", () => {
-    const role = EDITABLE_BY_NAME["--color-action"]!;
+    const role = EDITABLE_BY_NAME["--color-primary"]!;
     expect(role.kind).toBe("alias");
     expect(role.options?.every((o) => COLOR_PRIMITIVES.includes(o))).toBe(true);
   });
@@ -99,7 +99,11 @@ describe("token classification", () => {
   });
 
   it("tracks transitive dependents of a primitive", () => {
-    expect(transitiveDependents("--neutral-950")).toContain("--color-text");
+    // the body text, the neutral fill and the accent label all read the
+    // brand's ink; the scrim reads the darkest neutral
+    expect(transitiveDependents("--ink-plum")).toContain("--color-base-content");
+    expect(transitiveDependents("--ink-plum")).toContain("--color-accent-content");
+    expect(transitiveDependents("--ink-plum")).toContain("--color-neutral");
     expect(transitiveDependents("--neutral-950")).toContain("--color-scrim");
   });
 
@@ -133,44 +137,47 @@ describe("value validation", () => {
 });
 
 describe("overrides and preview resolution", () => {
-  const only: Overrides = { "--neutral-950": { kind: "value", value: "#000000" } };
+  // a ramp step, so it stays editable; the ten brand anchors are fixed
+  const only: Overrides = { "--neutral-50": { kind: "value", value: "#000000" } };
 
   it("treats a no-op override as unchanged and prunes it", () => {
-    const e = EDITABLE_BY_NAME["--neutral-950"]!;
+    const e = EDITABLE_BY_NAME["--neutral-50"]!;
     const same = canonicalOverride(e);
-    expect(isChanged("--neutral-950", same)).toBe(false);
-    expect(changeCount({ "--neutral-950": same })).toBe(0);
-    expect(prune({ "--neutral-950": same })).toEqual({});
+    expect(isChanged("--neutral-50", same)).toBe(false);
+    expect(changeCount({ "--neutral-50": same })).toBe(0);
+    expect(prune({ "--neutral-50": same })).toEqual({});
   });
 
   it("produces scoped custom properties, not :root values", () => {
     const light = previewStyle(only);
-    expect(light["--neutral-950"]).toBe("#000000");
+    expect(light["--neutral-50"]).toBe("#000000");
     // every token that differs between themes is pinned on the wrapper under
     // the light mapping, so the preview never inherits a system dark preference
-    expect(light["--color-surface"]).toBe("var(--neutral-0)");
+    expect(light["--color-base-100"]).toBe("var(--white)");
     expect(THEME_VARYING.every((n) => n in light)).toBe(true);
     // and under the dark mapping the dark values are pinned instead
-    expect(previewStyle(only, "dark")["--color-surface"]).toBe("var(--dark-ground)");
+    expect(previewStyle(only, "dark")["--color-base-100"]).toBe("var(--dark-ground)");
     // a user override wins over the pin
-    expect(previewStyle({ "--color-surface": { kind: "alias", ref: "--soft-purple" } })["--color-surface"]).toBe(
+    expect(previewStyle({ "--color-base-100": { kind: "alias", ref: "--soft-purple" } })["--color-base-100"]).toBe(
       "var(--soft-purple)",
     );
   });
 
   it("flows a primitive change through the semantic and derived tokens", () => {
     const map = experimentalTokens(only);
-    expect(resolve("--color-text", map)).toBe("#000000");
-    expect(resolve("--color-scrim", map)).not.toBe(
+    expect(resolve("--color-base-200", map)).toBe("#000000");
+    // a derived token follows the primitive it mixes
+    const scrim = experimentalTokens({ "--neutral-950": { kind: "value", value: "#000000" } });
+    expect(resolve("--color-scrim", scrim)).not.toBe(
       resolve("--color-scrim", experimentalTokens({})),
     );
   });
 
   it("resolves the dark mapping when the mode is dark", () => {
-    expect(resolve("--color-surface", experimentalTokens({}, "dark")).toLowerCase()).toBe("#17121d");
+    expect(resolve("--color-base-100", experimentalTokens({}, "dark")).toLowerCase()).toBe("#17121d");
     expect(resolve("--color-base-300", experimentalTokens({}, "dark")).toLowerCase()).toBe("#2d2238");
-    expect(resolve("--color-action", experimentalTokens({}, "dark")).toLowerCase()).not.toBe(
-      resolve("--color-action", experimentalTokens({}, "light")).toLowerCase(),
+    expect(resolve("--color-primary", experimentalTokens({}, "dark")).toLowerCase()).not.toBe(
+      resolve("--color-primary", experimentalTokens({}, "light")).toLowerCase(),
     );
   });
 
@@ -184,7 +191,9 @@ describe("overrides and preview resolution", () => {
   });
 
   it("reports a broken promise when a role no longer clears its minimum", () => {
-    const broken = resolveContrast({ "--neutral-0": { kind: "value", value: "#211e25" } });
+    // the page is repointed at the darkest neutral, so the body text can no
+    // longer clear its minimum — the review panel must say so
+    const broken = resolveContrast({ "--color-base-100": { kind: "alias", ref: "--neutral-950" } });
     const body = broken.find((c) => c.why.includes("body text on the page"))!;
     expect(body.pass).toBe(false);
     expect(body.ratio).toBeLessThan(body.min);
@@ -193,9 +202,9 @@ describe("overrides and preview resolution", () => {
   it("summarises the change set with its dependents", () => {
     const rows = diffRows(only);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ name: "--neutral-950", from: "#211e25", to: "#000000" });
-    expect(rows[0]!.direct).toContain("--color-text");
-    expect(rows[0]!.dependents).toContain("--color-scrim");
+    expect(rows[0]).toMatchObject({ name: "--neutral-50", from: "#faf8fc", to: "#000000" });
+    expect(rows[0]!.direct).toContain("--color-base-200");
+    expect(rows[0]!.dependents).toContain("--color-base-200");
   });
 });
 
@@ -218,7 +227,7 @@ describe("font family control", () => {
 describe("candidate round-trip and validation", () => {
   const overrides: Overrides = {
     "--purple-600": { kind: "value", value: "#3B1E66" },
-    "--color-surface": { kind: "alias", ref: "--pale-lavender" },
+    "--color-base-100": { kind: "alias", ref: "--pale-lavender" },
   };
 
   it("serialises a versioned candidate and parses it back unchanged", () => {
@@ -248,7 +257,7 @@ describe("candidate round-trip and validation", () => {
         version: 1,
         tokens: [
           { name: "--nope", layer: "primitive", kind: "value", value: "#000000", from: "" },
-          { name: "--color-action", layer: "semantic", kind: "alias", ref: "--space-3", from: "x" },
+          { name: "--color-primary", layer: "semantic", kind: "alias", ref: "--space-3", from: "x" },
           { name: "--space-3", layer: "primitive", kind: "value", value: "12rem", from: "12px" },
         ],
       }),

@@ -47,45 +47,56 @@
 }
 
 /* variants */
+/* The primary button is a solid object, so it gets an edge and a lip: a
+   hairline a shade darker than the fill, and a hard 1px shadow under it
+   (`--shadow-lip`, the brand ink at 25%). Together they read as a pressed
+   piece of the palette rather than a flat swatch. */
 .nise-button--primary {
-  background-color: var(--color-action);
-  color: var(--color-action-text);
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+  border-color: var(--color-primary-edge);
+  box-shadow: var(--shadow-lip);
 }
 
 .nise-button--primary:hover:not(:disabled) {
-  background-color: var(--color-action-hover);
+  background-color: var(--color-primary-hover);
 }
 
 .nise-button--primary:active:not(:disabled) {
-  background-color: var(--color-action-active);
+  background-color: var(--color-primary-active);
 }
 
+/* Secondary is a bordered surface, and the border carries the primary colour —
+   the label is already `--color-primary`, so the button reads as one purple
+   voice with a hairline frame rather than a purple word in a grey box. The
+   border moves through the primary ramp with the state. */
 .nise-button--secondary {
-  background-color: var(--color-surface);
-  color: var(--color-action);
-  border-color: var(--color-border-strong);
+  background-color: var(--color-base-100);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .nise-button--secondary:hover:not(:disabled) {
-  background-color: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
+  background-color: var(--color-base-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .nise-button--secondary:active:not(:disabled) {
-  background-color: var(--color-surface-active);
+  background-color: var(--color-base-active);
+  border-color: var(--color-primary-active);
 }
 
 .nise-button--ghost {
   background-color: transparent;
-  color: var(--color-action);
+  color: var(--color-primary);
 }
 
 .nise-button--ghost:hover:not(:disabled) {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-base-hover);
 }
 
 .nise-button--ghost:active:not(:disabled) {
-  background-color: var(--color-surface-active);
+  background-color: var(--color-base-active);
 }
 
 /* shared parts */

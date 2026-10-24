@@ -15,9 +15,9 @@ An action. Triggers a single, immediate operation.
 - For navigation with no action, use a link.
 - To carry status — a button never changes colour to mean good or bad (color.md
   §4). This is why there is no `danger` variant: a destructive action earns a
-  clear label and confirmation, not a red fill. The operational roles that exist
-  now (decisions.md P4) describe machine states — saved, failed — and are not a
-  licence to make a button's colour carry a verdict.
+  clear label and confirmation, not a red fill. The status roles that exist now
+  describe machine states — saved, failed — and are not a licence to make a
+  button's colour carry a verdict.
 
 ## Props
 
@@ -39,11 +39,34 @@ An action. Triggers a single, immediate operation.
 
 - Heights `--button-height-{sm,md,lg}` → `--control-height-*`.
 - Padding `--button-padding-x-*` → `--space-*`; gap `--button-gap` → `--space-2`.
-- `primary` uses `--color-action` (a deep purple) with `--color-action-text`
-  (white) — 9.06:1 in the light theme. `secondary` is a bordered surface; `ghost`
-  has no fill until hover.
-- Radius via `var(--button-radius, var(--radius-md))`, so a surface can re-round
+- `primary` uses `--color-primary` (a deep purple) with `--color-primary-content`
+  (white) — 11.54:1 in the light theme. `secondary` is a bordered surface whose
+  border carries `--color-primary` (the label already does), moving through
+  `--color-primary-hover` and `--color-primary-active` with the state; the
+  boundary clears 3:1 in both themes. `ghost` has no fill until hover.
+- The `primary` fill is a solid object, so it carries an edge and a lip:
+  `border-color: var(--color-primary-edge)` — the fill mixed 15% toward the
+  brand ink, a hairline darker than the fill itself, re-authored per theme so
+  it stays darker in both — and `box-shadow: var(--shadow-lip)`, a hard 1px
+  line under the button in the brand ink at 25% (no blur: it draws an edge, not
+  a halo). The other two variants stay flat.
+- Radius via `var(--button-radius, var(--radius-sm))`, so a surface can re-round
   one button without a token.
+
+### Known limitation — the secondary/ghost label in dark
+
+`secondary` and `ghost` paint their label with `--color-primary`, a *fill* role
+used as a text colour. It is legible at rest (6.13:1 on the dark ground, 11.54:1
+on the light page) but it fails in the dark theme's interactive states: 2.72:1 on
+`--color-base-hover` and 1.88:1 on `--color-base-active`. The light theme is
+fine (10.19:1 and 8.70:1).
+
+The token-correct fix is to label these two variants with `--color-base-content`
+(the text role) — 7.74:1 and 5.35:1 in the dark theme, 14.85:1 and 12.68:1 in
+light — or to introduce a role for "the primary colour as text on a surface",
+which D20's one-name-per-role rule does not currently allow. This is a
+component decision, not a token one, and it is deliberately not made here
+(decisions.md D22).
 
 ## Accessibility
 

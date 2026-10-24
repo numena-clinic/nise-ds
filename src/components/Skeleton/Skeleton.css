@@ -1,0 +1,21 @@
+/* The pulse runs once per loop through 1 → disabled → 1 via `alternate`, so the
+   placeholder breathes on the shared motion curve instead of blinking. */
+.nise-skeleton {
+  display: block;
+  width: 100%;
+  height: var(--control-height-md);
+  flex-shrink: 0;
+  background-color: var(--color-base-200);
+  border-radius: var(--skeleton-radius, var(--radius-md));
+  animation: nise-skeleton-pulse var(--duration-slow) var(--ease-standard) infinite alternate;
+}
+
+@keyframes nise-skeleton-pulse {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: var(--opacity-disabled);
+  }
+}

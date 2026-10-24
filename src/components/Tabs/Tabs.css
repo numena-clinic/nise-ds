@@ -1,7 +1,7 @@
 .nise-tabs__list {
   display: inline-flex;
   gap: var(--tabs-gap);
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-base-200);
   border-radius: var(--radius-md);
   padding: var(--tabs-gap);
   border: var(--border-width) solid var(--color-border);
@@ -23,17 +23,17 @@
 }
 
 .nise-tabs__trigger:hover:not([data-state="active"]):not(:disabled) {
-  color: var(--color-text);
-  background-color: var(--color-surface-hover);
+  color: var(--color-base-content);
+  background-color: var(--color-base-hover);
 }
 
 .nise-tabs__trigger:active:not(:disabled) {
-  background-color: var(--color-surface-active);
+  background-color: var(--color-base-active);
 }
 
 .nise-tabs__trigger[data-state="active"] {
-  background-color: var(--color-surface);
-  color: var(--color-text);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
   box-shadow: var(--shadow-sm);
 }
 
@@ -45,5 +45,5 @@
 .nise-tabs__content {
   margin-top: var(--space-4);
   font-family: var(--font-sans);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }

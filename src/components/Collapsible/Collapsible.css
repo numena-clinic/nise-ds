@@ -1,0 +1,44 @@
+.nise-collapsible {
+  font-family: var(--font-sans);
+}
+
+.nise-collapsible__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--collapsible-radius, var(--radius-sm));
+  color: var(--color-base-content);
+  font-weight: var(--font-weight-medium);
+}
+
+.nise-collapsible__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.nise-collapsible__trigger:hover {
+  background-color: var(--color-base-hover);
+}
+
+.nise-collapsible__trigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.nise-collapsible__chevron {
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.nise-collapsible[open] > .nise-collapsible__trigger .nise-collapsible__chevron {
+  transform: rotate(90deg);
+}
+
+.nise-collapsible__content {
+  color: var(--color-base-content);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+  padding-block-start: var(--space-2);
+}

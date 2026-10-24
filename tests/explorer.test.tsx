@@ -62,10 +62,10 @@ describe("Theme Explorer", () => {
 
   it("retargets a colour role through its select", () => {
     const { container } = render(<App />);
-    fireEvent.change(screen.getByLabelText("color-surface"), {
+    fireEvent.change(screen.getByLabelText("color-base-100"), {
       target: { value: "--soft-purple" },
     });
-    expect(preview(container).style.getPropertyValue("--color-surface")).toBe("var(--soft-purple)");
+    expect(preview(container).style.getPropertyValue("--color-base-100")).toBe("var(--soft-purple)");
   });
 
   it("reviews the diff and prints the local promotion command", () => {
@@ -83,7 +83,7 @@ describe("Theme Explorer", () => {
 
   it("reports a broken contrast promise in the review", () => {
     render(<App />);
-    fireEvent.change(screen.getByLabelText("color-text"), { target: { value: "--pale-lavender" } });
+    fireEvent.change(screen.getByLabelText("color-base-content"), { target: { value: "--pale-lavender" } });
     fireEvent.click(screen.getByRole("button", { name: /Review & export/ }));
     expect(screen.getByText(/promises\s+fail/)).toBeInTheDocument();
   });
@@ -118,19 +118,67 @@ describe("Theme Explorer", () => {
     expect(deep?.textContent).toContain("#4C207F");
     expect(preview(container).style.getPropertyValue("--deep-purple")).toBe("");
     // …and roles may still point at an anchor
-    fireEvent.change(screen.getByLabelText("color-surface"), { target: { value: "--deep-purple" } });
-    expect(preview(container).style.getPropertyValue("--color-surface")).toBe("var(--deep-purple)");
+    fireEvent.change(screen.getByLabelText("color-base-100"), { target: { value: "--deep-purple" } });
+    expect(preview(container).style.getPropertyValue("--color-base-100")).toBe("var(--deep-purple)");
+  });
+
+  it("names what each brand anchor drives, so immutability has a consequence", () => {
+    const { container } = render(<App />);
+    const cards = [...container.querySelectorAll(".nise-swatch-card--locked")];
+    const card = (needle: string) => cards.find((c) => c.textContent?.includes(needle));
+
+    // the page reads the white anchor — the fill it paints, named on its card
+    const white = card("white");
+    expect(white?.textContent).toContain("drives");
+    expect(white?.textContent).toContain("base-100");
+    // …and the white anchor is also the label colour on the fills
+    expect(white?.textContent).toContain("text on");
+    expect(white?.textContent).toContain("primary");
+
+    // the brand ink is the body text and the neutral fill
+    const ink = card("ink-plum");
+    expect(ink?.textContent).toContain("base-content");
+    expect(ink?.textContent).toContain("neutral");
+
+    // the vibrant purple is the secondary fill, not decoration
+    expect(card("vibrant-purple")?.textContent).toContain("secondary");
+    // the tangerine is the accent fill
+    expect(card("vibrant-tangerine")?.textContent).toContain("accent");
+  });
+
+  it("tags a role that reads a brand anchor on the colour page", () => {
+    const { container } = render(<App />);
+    // navigate to the Colour page of the Foundations section
+    fireEvent.click(screen.getByRole("button", { name: /Colour/ }));
+    const tagged = [...container.querySelectorAll(".nise-pv__swatch")].filter((s) =>
+      s.querySelector(".nise-pv__swatch-tag"),
+    );
+    expect(tagged.length).toBeGreaterThan(0);
+    // base-100 is one of them: it reads the white anchor
+    const base = tagged.find((s) => s.textContent?.includes("base-100"));
+    expect(base?.querySelector(".nise-pv__swatch-tag")?.textContent).toBe("brand");
+  });
+
+  it("shows a role's dark mapping beside its light target", () => {
+    const { container } = render(<App />);
+    const cards = [...container.querySelectorAll(".nise-swatch-card:not(.nise-swatch-card--locked)")];
+    const secondary = cards.find((c) => c.querySelector(".nise-color__name")?.textContent === "color-secondary");
+    // the light base is what the explorer edits…
+    expect(secondary?.textContent).toContain("points at vibrant-purple");
+    // …and the dark mapping is a target of its own, in another family since D22
+    expect(secondary?.textContent).toContain("dark mapping");
+    expect(secondary?.textContent).toContain("purple-300");
   });
 
   it("switches the preview between the light and dark mappings", () => {
     const { container } = render(<App />);
     const wrap = preview(container);
     expect(wrap.getAttribute("data-nise-theme")).toBe("light");
-    expect(wrap.style.getPropertyValue("--color-surface")).toBe("var(--neutral-0)");
+    expect(wrap.style.getPropertyValue("--color-base-100")).toBe("var(--white)");
 
     fireEvent.click(screen.getByRole("button", { name: "Dark" }));
     expect(wrap.getAttribute("data-nise-theme")).toBe("dark");
-    expect(wrap.style.getPropertyValue("--color-surface")).toBe("var(--dark-ground)");
+    expect(wrap.style.getPropertyValue("--color-base-100")).toBe("var(--dark-ground)");
     expect(wrap.style.getPropertyValue("--color-success")).toBe("var(--mint-500)");
 
     // the review panel says which mapping the promises were checked against
@@ -139,7 +187,7 @@ describe("Theme Explorer", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Light" }));
     expect(wrap.getAttribute("data-nise-theme")).toBe("light");
-    expect(wrap.style.getPropertyValue("--color-surface")).toBe("var(--neutral-0)");
+    expect(wrap.style.getPropertyValue("--color-base-100")).toBe("var(--white)");
   });
 
   // axe walks the whole token list (262 leaves), which is ~6s — past the 5s

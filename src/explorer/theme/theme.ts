@@ -165,6 +165,22 @@ export function resolve(name: string, map: Record<string, string>): string {
   }
 }
 
+/** What the shipped dark mapping points a role at, and the value it resolves
+ *  to there. The explorer edits the LIGHT base (D19): promoting a candidate
+ *  changes the light contract, and `tokens/themes.mjs` keeps its own target
+ *  for a role until it is edited in turn. Showing both is the difference
+ *  between "the dark theme re-points this role" and "the dark theme is a
+ *  different colour". */
+export function darkTarget(
+  name: string,
+  map: Record<string, string>,
+): { ref: string; resolved: string } | null {
+  const raw = DARK_RAW[name];
+  if (raw === undefined) return null;
+  const ref = raw.replace(/^var\(\s*|\s*\)$/g, "");
+  return { ref, resolved: resolve(name, map) };
+}
+
 export interface ContrastResult extends ContrastCheck {
   fgResolved: string;
   bgResolved: string;

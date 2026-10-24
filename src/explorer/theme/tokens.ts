@@ -73,15 +73,11 @@ function groupSection(layer: LayerId, group: string, name: string): Section {
     "primitive:border": "shape",
     "primitive:elevation": "shape",
     "primitive:motion": "motion",
-    "semantic:surface & text": "color",
     "semantic:base": "color",
-    "semantic:border": "color",
-    "semantic:action": "color",
-    "semantic:fill": "color",
-    "semantic:focus": "color",
-    "semantic:selected": "color",
-    "semantic:categorical accents": "color",
-    "semantic:operational roles": "color",
+    "semantic:emphasis": "color",
+    "semantic:status": "color",
+    "semantic:supporting": "color",
+    "semantic:tints": "color",
   };
   const hit = map[key];
   if (hit) return hit;
@@ -151,6 +147,58 @@ export function transitiveDependents(name: string): string[] {
     stack.push(...directDependents(next));
   }
   return [...seen];
+}
+
+/** The colour roles that point at a primitive in the LIGHT base (D19 — the
+ *  explorer edits the light base; dark is a view of it).
+ *
+ *  Since D22 several brand anchors are load-bearing: the page, the body text,
+ *  the secondary fill and the accent fill all read an anchor, so an anchor is
+ *  not an inert artwork swatch any more. Naming the roles an anchor drives is
+ *  what makes the immutability legible — "the page cannot be re-coloured here"
+ *  is a different statement from "this hex is fixed". */
+export function rolesPointingAt(primitive: string): string[] {
+  return directDependents(primitive)
+    .filter((name) => name.startsWith("--color-"))
+    .sort();
+}
+
+export interface AnchorRoles {
+  /** Surface and fill roles the anchor drives — the page, the ink, a fill. */
+  drives: string[];
+  /** `-content` roles that pair with a fill and read this anchor as text. */
+  textOn: string[];
+}
+
+/** Split an anchor's readership: the fills and surfaces it paints, and the
+ *  labels it paints on top of them. `--white` paints the page and the label
+ *  on seven fills; saying so in one list would hide the first fact under the
+ *  second.
+ *
+ *  `--color-base-content` is body text on the page, not a label on a fill, so
+ *  it stays on the "drives" side even though it ends in `-content`. */
+export function anchorRoles(primitive: string): AnchorRoles {
+  const all = rolesPointingAt(primitive);
+  const isLabelOnFill = (name: string) =>
+    name.endsWith("-content") && name !== "--color-base-content";
+  return {
+    drives: all.filter((name) => !isLabelOnFill(name)),
+    textOn: all.filter(isLabelOnFill).map((name) => name.replace(/^--color-/, "").replace(/-content$/, "")),
+  };
+}
+
+/** The brand anchors, by name — the values the panel shows as immutable. */
+export const ANCHOR_NAMES: Set<string> = new Set(
+  TOKEN_INFOS.filter((t) => t.immutable).map((t) => t.name),
+);
+
+/** True when a role reads a brand anchor AND is a surface or a fill — the
+ *  loads a role can carry. A `-content` role reading an anchor is expected
+ *  (the label on a fill is the page's own white), so it is not called out.
+ *  `--color-base-content` is body text, and is. */
+export function isAnchorRole(name: string, ref: string | undefined): boolean {
+  if (!ref || !ANCHOR_NAMES.has(ref)) return false;
+  return !name.endsWith("-content") || name === "--color-base-content";
 }
 
 // ── editable descriptors ─────────────────────────────────────────────────────

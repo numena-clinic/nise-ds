@@ -45,7 +45,7 @@ An error is carried by three things at once, in this order of importance:
 2. a 16px `AlertIcon` (shape, not hue),
 3. a heavier boundary (`--border-width-strong` plus `--color-border-error`).
 
-The boundary reads from the operational error accent (decisions.md P4) rather
+The boundary reads from the status error accent rather
 than a neutral, which is the *only* place colour enters — it is the third
 channel, not the first. Strip the text and the icon and the field must still
 read as invalid. This follows color.md §4: colour may reinforce a state the

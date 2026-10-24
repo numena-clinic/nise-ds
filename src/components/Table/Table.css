@@ -3,7 +3,7 @@
   overflow-x: auto;
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
 }
 
 .nise-table {
@@ -25,18 +25,18 @@
 }
 
 .nise-table__row:hover:not(.nise-table__row--header) {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-base-hover);
 }
 
 .nise-table__row--header {
-  background-color: var(--color-surface-subtle);
+  background-color: var(--color-base-200);
   border-top: none;
 }
 
 .nise-table__cell {
   padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
   font-size: var(--table-font-size);
-  color: var(--color-text);
+  color: var(--color-base-content);
   text-align: left;
   vertical-align: top;
 }
@@ -46,7 +46,7 @@
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-wide);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-table__cell--numeric {

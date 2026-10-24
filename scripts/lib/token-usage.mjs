@@ -46,7 +46,7 @@ export const NAMED_COLORS = new Set([
 // AGENTS.md depends on this. Component tokens (`--button-*`) and semantic
 // (`--color-*`, `--surface-*`) names are deliberately outside the set.
 export const PRIMITIVE_PREFIX =
-  /^--(?:white|ink-plum|deep-purple|vibrant-|soft-|pale-lavender|dark-ground|dark-panel|neutral-|purple-|cyan-|tangerine-|mint-|citron-|pink-|teal-)/;
+  /^--(?:white|ink-plum|deep-purple|vibrant-|soft-|pale-lavender|dark-ground|dark-panel|neutral-|purple-|cyan-|tangerine-|mint-|citron-|pink-|blue-)/;
 
 /** A `var()` that resolves a primitive directly instead of a semantic role. */
 export function checkPrimitiveRefs(text, isKnownToken) {

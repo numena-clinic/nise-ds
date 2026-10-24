@@ -1,0 +1,16 @@
+/* Flexible in the flow: a horizontal rule spans, a vertical rule leans on the
+   parent's height (the consumer supplies the height context). */
+.nise-separator {
+  flex-shrink: 0;
+  background-color: var(--color-border);
+}
+
+.nise-separator--horizontal {
+  width: 100%;
+  height: var(--separator-thickness);
+}
+
+.nise-separator--vertical {
+  width: var(--separator-thickness);
+  align-self: stretch;
+}

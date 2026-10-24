@@ -1,0 +1,11 @@
+/* The wrapper is absolute on every side, so the direct content fills the
+   reserved box exactly; callers overlay or cover inside it. */
+.nise-aspect-ratio {
+  position: relative;
+  width: 100%;
+}
+
+.nise-aspect-ratio__content {
+  position: absolute;
+  inset: 0;
+}

@@ -4,7 +4,7 @@
   gap: var(--choice-gap);
   font-family: var(--font-sans);
   cursor: pointer;
-  color: var(--color-text);
+  color: var(--color-base-content);
   -webkit-user-select: none;
   user-select: none;
 }
@@ -29,29 +29,33 @@
   margin: 0;
 }
 
+/* The track is 2× the knob plus the inset on each side (42 = 2×18 + 2×3), and
+   the knob is the knob plus the inset top and bottom (24 = 18 + 2×3). The knob
+   is positioned from the track's OUTER edge, so the track must not carry a
+   border: a border would shrink the padding box the knob is measured from and
+   push it out of the track. */
 .nise-switch__track {
   position: relative;
   width: var(--switch-width);
   height: var(--switch-height);
   border-radius: var(--radius-full);
   background-color: var(--color-border-strong);
-  border: var(--border-width-strong) solid transparent;
   transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
 .nise-switch__knob {
   position: absolute;
-  top: var(--switch-inset);
+  top: calc((var(--switch-height) - var(--switch-knob)) / 2);
   left: var(--switch-inset);
   width: var(--switch-knob);
   height: var(--switch-knob);
   border-radius: var(--radius-full);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   transition: transform var(--duration-fast) var(--ease-standard);
 }
 
 .nise-switch__input:checked + .nise-switch__track {
-  background-color: var(--color-action);
+  background-color: var(--color-primary);
 }
 
 .nise-switch:hover:not(.nise-switch--disabled) .nise-switch__track {
@@ -59,7 +63,7 @@
 }
 
 .nise-switch:hover:not(.nise-switch--disabled) .nise-switch__input:checked + .nise-switch__track {
-  background-color: var(--color-action-hover);
+  background-color: var(--color-primary-hover);
 }
 
 .nise-switch__input:checked + .nise-switch__track .nise-switch__knob {
@@ -81,7 +85,7 @@
 .nise-switch__label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-switch__hint {

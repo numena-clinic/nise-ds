@@ -8,7 +8,7 @@
    Tokens consumed:
      --card-padding, --card-gap, --card-border-width
        → --space-6, --space-4, --border-width
-     --color-surface, --color-text, --color-text-muted, --color-border,
+     --color-base-100, --color-base-content, --color-text-muted, --color-border,
      --shadow-sm, --font-serif, --font-size-{xl,sm}, --line-height-*, --letter-spacing-tight
 
    Radius is declared at the point of use: var(--card-radius, var(--radius-md)).

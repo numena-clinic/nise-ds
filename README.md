@@ -45,12 +45,13 @@ docs/              tokens, typography, accessibility, theme, decisions, componen
 
 ## Tokens
 
-Three layers, each referencing only the layers below it:
+Four layers, each referencing only the layers below it:
 
 | Layer | Answers | Example |
 | --- | --- | --- |
 | **primitive** | *what value?* | `--deep-purple: #4C207F` |
-| **semantic** | *what role?* | `--color-action: var(--deep-purple)` |
+| **semantic** | *what role?* | `--color-primary: var(--deep-purple)` |
+| **themes** | *the same roles, on another ground* | `[data-theme="dark"] { --color-primary: var(--purple-500) }` |
 | **component** | *where used?* | `--button-height-md: var(--control-height-md)` |
 
 The source of truth is the `.mjs` files, not the CSS. `npm run tokens:build`

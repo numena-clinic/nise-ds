@@ -14,7 +14,7 @@
   gap: var(--field-label-gap);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-field__required {
@@ -34,9 +34,9 @@
   color: var(--color-text-muted);
 }
 
-/* Error is a message and an icon, never colour alone (no status colour exists). */
+/* Error is a message and an icon, never colour alone (color.md §4). */
 .nise-field__error {
-  color: var(--color-text);
+  color: var(--color-base-content);
   font-weight: var(--font-weight-medium);
 }
 

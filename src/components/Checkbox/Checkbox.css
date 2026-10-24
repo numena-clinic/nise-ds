@@ -4,7 +4,7 @@
   gap: var(--choice-gap);
   font-family: var(--font-sans);
   cursor: pointer;
-  color: var(--color-text);
+  color: var(--color-base-content);
   -webkit-user-select: none;
   user-select: none;
 }
@@ -34,16 +34,16 @@
   width: var(--choice-size);
   height: var(--choice-size);
   border: var(--border-width-strong) solid var(--color-border-strong);
-  border-radius: var(--checkbox-radius, var(--radius-xl));
-  background-color: var(--color-surface);
+  border-radius: var(--checkbox-radius, var(--radius-sm));
+  background-color: var(--color-base-100);
   transition: border-color var(--duration-fast) var(--ease-standard),
     background-color var(--duration-fast) var(--ease-standard);
 }
 
 .nise-checkbox__input:checked + .nise-checkbox__box,
 .nise-checkbox__input:indeterminate + .nise-checkbox__box {
-  background-color: var(--color-action);
-  border-color: var(--color-action);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .nise-checkbox:hover:not(.nise-checkbox--disabled) .nise-checkbox__box {
@@ -52,8 +52,8 @@
 
 .nise-checkbox:hover:not(.nise-checkbox--disabled) .nise-checkbox__input:checked + .nise-checkbox__box,
 .nise-checkbox:hover:not(.nise-checkbox--disabled) .nise-checkbox__input:indeterminate + .nise-checkbox__box {
-  background-color: var(--color-action-hover);
-  border-color: var(--color-action-hover);
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .nise-checkbox__input:focus-visible + .nise-checkbox__box {
@@ -68,9 +68,9 @@
   opacity: 0;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 12px 12px;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
-  background-color: var(--color-action-text);
+  background-size: 13px 13px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
+  background-color: var(--color-primary-content);
 }
 
 .nise-checkbox__input:checked + .nise-checkbox__box::after {
@@ -79,8 +79,8 @@
 
 .nise-checkbox__input:indeterminate + .nise-checkbox__box::after {
   opacity: 1;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12h12' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
-  background-size: 10px 10px;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12h12' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  background-size: 12px 12px;
 }
 
 .nise-checkbox__text {
@@ -93,7 +93,7 @@
 .nise-checkbox__label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text);
+  color: var(--color-base-content);
 }
 
 .nise-checkbox__hint {

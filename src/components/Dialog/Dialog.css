@@ -15,7 +15,7 @@
   overflow-y: auto;
   border-radius: var(--radius-md);
   border: var(--border-width) solid var(--color-border-strong);
-  background-color: var(--color-surface);
+  background-color: var(--color-base-100);
   box-shadow: var(--shadow-md);
   padding: var(--dialog-padding);
   display: flex;
@@ -41,7 +41,7 @@
   font-family: var(--font-sans);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
+  color: var(--color-base-content);
   margin: 0;
 }
 

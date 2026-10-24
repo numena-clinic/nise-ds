@@ -10,7 +10,13 @@
 // Nothing here writes to the token source; it only emits an override.
 
 import { useState } from "react";
-import { COLOR_PRIMITIVES, INFO_BY_NAME, type EditableToken } from "../theme/tokens";
+import {
+  COLOR_PRIMITIVES,
+  INFO_BY_NAME,
+  isAnchorRole,
+  type AnchorRoles,
+  type EditableToken,
+} from "../theme/tokens";
 import { hexToHsl, hslToHex, isHex, normalizeHex } from "../theme/color";
 
 export interface ColorEditorProps {
@@ -42,9 +48,25 @@ function Swatch({ hex, size = 40 }: { hex: string; size?: number }) {
 
 /** A brand anchor (numena-brand color.md §2): the published value, shown
  * read-only. The explorer can point roles at it; it can never change it — the
- * badge says so in words, not colour. */
-export function LockedAnchorCard({ name, raw, resolved }: { name: string; raw: string; resolved: string }) {
+ * badge says so in words, not colour.
+ *
+ *  When the anchor is load-bearing it also names the roles it drives: since
+ *  D22 the page, the body text, the secondary and the accent all read an
+ *  anchor, and "immutable" alone would not say why that matters. */
+export function LockedAnchorCard({
+  name,
+  raw,
+  resolved,
+  roles,
+}: {
+  name: string;
+  raw: string;
+  resolved: string;
+  roles?: AnchorRoles;
+}) {
   const bare = pretty(name);
+  const drives = roles?.drives ?? [];
+  const textOn = roles?.textOn ?? [];
   return (
     <div className="nise-swatch-card nise-swatch-card--locked">
       <div className="nise-color__head">
@@ -60,6 +82,20 @@ export function LockedAnchorCard({ name, raw, resolved }: { name: string; raw: s
       <div className="nise-color__row">
         <code className="nise-color__canonical">{raw}</code>
       </div>
+      {drives.length > 0 ? (
+        <p className="nise-color__drives">
+          drives{" "}
+          <span className="nise-color__drives-list">
+            {drives.map((role) => pretty(role.replace(/^--color-/, ""))).join(" · ")}
+          </span>
+        </p>
+      ) : null}
+      {textOn.length > 0 ? (
+        <p className="nise-color__drives">
+          text on{" "}
+          <span className="nise-color__drives-list">{textOn.map(pretty).join(" · ")}</span>
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -220,11 +256,13 @@ export function RoleColorEditor({
   changed,
   onChange,
   onReset,
-}: ColorEditorProps) {
+  dark,
+}: ColorEditorProps & { dark?: { ref: string; resolved: string } | null }) {
   const bare = pretty(editable.name);
   const currentRef = value.startsWith("var(")
     ? value.replace(/^var\(\s*|\s*\)$/g, "")
     : (editable.canonicalRef ?? "");
+  const onAnchor = isAnchorRole(editable.name, currentRef);
 
   return (
     <div className={`nise-swatch-card ${changed ? "nise-swatch-card--changed" : ""}`}>
@@ -233,7 +271,10 @@ export function RoleColorEditor({
           <Swatch hex={resolved} size={44} />
           <div className="nise-color__names">
             <p className="nise-color__name">{bare}</p>
-            <p className="nise-color__meta">points at {pretty(currentRef)}</p>
+            <p className="nise-color__meta">
+              points at {pretty(currentRef)}
+              {onAnchor ? <span className="nise-color__meta-flag"> · brand anchor</span> : null}
+            </p>
           </div>
         </div>
         <button
@@ -246,6 +287,14 @@ export function RoleColorEditor({
           Reset
         </button>
       </div>
+
+      {dark ? (
+        <p className="nise-color__drives">
+          dark mapping{" "}
+          <span className="nise-color__drives-list">{pretty(dark.ref)}</span>
+          {dark.resolved ? <code className="nise-color__canonical"> {dark.resolved}</code> : null}
+        </p>
+      ) : null}
 
       <div className="nise-color__palette" role="group" aria-label={`${bare} palette`}>
         {COLOR_PRIMITIVES.map((primitive) => {

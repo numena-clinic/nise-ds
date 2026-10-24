@@ -103,7 +103,7 @@ const Ramp = ({ chips }: { chips: Chip[] }) => (
             color: "var(--color-text-muted)",
           }}
         >
-          <div style={{ color: "var(--color-text)", fontWeight: "var(--font-weight-semibold)" }}>
+          <div style={{ color: "var(--color-base-content)", fontWeight: "var(--font-weight-semibold)" }}>
             {chip.label ?? chip.name}
           </div>
           <div>{chip.hex}</div>
@@ -215,7 +215,7 @@ const SemanticRolesView = () => {
           flexDirection: "column",
           gap: "var(--space-6)",
           padding: "var(--space-4)",
-          backgroundColor: "var(--color-surface)",
+          backgroundColor: "var(--color-base-100)",
           borderRadius: "var(--radius-md)",
         }}
       >
