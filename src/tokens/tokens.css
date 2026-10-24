@@ -36,9 +36,10 @@
   --soft-tangerine: #FDE4DA;
   --dark-ground: #17121D;
   --dark-panel: #2D2238;
-  --neutral-50: #faf8fc;
-  --neutral-100: #f2f0f4;
-  --neutral-200: #e0dfe3;
+  --accent-violet: #AB62ED;
+  --neutral-50: #f4f1f8;
+  --neutral-100: #eae5f1;
+  --neutral-200: #dfd8e8;
   --neutral-400: #b5b3b8;
   --neutral-500: #9b989e;
   --neutral-600: #817f85;
@@ -59,17 +60,17 @@
   --cyan-900: #003d43;
   --tangerine-100: #ffece6;
   --tangerine-900: #5a2200;
-  --mint-500: #42F5A5;
-  --mint-700: #1a7856;
-  --mint-950: #142D27;
-  --citron-500: #FFD84D;
-  --citron-800: #6b5418;
-  --citron-950: #302817;
+  --mint-500: #20B098;
+  --mint-700: #147061;
+  --mint-950: #0A2823;
+  --citron-500: #DF6E39;
+  --citron-800: #873612;
+  --citron-950: #331204;
   --pink-500: #FF5CA8;
-  --pink-700: #A52D70;
+  --pink-700: #D10057;
   --pink-950: #351629;
-  --blue-500: #80C5FF;
-  --blue-700: #2B75B9;
+  --blue-500: #4FA5E8;
+  --blue-700: #1F6492;
   --blue-950: #0C2345;
 
   /* typography */
@@ -143,7 +144,7 @@
   /* The surface ladder, its text and its interaction states. */
   --color-base-100: var(--white);
   --color-base-200: var(--neutral-50);
-  --color-base-300: var(--pale-lavender);
+  --color-base-300: var(--neutral-200);
   --color-base-content: var(--ink-plum);
   --color-base-hover: var(--neutral-100);
   --color-base-active: var(--neutral-200);
@@ -157,7 +158,7 @@
   --color-primary-content: var(--white);
   --color-secondary: var(--vibrant-purple);
   --color-secondary-content: var(--white);
-  --color-accent: var(--vibrant-tangerine);
+  --color-accent: var(--accent-violet);
   --color-accent-content: var(--ink-plum);
   --color-neutral: var(--ink-plum);
   --color-neutral-content: var(--white);
@@ -351,14 +352,14 @@
   --color-base-active: var(--neutral-700);
 
   /* emphasis */
-  --color-primary: var(--purple-500);
-  --color-primary-hover: var(--purple-400);
-  --color-primary-active: var(--purple-300);
-  --color-primary-edge: color-mix(in srgb, var(--purple-500) 85%, var(--ink-plum));
+  --color-primary: var(--purple-400);
+  --color-primary-hover: var(--purple-300);
+  --color-primary-active: var(--purple-200);
+  --color-primary-edge: color-mix(in srgb, var(--purple-400) 85%, var(--ink-plum));
   --color-primary-content: var(--neutral-950);
-  --color-secondary: var(--purple-300);
+  --color-secondary: var(--purple-200);
   --color-secondary-content: var(--neutral-950);
-  --color-accent: var(--vibrant-tangerine);
+  --color-accent: var(--accent-violet);
   --color-accent-content: var(--ink-plum);
   --color-neutral: var(--neutral-800);
   --color-neutral-content: var(--neutral-50);
@@ -410,14 +411,14 @@
   --color-base-active: var(--neutral-700);
 
   /* emphasis */
-  --color-primary: var(--purple-500);
-  --color-primary-hover: var(--purple-400);
-  --color-primary-active: var(--purple-300);
-  --color-primary-edge: color-mix(in srgb, var(--purple-500) 85%, var(--ink-plum));
+  --color-primary: var(--purple-400);
+  --color-primary-hover: var(--purple-300);
+  --color-primary-active: var(--purple-200);
+  --color-primary-edge: color-mix(in srgb, var(--purple-400) 85%, var(--ink-plum));
   --color-primary-content: var(--neutral-950);
-  --color-secondary: var(--purple-300);
+  --color-secondary: var(--purple-200);
   --color-secondary-content: var(--neutral-950);
-  --color-accent: var(--vibrant-tangerine);
+  --color-accent: var(--accent-violet);
   --color-accent-content: var(--ink-plum);
   --color-neutral: var(--neutral-800);
   --color-neutral-content: var(--neutral-50);

@@ -129,10 +129,10 @@ describe("evalMix", () => {
 
 describe("derived semantic colours (regression)", () => {
   const cases: Record<string, string> = {
-    "--color-base-hover": "#f2f0f4",
-    "--color-base-active": "#e0dfe3",
+    "--color-base-hover": "#eae5f1",
+    "--color-base-active": "#dfd8e8",
     "--color-text-muted": "#69666d",
-    "--color-border": "#e0dfe3",
+    "--color-border": "#dfd8e8",
     "--color-border-strong": "#817f85",
     "--color-border-hover": "#69666d",
     "--color-primary-hover": "#44097e",
@@ -236,11 +236,11 @@ describe("dark theme overrides", () => {
     expect(expand("--color-base-100", dark)).toBe("#17121D");
     expect(expand("--color-base-200", dark)).toBe("#221A2A"); // the brand ink
     expect(expand("--color-base-300", dark)).toBe("#2D2238"); // the strong panel
-    expect(expand("--color-base-content", dark)).toBe("#faf8fc");
+    expect(expand("--color-base-content", dark)).toBe("#f4f1f8");
   });
 
   it("brightens the primary and deepens the shadow", () => {
-    expect(expand("--color-primary", dark)).toBe("#aa7fef");
+    expect(expand("--color-primary", dark)).toBe("#c2a0fb");
     expect(expand("--shadow-md", dark)).toContain("rgb(0 0 0");
   });
 });

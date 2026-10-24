@@ -82,6 +82,10 @@ export const groundAnchors = [
   { name: "--dark-panel", hex: "#2D2238", role: "foundation", provenance: "dark panel candidate" },
 ];
 
+export const accentAnchors = [
+  { name: "--accent-violet", hex: "#AB62ED", role: "accent", provenance: "design image accent" },
+];
+
 // ── scale configuration ──────────────────────────────────────────────────────
 //
 // A scale is a list of steps (light → dark) plus, per family, an OKLCH hue and a
@@ -163,10 +167,10 @@ export const neutral = { hue: 305, maxChroma: 0.016 };
  * @param {(l: number) => number} hueAt
  * @returns {Record<string, { oklch: { l: number, c: number, h: number }, hex: string }>}
  */
-export function generateScale(steps, chromaAt, hueAt) {
+export function generateScale(steps, chromaAt, hueAt, customLightness = {}) {
   const out = {};
   for (const step of steps) {
-    const l = lightnessSteps[step];
+    const l = customLightness[step] ?? lightnessSteps[step];
     const lc = Math.min(1, Math.max(0, l));
     const oklch = { l: lc, c: chromaAt(lc), h: hueAt(lc) };
     out[step] = { oklch, hex: toHex(oklchToRgb(oklch)) };
@@ -248,50 +252,40 @@ export function authoredScale(pins, steps) {
  * @type {Record<string, Record<string, string>>}  family → step → published hex
  */
 export const functionalFamilies = {
-  /** success — a cool green that reads as confirmation without a verdict hue. */
+  /** success — cool mint green from design image (#20B098 / #C9FFF5). */
   mint: {
-    50: "#E8FFF2",
-    200: "#9CFFD0",
-    500: "#42F5A5",
-    600: "#1E8F63",
-    900: "#174B3A",
-    950: "#142D27",
+    50: "#C9FFF5",
+    200: "#BEFFF4",
+    500: "#20B098",
+    700: "#147061",
+    900: "#10483E",
+    950: "#0A2823",
   },
-  /** warning — amber, not ochre: brighter and sharper than a muted gold. */
+  /** warning — orange from design image (#DF6E39 / #FDE4DA). */
   citron: {
-    50: "#FFF8DE",
-    200: "#FFF0A6",
-    500: "#FFD84D",
-    600: "#A27D14",
-    900: "#514017",
-    950: "#302817",
+    50: "#FFF5F0",
+    200: "#FDE4DA",
+    500: "#DF6E39",
+    700: "#9C4217",
+    800: "#873612",
+    900: "#542008",
+    950: "#331204",
   },
-  /** error — a saturated pink, not a fire-engine red. */
+  /** error — magenta/pink from design image (#D10057 / #FFC2DB). */
   pink: {
     50: "#FFF0F6",
-    200: "#FFB4D8",
+    200: "#FFC2DB",
     500: "#FF5CA8",
-    700: "#A52D70",
+    700: "#D10057",
     900: "#5B2043",
     950: "#351629",
   },
-  /** info — a true blue, NOT a second cyan. The family this replaces was a cyan
-   *  pushed a few degrees bluer: its 500 step sat at hue 209°, four degrees
-   *  from the brand's vibrant-cyan at 206°, and in the dark theme — where
-   *  `secondary` was the brand's vibrant-cyan and `info` was this family's
-   *  vivid step — the two read as one colour (ΔE2000 1.9, far inside a
-   *  just-noticeable difference; 8.9 in the light theme). The house rule "cyan
-   *  is not info" was met in name and broken in practice. These pins are a
-   *  genuine blue (hue 245°–258°), so `info` is far from the cyan that still
-   *  tints the page (`--color-tint-cyan`) and far from every fill role in both
-   *  themes. The secondary is no longer cyan at all (D22), but the cyan
-   *  family still carries a categorical role, so the family stays blue.
-   *  Measured; see decisions.md D21 and D22. */
+  /** info — blue from design image (#1F6492 / #BADBFF). */
   blue: {
     50: "#F0F8FF",
-    200: "#C6E4FF",
-    500: "#80C5FF",
-    700: "#2B75B9",
+    200: "#BADBFF",
+    500: "#4FA5E8",
+    700: "#1F6492",
     900: "#143B69",
     950: "#0C2345",
   },
@@ -340,8 +334,14 @@ export const scaleSteps = {
 export const scales = {
   neutral: generateScale(
     scaleSteps.neutral,
-    (l) => neutral.maxChroma * (0.35 + 0.65 * (1 - l)),
+    (l) => {
+      if (l >= 0.96) return 0.010;
+      if (l >= 0.92) return 0.017;
+      if (l >= 0.88) return 0.023;
+      return neutral.maxChroma * (0.35 + 0.65 * (1 - l));
+    },
     () => neutral.hue,
+    { 50: 0.962, 100: 0.929, 200: 0.892 },
   ),
   purple: familyScale(families.purple, scaleSteps.purple),
   cyan: familyScale(families.cyan, scaleSteps.cyan),
@@ -365,7 +365,7 @@ export const colorTokens = {};
 /** @type {Record<string, { oklch: { l: number, c: number, h: number }, hex: string, source: string, family?: string, step?: string, provenance?: string }>} */
 export const colorMeta = {};
 
-for (const anchor of [...brandAnchors, ...groundAnchors]) {
+for (const anchor of [...brandAnchors, ...groundAnchors, ...accentAnchors]) {
   colorTokens[anchor.name] = anchor.hex;
   colorMeta[anchor.name] = {
     oklch: {

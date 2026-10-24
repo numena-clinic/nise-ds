@@ -68,14 +68,14 @@ export const supportingDark = {
  *  accent is the brand's own vivid tangerine, with the brand ink as its
  *  content, at 6.20:1. */
 export const emphasisDark = {
-  "--color-primary": ref("--purple-500"),
-  "--color-primary-hover": ref("--purple-400"),
-  "--color-primary-active": ref("--purple-300"),
-  "--color-primary-edge": mix(ref("--purple-500"), 85, ref("--ink-plum")),
+  "--color-primary": ref("--purple-400"),
+  "--color-primary-hover": ref("--purple-300"),
+  "--color-primary-active": ref("--purple-200"),
+  "--color-primary-edge": mix(ref("--purple-400"), 85, ref("--ink-plum")),
   "--color-primary-content": ref("--neutral-950"),
-  "--color-secondary": ref("--purple-300"),
+  "--color-secondary": ref("--purple-200"),
   "--color-secondary-content": ref("--neutral-950"),
-  "--color-accent": ref("--vibrant-tangerine"),
+  "--color-accent": ref("--accent-violet"),
   "--color-accent-content": ref("--ink-plum"),
   "--color-neutral": ref("--neutral-800"),
   "--color-neutral-content": ref("--neutral-50"),

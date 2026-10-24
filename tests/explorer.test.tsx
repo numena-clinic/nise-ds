@@ -142,8 +142,8 @@ describe("Theme Explorer", () => {
 
     // the vibrant purple is the secondary fill, not decoration
     expect(card("vibrant-purple")?.textContent).toContain("secondary");
-    // the tangerine is the accent fill
-    expect(card("vibrant-tangerine")?.textContent).toContain("accent");
+    // the tangerine is an immutable brand anchor
+    expect(card("vibrant-tangerine")?.textContent).toContain("#F57A44");
   });
 
   it("tags a role that reads a brand anchor on the colour page", () => {

@@ -49,11 +49,11 @@ The structural ladder for page, cards, and panels:
 | Token | Light Value | Dark Value | Purpose |
 | --- | --- | --- | --- |
 | `--color-base-100` | `var(--white)` | `var(--dark-ground)` | Page background canvas |
-| `--color-base-200` | `var(--neutral-50)` | `var(--ink-plum)` | Raised cards and containers |
-| `--color-base-300` | `var(--pale-lavender)` | `var(--dark-panel)` | Nested panels and wells |
+| `--color-base-200` | `var(--neutral-50)` (`#f4f1f8`) | `var(--ink-plum)` | Raised cards and containers |
+| `--color-base-300` | `var(--neutral-200)` (`#dfd8e8`) | `var(--dark-panel)` | Nested panels and wells |
 | `--color-base-content` | `var(--ink-plum)` | `var(--neutral-50)` | Primary text on base surfaces |
-| `--color-base-hover` | `var(--neutral-100)` | `var(--neutral-800)` | Surface hover state |
-| `--color-base-active` | `var(--neutral-200)` | `var(--neutral-700)` | Surface pressed/active state |
+| `--color-base-hover` | `var(--neutral-100)` (`#eae5f1`) | `var(--neutral-800)` | Surface hover state |
+| `--color-base-active` | `var(--neutral-200)` (`#dfd8e8`) | `var(--neutral-700)` | Surface pressed/active state |
 
 ### 2. Actions & Emphasis Fills
 
@@ -61,21 +61,17 @@ Primary, secondary, accent, and neutral action fills with their required content
 
 | Token | Light Value | Dark Value | Purpose |
 | --- | --- | --- | --- |
-| `--color-primary` | `var(--deep-purple)` | `var(--purple-500)` | Primary action fill |
-| `--color-primary-hover` | `var(--purple-900)` | `var(--purple-400)` | Primary action hover |
-| `--color-primary-active` | `var(--purple-950)` | `var(--purple-300)` | Primary action pressed |
-| `--color-primary-edge` | `color-mix(in srgb, var(--deep-purple) 85%, var(--ink-plum))` | `color-mix(in srgb, var(--purple-500) 85%, var(--ink-plum))` | Action boundary rim |
+| `--color-primary` | `var(--deep-purple)` | `var(--purple-400)` | Primary action fill |
+| `--color-primary-hover` | `var(--purple-900)` | `var(--purple-300)` | Primary action hover |
+| `--color-primary-active` | `var(--purple-950)` | `var(--purple-200)` | Primary action pressed |
+| `--color-primary-edge` | `color-mix(in srgb, var(--deep-purple) 85%, var(--ink-plum))` | `color-mix(in srgb, var(--purple-400) 85%, var(--ink-plum))` | Action boundary rim |
 | `--color-primary-content` | `var(--white)` | `var(--neutral-950)` | Label text on primary fill |
-| `--color-secondary` | `var(--vibrant-purple)` | `var(--purple-300)` | Secondary action fill |
+| `--color-secondary` | `var(--vibrant-purple)` | `var(--purple-200)` | Secondary action fill |
 | `--color-secondary-content` | `var(--white)` | `var(--neutral-950)` | Label text on secondary fill |
-| `--color-accent` | `var(--vibrant-tangerine)` | `var(--vibrant-tangerine)` | Accent fill (fill-only; D22) |
-| `--color-accent-content` | `var(--ink-plum)` | `var(--ink-plum)` | Label text on accent fill |
+| `--color-accent` | `var(--accent-violet)` (`#AB62ED`) | `var(--accent-violet)` | Violet accent fill |
+| `--color-accent-content` | `var(--ink-plum)` | `var(--ink-plum)` | Label text on accent fill (4.56:1) |
 | `--color-neutral` | `var(--ink-plum)` | `var(--neutral-800)` | Neutral action fill |
 | `--color-neutral-content` | `var(--white)` | `var(--neutral-50)` | Label text on neutral fill |
-
-> **Accent is a fill-only role:** `#F57A44` is 2.71:1 as text on light surfaces. Use it
-> as a background under `--color-accent-content`, or use `--color-tint-tangerine` for a
-> pale wash. Never use `--color-accent` directly as text.
 
 ### 3. Operational Status Roles
 
@@ -84,14 +80,14 @@ signal (brand `color.md §4`):
 
 | Token | Light Value | Dark Value | Status Meaning |
 | --- | --- | --- | --- |
-| `--color-success` | `var(--mint-700)` | `var(--mint-500)` | Success, confirmed, saved |
-| `--color-success-content` | `var(--white)` | `var(--mint-950)` | Label text on success badge/pill |
-| `--color-warning` | `var(--citron-800)` | `var(--citron-500)` | Warning, attention, caution |
-| `--color-warning-content` | `var(--white)` | `var(--citron-950)` | Label text on warning badge/pill |
-| `--color-error` | `var(--pink-700)` | `var(--pink-500)` | Error, failure, rejected |
-| `--color-error-content` | `var(--white)` | `var(--pink-950)` | Label text on error badge/pill |
-| `--color-info` | `var(--blue-700)` | `var(--blue-500)` | Informational, system notice |
-| `--color-info-content` | `var(--white)` | `var(--blue-950)` | Label text on info badge/pill |
+| `--color-success` | `var(--mint-700)` (`#147061`) | `var(--mint-500)` (`#20B098`) | Success, confirmed, saved |
+| `--color-success-content` | `var(--white)` | `var(--mint-950)` (`#0A2823`) | Label text on success badge/pill |
+| `--color-warning` | `var(--citron-800)` (`#873612`) | `var(--citron-500)` (`#DF6E39`) | Warning, attention, caution |
+| `--color-warning-content` | `var(--white)` | `var(--citron-950)` (`#331204`) | Label text on warning badge/pill |
+| `--color-error` | `var(--pink-700)` (`#D10057`) | `var(--pink-500)` (`#FF5CA8`) | Error, failure, rejected |
+| `--color-error-content` | `var(--white)` | `var(--pink-950)` (`#351629`) | Label text on error badge/pill |
+| `--color-info` | `var(--blue-700)` (`#1F6492`) | `var(--blue-500)` (`#4FA5E8`) | Informational, system notice |
+| `--color-info-content` | `var(--white)` | `var(--blue-950)` (`#0C2345`) | Label text on info badge/pill |
 
 ### 4. Supporting, Boundaries & Selection
 

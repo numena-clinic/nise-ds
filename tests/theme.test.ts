@@ -202,7 +202,7 @@ describe("overrides and preview resolution", () => {
   it("summarises the change set with its dependents", () => {
     const rows = diffRows(only);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ name: "--neutral-50", from: "#faf8fc", to: "#000000" });
+    expect(rows[0]).toMatchObject({ name: "--neutral-50", from: "#f4f1f8", to: "#000000" });
     expect(rows[0]!.direct).toContain("--color-base-200");
     expect(rows[0]!.dependents).toContain("--color-base-200");
   });

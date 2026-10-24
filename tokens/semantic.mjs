@@ -72,7 +72,7 @@ const inkPlum = ref("--ink-plum");
 export const base = {
   "--color-base-100": ref("--white"),
   "--color-base-200": ref("--neutral-50"),
-  "--color-base-300": ref("--pale-lavender"),
+  "--color-base-300": ref("--neutral-200"),
   "--color-base-content": ref("--ink-plum"),
   "--color-base-hover": ref("--neutral-100"),
   "--color-base-active": ref("--neutral-200"),
@@ -104,9 +104,8 @@ export const supporting = {
  *  brand's other purple, the VIBRANT one: the same family, a good deal
  *  lighter, so the two fills read as a pair (ΔE2000 20.1, well clear of the
  *  just-noticeable floor) and are told apart by ROLE — primary is the action,
- *  secondary is the lesser emphasis. The accent is the brand's vivid tangerine,
- *  and it is a FILL role: its content is the brand ink, not white, because
- *  white on tangerine is 2.71:1. Neutral is the brand ink.
+ *  secondary is the lesser emphasis. The accent is the design violet #AB62ED,
+ *  and it pairs with brand ink content at 4.56:1 contrast. Neutral is the brand ink.
  *
  *  Each pairs with a content colour that clears 4.5:1 on the fill; the primary
  *  carries hover/active steps down the purple ramp. */
@@ -118,7 +117,7 @@ export const emphasis = {
   "--color-primary-content": white,
   "--color-secondary": ref("--vibrant-purple"),
   "--color-secondary-content": white,
-  "--color-accent": ref("--vibrant-tangerine"),
+  "--color-accent": ref("--accent-violet"),
   "--color-accent-content": inkPlum,
   "--color-neutral": inkPlum,
   "--color-neutral-content": white,
