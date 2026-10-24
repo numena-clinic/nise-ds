@@ -4,8 +4,7 @@ import type { ReactNode } from "react";
 import type { FoundationId, FoundationPage, PageRenderContext } from "./types";
 import { ALL_TOKENS, INFO_BY_NAME, LAYERS, isAnchorRole } from "../theme/tokens";
 import { resolve } from "../theme/theme";
-import { brandAnchors, colorMeta, groundAnchors, oklchOf, scales } from "../../../tokens/palette.mjs";
-import { oklchToRgb, toHex } from "../../../tokens/color.mjs";
+import { brandAnchors, groundAnchors, scales } from "../../../tokens/palette.mjs";
 
 interface Anchor {
   name: string;
@@ -15,86 +14,6 @@ interface Anchor {
 
 const allAnchors: Anchor[] = brandAnchors as Anchor[];
 const groundAnchorNames: string[] = groundAnchors.map((a: { name: string }) => a.name);
-
-const meta = colorMeta as Record<string, { oklch: { l: number; c: number; h: number } } | undefined>;
-const cOf = (name: string) => meta[name]?.oklch.c ?? 0;
-const hOf = (name: string) => meta[name]?.oklch.h ?? 0;
-
-/** The generated hue families a brand anchor belongs to, and the family's hue. */
-const HUE_FAMILIES: { label: string; family: string; hue: number }[] = [
-  { label: "Purple", family: "purple", hue: 300 },
-  { label: "Cyan", family: "cyan", hue: 205 },
-  { label: "Tangerine", family: "tangerine", hue: 43 },
-];
-
-const CHROMA_NEUTRAL_MAX = 0.05;
-const hueDistance = (h: number, target: number) => {
-  const d = Math.abs(h - target) % 360;
-  return d > 180 ? 360 - d : d;
-};
-
-const chromaFamilyOf = (name: string): string =>
-  cOf(name) <= CHROMA_NEUTRAL_MAX
-    ? "neutral"
-    : HUE_FAMILIES.reduce((best, f) =>
-        hueDistance(hOf(name), f.hue) < hueDistance(hOf(name), best.hue) ? f : best,
-      ).family;
-
-interface RampStep {
-  hex: string;
-  anchor?: string;
-}
-
-/** A ramp of swatches interpolated in OKLCH through a hue's own brand anchors,
- * ordered soft → vibrant by chroma. Control points ARE the published hex, so
- * the ramp always fits the brand colours; the steps between them are even
- * blends. The brand hex are flagged so the ramp reads as "these anchors, plus
- * the shades the brand leaves to the design system". */
-function buildChromaRamp(anchors: { name: string; hex: string }[]): RampStep[] {
-  if (anchors.length === 0) return [];
-  const points = anchors
-    .map((a) => ({ ...a, oklch: oklchOf(a.hex) }))
-    .sort((a, b) => a.oklch.c - b.oklch.c);
-  if (points.length === 1) {
-    const only = points[0]!;
-    return [{ hex: only.hex, anchor: only.name.replace(/^--/, "") }];
-  }
-
-  const steps: RampStep[] = [];
-  const between = 3; // in-between swatches per interval
-  for (let i = 0; i < points.length - 1; i++) {
-    const a = points[i]!;
-    const b = points[i + 1]!;
-    steps.push({ hex: a.hex, anchor: a.name.replace(/^--/, "") });
-    for (let k = 1; k <= between; k++) {
-      const t = k / (between + 1);
-      const oklch = {
-        l: a.oklch.l + (b.oklch.l - a.oklch.l) * t,
-        c: a.oklch.c + (b.oklch.c - a.oklch.c) * t,
-        h: a.oklch.h + (b.oklch.h - a.oklch.h) * t,
-      };
-      steps.push({ hex: toHex(oklchToRgb(oklch)) });
-    }
-  }
-  const last = points[points.length - 1]!;
-  steps.push({ hex: last.hex, anchor: last.name.replace(/^--/, "") });
-  return steps;
-}
-
-/** Each hue family as one chroma ramp built from its own brand anchors (soft →
- * vibrant), pale-lavender included in the purple family. */
-const FAMILY_CHROMA_SCALES: { label: string; note: string; steps: RampStep[] }[] = [
-  ...HUE_FAMILIES.map(({ label, family }) => ({ label, family })),
-  { label: "Neutral", family: "neutral" },
-].map(({ label, family }) => ({
-  label,
-  note: "soft → vibrant · built from the brand hex",
-  steps: buildChromaRamp(
-    allAnchors
-      .filter((a) => chromaFamilyOf(a.name) === family)
-      .map((a) => ({ name: a.name, hex: a.hex })),
-  ),
-}));
 
 /** The brand anchors, categorised the way the brand describes them: the
  * foundation pair, the two primaries, and the expressive accents — the vibrant
@@ -218,33 +137,6 @@ function Ramp({ tokens, map }: { tokens: string[]; map: Readonly<Record<string, 
   );
 }
 
-/** A chroma ramp of literal colours (built from the brand hex), with the
- * anchor swatches named underneath. */
-function ChromaRamp({ steps }: { steps: RampStep[] }) {
-  if (steps.length === 0) return null;
-  return (
-    <div className="nise-pv__ramp">
-      <div className="nise-pv__ramp-track">
-        {steps.map((step, i) => (
-          <span
-            key={`${step.hex}-${i}`}
-            className={`nise-pv__ramp-step ${step.anchor ? "nise-pv__ramp-step--anchor" : ""}`}
-            style={{ background: step.hex }}
-            title={`${step.anchor ?? "blend"} · ${step.hex}`}
-          />
-        ))}
-      </div>
-      <div className="nise-pv__ramp-labels">
-        {steps.map((step, i) => (
-          <span key={`${step.hex}-l-${i}`} className="nise-pv__ramp-label">
-            {step.anchor ? <span className="nise-pv__ramp-anchor">{step.anchor}</span> : null}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function ColourSection({
   title,
   note,
@@ -269,14 +161,27 @@ function ColourPage({ map }: PageRenderContext) {
   return (
     <>
       <p className="nise-explorer__page-lead">
-        Colour comes from the token source, not a hand-kept list. The ten brand anchors and the two
-        pinned dark-ground anchors are fixed by numena-brand; the scales and the semantic roles are
-        authored here and resolve live against your overrides.
+        Colour comes from the token source, not a hand-kept list. The 37 semantic roles below are
+        the active tokens used across all components. They resolve live against your overrides and
+        selected theme mode.
       </p>
 
       <ColourSection
+        title="Semantic roles"
+        note="The active interface colours grouped by function: base surfaces, emphasis actions, operational status, supporting boundaries, and categorical tints. Roles tagged 'brand' read a brand anchor."
+      >
+        <div className="nise-pv__role-groups">
+          {ROLE_GROUPS.map((group) => (
+            <ColourSection key={group.label} title={group.label} note={group.note}>
+              <SwatchGrid tokens={group.tokens} map={map} mark={isBrandBacked} />
+            </ColourSection>
+          ))}
+        </div>
+      </ColourSection>
+
+      <ColourSection
         title="Brand anchors"
-        note="The ten brand hex, unchanged (numena-brand color.md §2). Since D22 six of them are load-bearing — white paints the page, the ink paints the body text, and the pale lavender, the deep purple, the vibrant purple and the tangerine paint the panel, the primary, the secondary and the accent fills — so the interface is literally the brand's own colours. The remaining anchors are for artwork and marketing surfaces; product components use the semantic roles below, and a role tagged 'brand' reads an anchor."
+        note="The ten brand hex, unchanged (numena-brand color.md §2). Six of them directly drive foundational roles: white paints the page, ink paints the body text, and pale lavender, deep purple, vibrant purple and tangerine paint panel, primary, secondary and accent fills."
       >
         <div className="nise-pv__role-groups">
           {ANCHOR_CATEGORIES.map((group) => (
@@ -288,39 +193,20 @@ function ColourPage({ map }: PageRenderContext) {
       </ColourSection>
 
       <ColourSection
-        title="Chroma scales"
-        note="Each hue family's own ramp, soft → vibrant, built by interpolating through that family's brand hex — so the ramp always fits the brand, and the published anchors are marked on it."
-      >
-        <div className="nise-pv__colour-groups">
-          {FAMILY_CHROMA_SCALES.map((scale) => (
-            <ColourSection key={scale.label} title={scale.label} note={scale.note}>
-              <ChromaRamp steps={scale.steps} />
-            </ColourSection>
-          ))}
-        </div>
-      </ColourSection>
-
-      <ColourSection
         title="Dark ground anchors"
-        note="The pinned ladder the dark theme reads from: the page, the brand ink as the raised step, the strong panel."
+        note="The pinned ladder the dark theme reads from: the page (--dark-ground) and the strong panel (--dark-panel)."
       >
         <SwatchGrid tokens={groundAnchorNames} map={map} />
       </ColourSection>
 
-      {SCALE_FAMILIES.map((family) => (
-        <ColourSection key={family.label} title={`${family.label} scale`}>
-          <Ramp tokens={family.tokens} map={map} />
-        </ColourSection>
-      ))}
-
       <ColourSection
-        title="Semantic roles"
-        note="One contract of role names, grouped by meaning; each resolves against the palette above under your current edits and the selected mapping. A role tagged 'brand' reads a brand anchor — the value is fixed by numena-brand, though the role itself can be re-pointed."
+        title="Primitive scale ramps"
+        note="The underlying ramps in OKLCH (neutral, purple, cyan, tangerine) and authored operational scales (mint, citron, pink, blue). Every surfaced step is referenced by a semantic role above."
       >
-        <div className="nise-pv__role-groups">
-          {ROLE_GROUPS.map((group) => (
-            <ColourSection key={group.label} title={group.label} note={group.note}>
-              <SwatchGrid tokens={group.tokens} map={map} mark={isBrandBacked} />
+        <div className="nise-pv__colour-groups">
+          {SCALE_FAMILIES.map((family) => (
+            <ColourSection key={family.label} title={`${family.label} scale`}>
+              <Ramp tokens={family.tokens} map={map} />
             </ColourSection>
           ))}
         </div>

@@ -255,6 +255,6 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Palette: Story = { render: () => <PaletteView /> };
-
 export const SemanticRoles: Story = { render: () => <SemanticRolesView /> };
+
+export const Palette: Story = { render: () => <PaletteView /> };

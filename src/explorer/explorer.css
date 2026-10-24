@@ -1536,8 +1536,3 @@
   color: var(--color-text-muted);
 }
 
-.nise-pv__ramp-anchor {
-  display: block;
-  color: var(--color-base-content);
-  font-weight: var(--font-weight-medium);
-}
