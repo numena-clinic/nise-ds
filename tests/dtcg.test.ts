@@ -137,7 +137,7 @@ describe("DTCG value conformance", () => {
     }
   });
 
-  it("colours follow the Color module (srgb, 3 components, hex fallback)", () => {
+  it("colors follow the Color module (srgb, 3 components, hex fallback)", () => {
     for (const { leaf } of byType("color")) {
       const v = leaf.$value as {
         colorSpace: string;
@@ -188,7 +188,7 @@ describe("DTCG value conformance", () => {
     }
   });
 
-  it("shadow composites carry colour, offsets, blur and spread", () => {
+  it("shadow composites carry color, offsets, blur and spread", () => {
     for (const { leaf } of byType("shadow")) {
       const v = leaf.$value as Dict;
       for (const k of ["color", "offsetX", "offsetY", "blur", "spread"]) {
@@ -242,7 +242,7 @@ describe("value equivalence with the canonical source", () => {
           expect(v.alpha ?? 1).toBeCloseTo(c.a, 5);
           // A derived `color-mix()` has no exact 8-bit source to compare against
           // here; it is verified against a standards engine below. Literal
-          // colours are exact, so their components must equal the channel value
+          // colors are exact, so their components must equal the channel value
           // at the exporter's precision (no loose byte-rounding slop).
           if (leaf.$extensions?.[NS]?.mix) break;
           expect(v.components).toEqual([c.r, c.g, c.b].map(srgb6));
@@ -259,7 +259,7 @@ describe("value equivalence with the canonical source", () => {
   // components (getComputedStyle). The reference is quoted to 6 decimal places,
   // so the tolerance is half a step (5e-7) — the tightest a 6-dp reference can
   // justify.
-  it("derived colours match browser-computed sRGB components (not byte-quantised)", () => {
+  it("derived colors match browser-computed sRGB components (not byte-quantised)", () => {
     const expected: Record<string, [number, number, number, number]> = {
       "--color-scrim": [0.133333, 0.101961, 0.164706, 0.4],
     };
@@ -287,7 +287,7 @@ describe("value equivalence with the canonical source", () => {
 });
 
 describe("extension metadata", () => {
-  it("precomputes each derived colour and keeps its mix recipe", () => {
+  it("precomputes each derived color and keeps its mix recipe", () => {
     const derived = leaves.filter(({ leaf }) => leaf.$extensions?.[NS]?.mix);
     expect(derived.map(({ leaf }) => cssVarOf(leaf)).sort()).toEqual([
       "--color-primary-edge",
@@ -302,7 +302,7 @@ describe("extension metadata", () => {
     }
   });
 
-  it("records the canonical OKLCH alongside each generated colour", () => {
+  it("records the canonical OKLCH alongside each generated color", () => {
     const purple = leaves.find(
       ({ leaf }) => cssVarOf(leaf) === "--purple-600",
     );
@@ -315,7 +315,7 @@ describe("extension metadata", () => {
     expect(anchor?.leaf.$extensions?.[NS]?.oklch).toBeDefined();
   });
 
-  it("scrim keeps its hue at 40% alpha (premultiplied colour-mix)", () => {
+  it("scrim keeps its hue at 40% alpha (premultiplied color-mix)", () => {
     const scrim = leaves.find(({ leaf }) => cssVarOf(leaf) === "--color-scrim");
     const v = scrim?.leaf.$value as { components: number[]; alpha?: number };
     expect(v.components).toEqual([srgb6(34), srgb6(26), srgb6(42)]);

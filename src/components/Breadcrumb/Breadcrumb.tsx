@@ -4,7 +4,7 @@
    The path trail above a page: where the clinician is and how to get back. It
    is pure navigation — every part is a link, a marker or a separator, and no
    part is an action. The current page is marked with `aria-current="page"` so
-   assistive tech reads where the trail ends without colour or italics doing
+   assistive tech reads where the trail ends without color or italics doing
    the work.
 
    It is composable, in the shape Radix established (D6: no extra dependency

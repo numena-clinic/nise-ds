@@ -1,9 +1,9 @@
 /* =============================================================================
    Theme Explorer — the design tool's own styles.
 
-   These styles dress the TOOL, never the design system. Every colour, space,
+   These styles dress the TOOL, never the design system. Every color, space,
    radius and type value is a token (check-token-usage keeps it honest), so the
-   explorer chrome reflows and re-colours with the system it is editing without
+   explorer chrome reflows and re-colors with the system it is editing without
    any of it leaking into the preview: the preview's experimental values are
    scoped to `.nise-explorer__preview` as inline custom properties, not :root.
    ============================================================================= */
@@ -716,7 +716,7 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* ── swatch cards (colour editor) ──────────────────────────────────────── */
+/* ── swatch cards (color editor) ──────────────────────────────────────── */
 
 .nise-swatch-card {
   border: var(--border-width) solid var(--color-border);
@@ -731,7 +731,7 @@
 }
 
 /* Read-only, the same dashed boundary the derived list uses — plus the badge's
-   words, so "fixed" never rests on colour alone. */
+   words, so "fixed" never rests on color alone. */
 .nise-swatch-card--locked {
   border-style: dashed;
   background: var(--color-base-200);
@@ -747,7 +747,7 @@
   white-space: nowrap;
 }
 
-/* What an anchor actually drives — the roles that read it. Words, not colour:
+/* What an anchor actually drives — the roles that read it. Words, not color:
    the point is that "immutable" has a consequence worth naming. */
 .nise-color__drives {
   font-size: var(--font-size-xs);
@@ -764,7 +764,7 @@
   color: var(--color-text-muted);
 }
 
-/* The "brand" tag on a role swatch in the Colour page. */
+/* The "brand" tag on a role swatch in the Color page. */
 .nise-pv__swatch-tag {
   margin-left: var(--space-1);
   padding: 0 var(--space-1);
@@ -796,7 +796,7 @@
   outline-offset: var(--focus-ring-offset);
 }
 
-/* Colour editor internals (primitive + role editors). */
+/* Color editor internals (primitive + role editors). */
 
 .nise-color__head {
   display: flex;
@@ -1455,21 +1455,21 @@
   color: var(--color-selected-text);
 }
 
-/* ── colour page (palette + semantic roles, Storybook-style) ──────────────── */
+/* ── color page (palette + semantic roles, Storybook-style) ──────────────── */
 
-.nise-pv__colour-section {
+.nise-pv__color-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-.nise-pv__colour-header {
+.nise-pv__color-header {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
 }
 
-.nise-pv__colour-title {
+.nise-pv__color-title {
   margin: 0;
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
@@ -1477,7 +1477,7 @@
   color: var(--color-base-content);
 }
 
-.nise-pv__colour-note {
+.nise-pv__color-note {
   margin: 0;
   max-width: var(--measure-prose);
   font-size: var(--font-size-xs);
@@ -1493,7 +1493,7 @@
   border-radius: var(--radius-md);
 }
 
-.nise-pv__colour-groups {
+.nise-pv__color-groups {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);

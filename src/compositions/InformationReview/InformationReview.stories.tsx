@@ -10,7 +10,7 @@ const meta = {
       description: {
         component:
           "The reference composition: a clinical information review built entirely " +
-          "from system components. Synthetic content. Colour is categorical here, " +
+          "from system components. Synthetic content. Color is categorical here, " +
           "never a verdict — confidence is a neutral Select and no element is tinted " +
           "good or bad.",
       },

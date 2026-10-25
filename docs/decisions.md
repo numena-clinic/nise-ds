@@ -32,11 +32,11 @@ anything other than primitives, and any component token pointing upward. Themes 
 token set: they re-point the *same* semantic role names onto another ground (Light `:root`,
 Dark `[data-theme="dark"]`). The token graph is proven strictly acyclic (`tokens/graph.mjs`).
 
-**D5 — Status colours report machine states, never clinical judgements.**  
-Status colours (`--color-success`, `--color-warning`, `--color-error`, `--color-info`) are
-first-class system roles. In line with brand rules (`color.md §4`), colour is never the sole
+**D5 — Status colors report machine states, never clinical judgements.**  
+Status colors (`--color-success`, `--color-warning`, `--color-error`, `--color-info`) are
+first-class system roles. In line with brand rules (`color.md §4`), color is never the sole
 indicator of state: an interface error or warning is text + an icon + a heavier boundary first,
-colour last. Accents remain categorical emphasis, never verdicts.
+color last. Accents remain categorical emphasis, never verdicts.
 
 **D6 — Radix primitives for complex ARIA; native HTML everywhere else.**  
 Radix is adopted only when it solves genuinely difficult accessibility patterns: `Select`
@@ -92,7 +92,7 @@ Design Tokens Community Group (DTCG) 2025.10 format, facilitating integration wi
 
 **D16 — Hardened verification pipeline.**  
 Token boundary checks (`scripts/check-token-usage.mjs`) analyze full CSS declarations and JSX styles
-(including multiline rules and `calc()` expressions) to guarantee zero off-token colours or raw pixels.
+(including multiline rules and `calc()` expressions) to guarantee zero off-token colors or raw pixels.
 Acyclicity is mathematically proven across the entire token graph.
 
 **D17 — Self-contained TypeScript build.**  
@@ -101,7 +101,7 @@ and `npm run verify` pass consistently in clean CI environments without global d
 
 ---
 
-### Colour System & Active Palette
+### Color System & Active Palette
 
 **D18 — OKLCH palette generation with immutable brand anchors.**  
 The palette uses an OKLCH model (`tokens/palette.mjs`) to ensure perceptual uniformity. The ten published
@@ -144,6 +144,16 @@ prevents functional color collisions (such as info cyan colliding with secondary
 The primary solid button features a hairline darker boundary (`border-color: var(--color-primary-edge)`)
 and a hard 1px ink shadow (`box-shadow: var(--shadow-lip)`), grounding the primary action without relying
 on blurry drop shadows.
+
+**D24 — 4px Base Grid & Multiplier Spacing Convention (`--space-N = N * 4px`).**  
+Spacing tokens use a 4px grid multiplier index rather than raw pixel counts. The token suffix $N$
+represents the number of 4px base units: `--space-1` = 4px ($1 \times 4\text{px}$), `--space-2` = 8px ($2 \times 4\text{px}$),
+and `--space-4` = 16px ($4 \times 4\text{px}$). This convention matches standard web grid design systems (e.g. Tailwind `p-1 = 4px`).
+
+A **4px base** was selected over alternative models:
+- **Over 8px-only**: Pure 8px is too coarse for dense clinical workstations, forcing awkward leaps between 8px and 16px. 4px and 12px steps provide essential micro-hierarchy for compact form stacks, table rows, and badge insets.
+- **Over 5px/10px decimal**: Decimal grids fail to align with binary powers of 2, 24px icon viewboxes, or the 16px rem baseline.
+- **For exact quarter-rem scaling**: At 16px base, 4px is exactly `0.25rem` ($1/4\text{rem}$), ensuring fluid and jitter-free accessibility zoom (WCAG 1.4.4).
 
 ---
 

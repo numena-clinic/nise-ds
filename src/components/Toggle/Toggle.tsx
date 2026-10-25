@@ -9,9 +9,9 @@
    The pressed state is a SELECTION, not a status: it draws the validated
    selected pair (`--color-selected-surface` under `--color-selected-text`) and
    nothing else — no glyph, no difference in weight. Pressed and unpressed
-   differ by tile AND tile-text, never by colour alone: the unpressed rest is a
+   differ by tile AND tile-text, never by color alone: the unpressed rest is a
    ghost-like tile (transparent fill, `--color-primary` label), so the two
-   states remain distinguishable without colour perception.
+   states remain distinguishable without color perception.
 
    Tokens consumed (component layer → semantic → primitive):
       --button-height-{sm,md,lg}      → --control-height-* → literal px
@@ -40,10 +40,13 @@ import {
 } from "react";
 import "./Toggle.css";
 
+export type ToggleVariant = "default" | "outline";
 export type ToggleSize = "sm" | "md" | "lg";
 
 export interface ToggleProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "aria-pressed"> {
+  /** Visual variant. "default" is a ghost-like tile; "outline" adds a border. */
+  variant?: ToggleVariant;
   /** Controlled press state. Omit it to manage the state internally. */
   pressed?: boolean;
   /** Initial press state when the component is uncontrolled. */
@@ -51,12 +54,13 @@ export interface ToggleProps
   onPressedChange?: (pressed: boolean) => void;
   size?: ToggleSize;
   /** Label text, or an icon followed by the text. */
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
 export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
   {
+    variant = "default",
     pressed,
     defaultPressed = false,
     onPressedChange,
@@ -76,6 +80,7 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
 
   const classes = [
     "nise-toggle",
+    `nise-toggle--${variant}`,
     `nise-toggle--${size}`,
     isPressed ? "nise-toggle--pressed" : null,
     className,

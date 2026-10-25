@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// token source: the COLOUR ARCHITECTURE, authored in OKLCH.
+// token source: the COLOR ARCHITECTURE, authored in OKLCH.
 //
-// This is the canonical model for every colour value in Nise. It has two parts:
+// This is the canonical model for every color value in Nise. It has two parts:
 //
 //   1. The ten brand anchors from numena-brand color.md §2. Their published hex
 //      is preserved verbatim and their provenance is kept alongside the OKLCH we
@@ -21,7 +21,7 @@
 //      gamut-mapped to sRGB by tokens/color.mjs.
 //
 // Nothing downstream stores OKLCH as the runtime value: `colorTokens` resolves
-// every colour to a deterministic sRGB hex, which is what `tokens.css` ships.
+// every color to a deterministic sRGB hex, which is what `tokens.css` ships.
 // The OKLCH source travels with each token in `colorMeta` and is preserved in
 // the DTCG export. See docs/tokens.md and docs/decisions.md.
 //
@@ -152,7 +152,7 @@ export const families = {
 export const neutral = { hue: 307, maxChroma: 0.0321 };
 
 /**
- * Generate one scale: an OKLCH colour per step, gamut-mapped to sRGB hex.
+ * Generate one scale: an OKLCH color per step, gamut-mapped to sRGB hex.
  * Pure and deterministic.
  *
  * @param {string[]} steps

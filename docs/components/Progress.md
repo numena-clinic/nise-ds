@@ -12,7 +12,7 @@ Pass a `value` number for determinate; pass `value={null}` for indeterminate. Th
 
 ## Accessibility
 
-`aria-label` is **required** because the painted bar has no text of its own and colour must not carry state alone (color.md §4). The component exposes `role="progressbar"` with `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` when determinate.
+`aria-label` is **required** because the painted bar has no text of its own and color must not carry state alone (color.md §4). The component exposes `role="progressbar"` with `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` when determinate.
 
 ## Props
 

@@ -10,7 +10,7 @@
 
    The container renders `role="group"` named by the required `label` prop. The
    item's pressed state is a SELECTION (the validated selected pair — see
-   Toggle); pressed and unpressed differ by tile AND tile-text, never colour
+   Toggle); pressed and unpressed differ by tile AND tile-text, never color
    alone.
 
    Value semantics mirror the controlled/uncontrolled split the group needs:
@@ -40,15 +40,17 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import type { ToggleSize } from "../Toggle/Toggle";
+import type { ToggleSize, ToggleVariant } from "../Toggle/Toggle";
 import "./ToggleGroup.css";
 
-export type ToggleGroupType = "single" | "multi";
+export type ToggleGroupType = "single" | "multi" | "multiple";
 
 export interface ToggleGroupProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "className" | "onChange"> {
-  /** "single" keeps one layer pressed (the default); "multi" keeps a set. */
+  /** "single" keeps one layer pressed (the default); "multi" (or "multiple") keeps a set. */
   type?: ToggleGroupType;
+  /** Visual variant. "default" is a ghost-like tile; "outline" adds a border. */
+  variant?: ToggleVariant;
   /** Current selection. Controlled when given; a string for `single`, an array for `multi`. */
   value?: string | string[];
   /** Initial selection when uncontrolled. */
@@ -64,6 +66,7 @@ export interface ToggleGroupProps
 
 interface ToggleGroupContextValue {
   size: ToggleSize;
+  variant: ToggleVariant;
   isPressed: (value: string) => boolean;
   onPress: (value: string) => void;
 }
@@ -72,11 +75,23 @@ const ToggleGroupContext = createContext<ToggleGroupContextValue | null>(null);
 
 export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
   function ToggleGroup(
-    { type, value, defaultValue, onValueChange, size = "md", label, className, children, ...rest },
+    {
+      type = "single",
+      variant = "default",
+      value,
+      defaultValue,
+      onValueChange,
+      size = "md",
+      label,
+      className,
+      children,
+      ...rest
+    },
     ref,
   ) {
+    const isMultiMode = type === "multi" || type === "multiple";
     const [internal, setInternal] = useState<string | string[]>(
-      defaultValue ?? (type === "multi" ? [] : ""),
+      defaultValue ?? (isMultiMode ? [] : ""),
     );
 
     const controlled = value !== undefined;
@@ -84,12 +99,11 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
     const currentValues = Array.isArray(current) ? current : current !== "" ? [current] : [];
 
     const isPressed = (itemValue: string) =>
-      type === "single" ? currentValues[0] === itemValue : currentValues.includes(itemValue);
+      !isMultiMode ? currentValues[0] === itemValue : currentValues.includes(itemValue);
 
     const onPress = (itemValue: string) => {
-      const isMulti = type === "multi";
       const values = Array.isArray(current) ? current : [];
-      const next: string | string[] = isMulti
+      const next: string | string[] = isMultiMode
         ? values.includes(itemValue)
           ? values.filter((v) => v !== itemValue)
           : [...values, itemValue]
@@ -98,10 +112,16 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
       onValueChange?.(next);
     };
 
-    const classes = ["nise-toggle-group", className].filter(Boolean).join(" ");
+    const classes = [
+      "nise-toggle-group",
+      `nise-toggle-group--${variant}`,
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     return (
-      <ToggleGroupContext.Provider value={{ size, isPressed, onPress }}>
+      <ToggleGroupContext.Provider value={{ size, variant, isPressed, onPress }}>
         <div ref={ref} role="group" aria-label={label} className={classes} {...rest}>
           {children}
         </div>
@@ -113,6 +133,9 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
 export interface ToggleGroupItemProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value" | "className" | "aria-pressed"> {
   value: string;
+  /** Visual variant. Defaults to the group's variant. */
+  variant?: ToggleVariant;
+  size?: ToggleSize;
   /** Visible content used when no children are given. */
   label?: string;
   children?: ReactNode;
@@ -121,15 +144,29 @@ export interface ToggleGroupItemProps
 
 export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProps>(
   function ToggleGroupItem(
-    { value, label, disabled, type = "button", className, children, onClick, ...rest },
+    {
+      value,
+      variant: itemVariantProp,
+      size: itemSizeProp,
+      label,
+      disabled,
+      type = "button",
+      className,
+      children,
+      onClick,
+      ...rest
+    },
     ref,
   ) {
     const group = useContext(ToggleGroupContext);
     const isPressed = group ? group.isPressed(value) : false;
+    const variant = itemVariantProp ?? group?.variant ?? "default";
+    const size = itemSizeProp ?? group?.size ?? "md";
 
     const classes = [
       "nise-toggle-group__item",
-      group ? `nise-toggle-group__item--${group.size}` : null,
+      `nise-toggle-group__item--${variant}`,
+      `nise-toggle-group__item--${size}`,
       isPressed ? "nise-toggle-group__item--pressed" : null,
       className,
     ]

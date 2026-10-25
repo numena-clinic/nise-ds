@@ -295,12 +295,12 @@ export const PATTERN_PAGES: SpecimenPage[] = [
             </div>
             <div className="nise-catalogue__switch-row">
               <div className="nise-catalogue__switch-text">
-                <div className="nise-catalogue__switch-title">Derived colours</div>
+                <div className="nise-catalogue__switch-title">Derived colors</div>
                 <div className="nise-catalogue__switch-desc">
-                  Show colour-mix derivations in the token view.
+                  Show color-mix derivations in the token view.
                 </div>
               </div>
-              <Switch label="Derived colours" />
+              <Switch label="Derived colors" />
             </div>
             <Slider label="Density" defaultValue={[50]} min={0} max={100} hint="Adjust spacing density." />
             <div className="nise-catalogue__bar">

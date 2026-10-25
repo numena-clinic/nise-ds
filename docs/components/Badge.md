@@ -14,7 +14,7 @@ A short, non-interactive label: a category, a source type, a count.
   tints; it is not a status. A categorical accent is emphasis, never a verdict
   (color.md §4), and an icon or label must not "deliver a verdict"
   (iconography.md §5). A badge meaning "improving" or "at risk" is a misuse —
-  the wording would be doing the work anyway, with colour implying a judgement
+  the wording would be doing the work anyway, with color implying a judgement
   the system has not made. The status roles (success / warning / error / info)
   report a machine state and are deliberately not offered as `tone` options; a
   clinical reading of a tinted badge is exactly what the rule exists to prevent.

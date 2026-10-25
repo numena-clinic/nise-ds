@@ -5,7 +5,7 @@
 // scripts/lib/token-usage.mjs (unit-tested in tests/usage.test.ts), which fails
 // when component code:
 //   1. references a token that does not exist (a typo, or a token never built)
-//   2. writes a raw colour literal instead of a semantic token
+//   2. writes a raw color literal instead of a semantic token
 //   3. references a PRIMITIVE token directly instead of a semantic role
 //   4. writes an off-token px value for a spacing / radius / type property
 //

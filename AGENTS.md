@@ -7,7 +7,7 @@ before editing; it is the short version of `docs/`.
 
 **The brand defines the identity; Nise applies it.** Palette, typefaces, icon
 grid and the meaning-rules live in `numena-clinic/numena-brand`. Do not invent a
-colour, a typeface or a status convention here. When a decision is needed, find
+color, a typeface or a status convention here. When a decision is needed, find
 it in the brand docs and cite the section; if it is genuinely not there, record
 the tradeoff in `docs/decisions.md` and mark it provisional.
 
@@ -17,6 +17,7 @@ the tradeoff in `docs/decisions.md` and mark it provisional.
 npm install
 npm run storybook        # browse components at :6006
 npm run dev              # Theme Explorer at :5173 (bend tokens, preview live)
+npm run export:openpencil # export tokens and visual specimens to OpenPencil (.pen)
 npm run verify           # the gate — run before saying you are done
 ```
 
@@ -35,7 +36,7 @@ npm run verify           # the gate — run before saying you are done
   **authored** (pinned to published candidate values, no interpolation may move
   a pin) — `mint`, `citron`, `pink`, `blue` — plus two pinned dark-ground
   anchors, `--dark-ground` / `--dark-panel`. `primitives.mjs` re-exports its
-  `colorTokens`; do not hand-author a colour primitive. Themes live in
+  `colorTokens`; do not hand-author a color primitive. Themes live in
   `tokens/themes.mjs` (light is the base, dark re-points the same role names).
 - Four layers, downward references only: primitive → semantic → themes →
   component. A theme is not a second token set — it re-points the *same* role
@@ -45,8 +46,8 @@ npm run verify           # the gate — run before saying you are done
   token may reference primitives, semantics or other component tokens.
 - Use `ref()` (semantic layer) to reference a primitive — it throws at author
   time on a typo.
-- **No raw colours and no off-token `px`.** `npm run check:usage` fails on raw
-  colour literals and on `px` values on spacing/radius/type properties.
+- **No raw colors and no off-token `px`.** `npm run check:usage` fails on raw
+  color literals and on `px` values on spacing/radius/type properties.
 - **The role vocabulary is daisyUI-shaped and there is one name per role**
   (decisions.md D20). Surfaces: `--color-base-100/200/300`, `--color-base-content`,
   `--color-base-hover`, `--color-base-active`. Fills: `--color-primary`,
@@ -59,8 +60,8 @@ npm run verify           # the gate — run before saying you are done
   `--color-link{,-hover}`, `--color-tint-{purple,cyan,tangerine}`. There are no
   aliases — do not reintroduce `--color-surface`, `--color-text` or
   `--color-action`.
-- **Status colours are first-class (D5 is superseded).** They report a machine
-  state, never a clinical judgement, and colour is never the only signal: an
+- **Status colors are first-class (D5 is superseded).** They report a machine
+  state, never a clinical judgement, and color is never the only signal: an
   interface error is text + an icon + a heavier boundary first (color.md §4).
   They read from the authored ramps above; tangerine is not warning and cyan is
   not info. Do not add a fifth family.
@@ -75,13 +76,13 @@ npm run verify           # the gate — run before saying you are done
   the authoritative list of the steps each family surfaces — every surfaced step
   must be read by a role, and a role may only point at a surfaced step. Add a
   step only when a role needs it.
-- When a component needs to rely on a colour pair, add it to `contrastChecks` in
+- When a component needs to rely on a color pair, add it to `contrastChecks` in
   `tokens/semantic.mjs` and let the validator prove the ratio.
 - Component-specific values go in the component layer; radius is the exception —
   declare it at the point of use: `var(--button-radius, var(--radius-md))`.
 - `npm run tokens:build` also writes `tokens/dist/nise.tokens.json`, a DTCG
   2025.10 export (`tokens/dtcg.mjs`) — an isolated interchange artifact next to
-  the proprietary `tokens.json`. It precomputes `color-mix` colours and lists
+  the proprietary `tokens.json`. It precomputes `color-mix` colors and lists
   em/ch values under the `com.numena.nise` extension; nothing depends on it.
 
 ## Components
@@ -94,12 +95,12 @@ npm run verify           # the gate — run before saying you are done
   documentation.
 - Props are typed and exported; forward refs where a ref is meaningful; spread
   the rest of the native attributes.
-- Accessibility: a visible label always; never colour alone; `aria-describedby`
+- Accessibility: a visible label always; never color alone; `aria-describedby`
   only points at rendered ids; decorative icons `aria-hidden`. Prefer a primitive
   (Radix) for ARIA-heavy patterns and native HTML otherwise.
-- Twenty-nine components now. Radix backs `Select`, `Slider`, `Tabs`, `Dialog` and
-  `Tooltip`; the rest are native HTML (`Alert`, `AspectRatio`, `Avatar`, `Badge`,
-  `Breadcrumb`, `Button`, `Card`, `Checkbox`, `Collapsible`, `Empty`, `Kbd`,
+- Thirty components now. Radix backs `Select`, `Slider`, `Tabs`, `Dialog` and
+  `Tooltip`; the rest are native HTML (`Accordion`, `Alert`, `AspectRatio`, `Avatar`,
+  `Badge`, `Breadcrumb`, `Button`, `Card`, `Checkbox`, `Collapsible`, `Empty`, `Kbd`,
   `Label`, `Pagination`, `Progress`, `Radio`, `Separator`, `Skeleton`, `Switch`,
   `Table`, `TextField`, `Textarea`, `Timeline`, `Toggle`, `ToggleGroup`). Add a
   Radix package only when it earns its place (D6); record the reason in
@@ -145,9 +146,9 @@ npm run verify           # the gate — run before saying you are done
   never commits. Keep `scripts/lib/promote.mjs` free of I/O side effects so it
   stays unit-testable.
 - The parameter pane is a visual editor over the active foundation section
-  (Colour / Type / Space / Shape / Motion), opened by the sidebar — there are no
+  (Color / Type / Space / Shape / Motion), opened by the sidebar — there are no
   tabs in the pane; the sidebar IS the section switcher. The preview is a
-  **sidebar-driven page system**: Foundations (each section — Colour, Typography,
+  **sidebar-driven page system**: Foundations (each section — Color, Typography,
   Space, Shape, Motion — drives the pane, plus a Token graph page), Components
   (one page per family) and Patterns (composed combinations), each with a
   Phone / Tablet / Desktop toggle. The preview wrapper class
@@ -178,7 +179,7 @@ When you change something a doc describes, update the doc: `docs/tokens.md`,
 - Import Tailwind, `src/components/ui/` or `@/lib/utils` from anywhere — the
   vendored shadcn layer and the Tailwind toolchain were removed in D13 and must
   not come back. Every component is plain CSS over tokens (D2).
-- Write a colour outside the token set — raw hex, an off-scale `px`, or a family
+- Write a color outside the token set — raw hex, an off-scale `px`, or a family
   that is not in `palette.mjs`. The token boundary is enforced everywhere, with
   no path exemptions (D13). The four status families in the palette are the
   complete status vocabulary; do not add a role or a fifth family beside them.

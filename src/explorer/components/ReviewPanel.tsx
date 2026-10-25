@@ -6,7 +6,7 @@
 // tab must not write source files — so the panel prints the local command that
 // does it (`npm run theme:apply`, dry-run by default).
 //
-// The pass/fail marks follow the brand: never a colour verdict (color.md §4), so
+// The pass/fail marks follow the brand: never a color verdict (color.md §4), so
 // a failure is an icon + the word, on a heavier boundary.
 
 import { useEffect, useMemo, useRef, useState } from "react";

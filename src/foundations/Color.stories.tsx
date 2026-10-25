@@ -4,7 +4,7 @@ import { colorTokens, colorMeta, brandAnchors, groundAnchors, authoredFamilies, 
 import { formatOklch } from "../../tokens/color.mjs";
 import { semanticGroups, darkGroups } from "../../tokens/index.mjs";
 
-/** One colour primitive: name, resolved sRGB hex, OKLCH source. */
+/** One color primitive: name, resolved sRGB hex, OKLCH source. */
 interface Chip {
   name: string;
   hex: string;
@@ -266,13 +266,13 @@ const SemanticRolesView = () => {
 };
 
 const meta: Meta = {
-  title: "Foundations/Colour",
+  title: "Foundations/Color",
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component:
-          "Colour comes from the token source, not from a hand-kept list. The " +
+          "Color comes from the token source, not from a hand-kept list. The " +
           "Palette story groups the ten brand anchors (numena-brand color.md §2, " +
           "unchanged), the two pinned dark-ground anchors, and every scale — " +
           "generated OKLCH families and the four authored operational families " +

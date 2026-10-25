@@ -15,7 +15,7 @@
    Icons inherit `currentColor` (iconography.md §4), so an icon can never
    disagree with the text or control it sits in.
 
-   Colour carries no verdict: no check marks, crosses or traffic-light metaphors
+   Color carries no verdict: no check marks, crosses or traffic-light metaphors
    on clinical content; a check is reserved for a system state such as "saved"
    (iconography.md §5). The one check here is the Select's selected-option mark.
    ============================================================================= */
@@ -120,3 +120,69 @@ export function ChevronLeftIcon(props: IconProps) {
     </Icon>
   );
 }
+
+export function BookmarkIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M5 4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v18l-7-4-7 4V4z" />
+    </Icon>
+  );
+}
+
+export function BoldIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+      <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
+    </Icon>
+  );
+}
+
+export function ItalicIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M19 4h-9M14 20H5M15 4L9 20" />
+    </Icon>
+  );
+}
+
+export function UnderlineIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M6 4v7a6 6 0 0 0 12 0V4M4 20h16" />
+    </Icon>
+  );
+}
+
+export function AlignLeftIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 6h18M3 12h12M3 18h16" />
+    </Icon>
+  );
+}
+
+export function AlignCenterIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 6h18M6 12h12M4 18h16" />
+    </Icon>
+  );
+}
+
+export function AlignRightIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 6h18M9 12h12M5 18h16" />
+    </Icon>
+  );
+}
+
+export function AlignJustifyIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 6h18M3 12h18M3 18h18" />
+    </Icon>
+  );
+}
+

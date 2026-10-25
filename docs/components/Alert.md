@@ -8,7 +8,7 @@ Use an Alert when you need to surface a system event that the user should read b
 
 ## Variants
 
-| Variant | Colour family | Meaning |
+| Variant | Color family | Meaning |
 |---------|--------------|---------|
 | `neutral` | `--color-base` | No status; a general informational banner |
 | `info` | `--color-info` | System information — a scheduled job, a pending export |
@@ -18,7 +18,7 @@ Use an Alert when you need to surface a system event that the user should read b
 
 ## Accessibility
 
-Colour is never the only signal (color.md §4). Each variant also carries:
+Color is never the only signal (color.md §4). Each variant also carries:
 - The `role="alert"` attribute, which announces the content to screen readers.
 - A default `icon` drawn per variant — `AlertIcon` for warning/error, `InfoIcon` for info/success. Pass `icon={null}` only when a surrounding region already provides the icon.
 - A `title` prop rendered as `<p>` (the primary statement of state); body `children` stay `--color-base-content`.

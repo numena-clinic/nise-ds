@@ -20,7 +20,7 @@ import {
   authoredScale,
 } from "../tokens/palette.mjs";
 
-// The colour maths is shared by the validator and the Theme Explorer, so these
+// The color maths is shared by the validator and the Theme Explorer, so these
 // lock the semantics both rely on: CSS Color 4 parsing (hex, rgb/rgba, oklch)
 // and CSS Color 5 §3.5 premultiplied-alpha `color-mix` interpolation.
 
@@ -94,7 +94,7 @@ describe("parseColor", () => {
 
   it("returns null for values it cannot parse", () => {
     expect(parseColor("hsl(0 0% 0%)")).toBeNull();
-    expect(parseColor("totally-not-a-colour")).toBeNull();
+    expect(parseColor("totally-not-a-color")).toBeNull();
   });
 });
 
@@ -127,7 +127,7 @@ describe("evalMix", () => {
   });
 });
 
-describe("derived semantic colours (regression)", () => {
+describe("derived semantic colors (regression)", () => {
   const cases: Record<string, string> = {
     "--color-base-hover": "#eae5f1",
     "--color-base-active": "#dfd8e8",
@@ -146,7 +146,7 @@ describe("derived semantic colours (regression)", () => {
     });
   }
 
-  it("resolves every derived colour without an error", () => {
+  it("resolves every derived color without an error", () => {
     const errors: string[] = [];
     for (const name of Object.keys(cases)) {
       expand(name, allTokens, [name], (m: string) => errors.push(m));
@@ -177,7 +177,7 @@ describe("deltaE2000", () => {
     // Sharma, Wu & Dalal (2005), the standard test set. The distinguishability
     // guard is only as trustworthy as the metric behind it — an implementation
     // that forgets to fold the hue term into [0, 360) reports two clearly
-    // different colours as identical, and the guard would wave that through.
+    // different colors as identical, and the guard would wave that through.
     type Lab = [number, number, number];
     const REFERENCE: [Lab, Lab, number][] = [
       [[50, 2.6772, -79.7751], [50, 0, -82.7485], 2.0425],
@@ -219,7 +219,7 @@ describe("deltaE2000", () => {
     }
   });
 
-  it("is symmetric, and zero only for the same colour", () => {
+  it("is symmetric, and zero only for the same color", () => {
     const cyan = parseColor("#25E4F8")!;
     const blue = parseColor("#80C5FF")!;
     expect(deltaE2000(cyan, blue)).toBeCloseTo(deltaE2000(blue, cyan), 10);
@@ -311,7 +311,7 @@ describe("authored functional ramps", () => {
   });
 
   it("keeps every fill and status role distinguishable in BOTH themes", () => {
-    // The guard that was missing. A role pair that reads as one colour is a
+    // The guard that was missing. A role pair that reads as one color is a
     // defect a contrast check cannot see: `--color-info` sat ΔE2000 1.9 from
     // `--color-secondary` in the dark theme and 8.9 in the light theme,
     // because the info family was a cyan and the secondary IS the brand's cyan.
@@ -330,7 +330,7 @@ describe("authored functional ramps", () => {
       "info",
     ] as const;
     // The floor is a just-noticeable difference with room to spare: below
-    // ~10, two saturated colours read as the same colour on screen.
+    // ~10, two saturated colors read as the same color on screen.
     const MIN_DELTA_E = 10;
 
     // The light theme is the BASE — `semantic` — and dark is the override map.
@@ -414,8 +414,8 @@ describe("theme role parity", () => {
     expect(roles).toHaveLength(22);
   });
 
-  it("keeps every fill paired with a content colour in both themes", () => {
-    // A fill with no content role is a colour a component cannot put text on.
+  it("keeps every fill paired with a content color in both themes", () => {
+    // A fill with no content role is a color a component cannot put text on.
     for (const fill of [
       "primary",
       "secondary",

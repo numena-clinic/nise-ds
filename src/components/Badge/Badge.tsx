@@ -9,7 +9,7 @@
    clinical observations, evidence, hypotheses, decisions, or system statuses"
    (color.md §4), and an icon or label must not "deliver a verdict"
    (iconography.md §5). If a badge needs to mean something, the words in it
-   carry the meaning, not the colour. The operational roles added by
+   carry the meaning, not the color. The operational roles added by
    decisions.md P4 cover machine states (saved, failed) and are deliberately
    not `tone` options — a clinical reading of a tint is what both rules prevent.
 

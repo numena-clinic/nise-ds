@@ -1,6 +1,10 @@
 // Component specimen pages — one page per family.
 
 import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
   Alert,
   AspectRatio,
   Avatar,
@@ -59,7 +63,7 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from "../../index";
-import { InfoIcon } from "../../icons";
+import { InfoIcon, BookmarkIcon, BoldIcon, ItalicIcon, UnderlineIcon } from "../../icons";
 import { Block, Cell, Column, Row } from "../components/specimen";
 import type { SpecimenPage } from "./types";
 
@@ -281,17 +285,17 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
     id: "cmp-checkbox",
     label: "Checkbox",
     title: "Checkbox",
-    note: "never colour alone",
+    note: "never color alone",
     render: () => (
       <Block
         id="checkbox"
         title="Checkbox"
-        note="never colour alone"
+        note="never color alone"
         tokens={["--color-primary", "--color-base-100", "--color-border-strong", "--color-focus-ring", "--choice-size"]}
       >
         <Row>
           <Cell label="default">
-            <Checkbox label="Include derived colours" defaultChecked />
+            <Checkbox label="Include derived colors" defaultChecked />
           </Cell>
           <Cell label="indeterminate">
             <Checkbox label="Partial selection" indeterminate />
@@ -341,7 +345,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
             <Switch label="Live contrast" />
           </Cell>
           <Cell label="on">
-            <Switch label="Derived colours" defaultChecked />
+            <Switch label="Derived colors" defaultChecked />
           </Cell>
         </Row>
       </Block>
@@ -482,7 +486,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         ]}
       >
         <Table
-          caption="Colour roles and their literal values"
+          caption="Color roles and their literal values"
           header={["Token", "Layer", "Value"]}
           rows={[
             { key: "action", cells: ["--color-primary", "semantic", "var(--deep-purple)"] },
@@ -883,6 +887,50 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
     ),
   },
   {
+    id: "cmp-accordion",
+    label: "Accordion",
+    title: "Accordion",
+    note: "vertically stacked interactive disclosure headings (WAI-ARIA compliant)",
+    render: () => (
+      <Block
+        id="accordion"
+        title="Accordion"
+        note="single and multiple progressive disclosure panels"
+        tokens={[
+          "--color-base-content",
+          "--color-text-muted",
+          "--color-border",
+          "--color-focus-ring",
+          "--font-size-sm",
+          "--space-4",
+        ]}
+      >
+        <Column>
+          <Accordion type="single" collapsible defaultValue="item-1">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Is it accessible?</AccordionTrigger>
+              <AccordionContent>
+                Yes. It adheres to the W3C WAI-ARIA Accordion pattern with keyboard roving navigation.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Is it styled with design tokens?</AccordionTrigger>
+              <AccordionContent>
+                Yes. All typography, borders, chevron animations, and spacing use strict design tokens.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>Does it support dark mode?</AccordionTrigger>
+              <AccordionContent>
+                Yes. All surfaces, borders, and text automatically adapt across light and dark grounds.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </Column>
+      </Block>
+    ),
+  },
+  {
     id: "cmp-empty",
     label: "Empty",
     title: "Empty",
@@ -971,17 +1019,26 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         ]}
       >
         <Row>
-          <Cell label="unpressed">
-            <Toggle>Bold</Toggle>
+          <Cell label="bookmark icon">
+            <Toggle aria-label="Toggle bookmark">
+              <BookmarkIcon size={16} />
+            </Toggle>
           </Cell>
-          <Cell label="pressed">
-            <Toggle defaultPressed>Italic</Toggle>
+          <Cell label="bookmark outline">
+            <Toggle variant="outline" aria-label="Toggle bookmark" defaultPressed>
+              <BookmarkIcon size={16} />
+            </Toggle>
+          </Cell>
+          <Cell label="with text">
+            <Toggle aria-label="Toggle italic" defaultPressed>
+              <ItalicIcon size={16} /> Italic
+            </Toggle>
+          </Cell>
+          <Cell label="outline">
+            <Toggle variant="outline">Filter</Toggle>
           </Cell>
           <Cell label="small">
-            <Toggle size="sm" defaultPressed>Filter</Toggle>
-          </Cell>
-          <Cell label="large">
-            <Toggle size="lg">Expand</Toggle>
+            <Toggle size="sm" defaultPressed>Active</Toggle>
           </Cell>
           <Cell label="disabled">
             <Toggle disabled>Locked</Toggle>
@@ -999,7 +1056,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
       <Block
         id="togglegroup"
         title="ToggleGroup"
-        note="single or multi-selection toolbar group"
+        note="single or multi-selection toolbar group with text formatting and outline styles"
         tokens={[
           "--color-selected-surface",
           "--color-selected-text",
@@ -1009,6 +1066,17 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         ]}
       >
         <Column>
+          <ToggleGroup variant="outline" type="multi" label="Text formatting" defaultValue={["bold", "italic"]}>
+            <ToggleGroupItem value="bold" aria-label="Toggle bold">
+              <BoldIcon size={16} />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="italic" aria-label="Toggle italic">
+              <ItalicIcon size={16} />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="underline" aria-label="Toggle underline">
+              <UnderlineIcon size={16} />
+            </ToggleGroupItem>
+          </ToggleGroup>
           <ToggleGroup type="single" label="View mode" defaultValue="note">
             <ToggleGroupItem value="note">Session note</ToggleGroupItem>
             <ToggleGroupItem value="summary">Summary</ToggleGroupItem>

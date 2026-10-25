@@ -46,9 +46,9 @@ An error is carried by three things at once, in this order of importance:
 3. a heavier boundary (`--border-width-strong` plus `--color-border-error`).
 
 The boundary reads from the status error accent rather
-than a neutral, which is the *only* place colour enters — it is the third
+than a neutral, which is the *only* place color enters — it is the third
 channel, not the first. Strip the text and the icon and the field must still
-read as invalid. This follows color.md §4: colour may reinforce a state the
+read as invalid. This follows color.md §4: color may reinforce a state the
 other channels have already stated, and an icon or label must not "deliver a
 verdict" on its own (iconography.md §5).
 
@@ -66,5 +66,5 @@ at a missing node.
 ## Do / Don't
 
 - **Do** write an error that says what to do, in words.
-- **Don't** rely on a red border — colour alone is the one thing that is
+- **Don't** rely on a red border — color alone is the one thing that is
   guaranteed not to carry the error here.

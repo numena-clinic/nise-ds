@@ -3,8 +3,8 @@
    -----------------------------------------------------------------------------
    A plain, readable table for small datasets (the reference compositions don't
    need a data grid). It uses `<table>` semantics and accepts `header` and
-   `rows` — no new colours, just structure. The header is visually distinct only
-   by text weight/colour, not by a verdict colour.
+   `rows` — no new colors, just structure. The header is visually distinct only
+   by text weight/color, not by a verdict color.
 
    Tokens consumed: --table-cell-padding-x, --table-cell-padding-y,
    --table-font-size, --table-header-font-size, plus surface/border/text tokens.

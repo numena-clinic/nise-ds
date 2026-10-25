@@ -12,11 +12,11 @@ const BANNER = `/* =============================================================
    Checked by: npm run tokens:validate  (references, contrast, reproducibility)
 
    Three layers, each referencing only the layers below it:
-     primitive  raw values      → colour, type, spacing, radius, motion
+     primitive  raw values      → color, type, spacing, radius, motion
      semantic   interface roles → surface, text, border, action, focus, accent
      component  per-component   → control heights, paddings, font sizes
 
-   Colour primitives are generated in OKLCH (tokens/palette.mjs) and emitted as
+   Color primitives are generated in OKLCH (tokens/palette.mjs) and emitted as
    deterministic sRGB hex; light and dark are the same semantic roles mapped onto
    different grounds. The token layer is the first thing loaded by the app entry,
    src/styles/globals.css (which Storybook pulls in via .storybook/preview.ts).

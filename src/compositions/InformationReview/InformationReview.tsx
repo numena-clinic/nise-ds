@@ -7,7 +7,7 @@
    no clinical logic.
 
    Two constraints from the brand shape it:
-   · Colour never carries a verdict (color.md §4). The source-type badges are
+   · Color never carries a verdict (color.md §4). The source-type badges are
      categorical; confidence is a neutral Select; nothing is tinted good or bad.
    · The serif does the reading, the sans does the interface (typography.md
      §3–§4): headings are serif, every control is sans.

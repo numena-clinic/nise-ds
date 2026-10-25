@@ -42,7 +42,7 @@ const ANCHOR_CATEGORIES: { label: string; note?: string; tokens: string[] }[] = 
 ].filter((group) => group.tokens.length > 0);
 
 
-/** The semantic colour roles, grouped by meaning, in authored order. */
+/** The semantic color roles, grouped by meaning, in authored order. */
 const ROLE_GROUPS: { label: string; note?: string; tokens: string[] }[] = LAYERS.filter(
   (layer) => layer.id === "semantic",
 )
@@ -105,7 +105,7 @@ function SwatchGrid({
 }
 
 
-function ColourSection({
+function ColorSection({
   title,
   note,
   children,
@@ -115,57 +115,57 @@ function ColourSection({
   children: ReactNode;
 }) {
   return (
-    <section className="nise-pv__colour-section">
-      <header className="nise-pv__colour-header">
-        <h3 className="nise-pv__colour-title">{title}</h3>
-        {note ? <p className="nise-pv__colour-note">{note}</p> : null}
+    <section className="nise-pv__color-section">
+      <header className="nise-pv__color-header">
+        <h3 className="nise-pv__color-title">{title}</h3>
+        {note ? <p className="nise-pv__color-note">{note}</p> : null}
       </header>
       {children}
     </section>
   );
 }
 
-function ColourPage({ map }: PageRenderContext) {
+function ColorPage({ map }: PageRenderContext) {
   return (
     <>
       <p className="nise-explorer__page-lead">
-        Colour comes from the token source, not a hand-kept list. The 37 semantic roles below are
+        Color comes from the token source, not a hand-kept list. The 37 semantic roles below are
         the active tokens used across all components. They resolve live against your overrides and
         selected theme mode.
       </p>
 
-      <ColourSection
+      <ColorSection
         title="Semantic roles"
-        note="The active interface colours grouped by function: base surfaces, emphasis actions, operational status, supporting boundaries, and categorical tints. Roles tagged 'brand' read a brand anchor."
+        note="The active interface colors grouped by function: base surfaces, emphasis actions, operational status, supporting boundaries, and categorical tints. Roles tagged 'brand' read a brand anchor."
       >
         <div className="nise-pv__role-groups">
           {ROLE_GROUPS.map((group) => (
-            <ColourSection key={group.label} title={group.label} note={group.note}>
+            <ColorSection key={group.label} title={group.label} note={group.note}>
               <SwatchGrid tokens={group.tokens} map={map} mark={isBrandBacked} />
-            </ColourSection>
+            </ColorSection>
           ))}
         </div>
-      </ColourSection>
+      </ColorSection>
 
-      <ColourSection
+      <ColorSection
         title="Brand anchors"
         note="The ten brand hex, unchanged (numena-brand color.md §2). Six of them directly drive foundational roles: white paints the page, ink paints the body text, and pale lavender, deep purple, vibrant purple and tangerine paint panel, primary, secondary and accent fills."
       >
         <div className="nise-pv__role-groups">
           {ANCHOR_CATEGORIES.map((group) => (
-            <ColourSection key={group.label} title={group.label} note={group.note}>
+            <ColorSection key={group.label} title={group.label} note={group.note}>
               <SwatchGrid tokens={group.tokens} map={map} />
-            </ColourSection>
+            </ColorSection>
           ))}
         </div>
-      </ColourSection>
+      </ColorSection>
 
-      <ColourSection
+      <ColorSection
         title="Dark ground anchors"
         note="The pinned ladder the dark theme reads from: the page (--dark-ground) and the strong panel (--dark-panel)."
       >
         <SwatchGrid tokens={groundAnchorNames} map={map} />
-      </ColourSection>
+      </ColorSection>
     </>
   );
 }
@@ -279,7 +279,7 @@ function MotionPage({ map }: PageRenderContext) {
 export type { FoundationId };
 
 export const FOUNDATION_PAGES: FoundationPage[] = [
-  { id: "found-colour", label: "Colour", title: "Colour roles", render: (ctx) => <ColourPage {...ctx} /> },
+  { id: "found-color", label: "Color", title: "Color roles", render: (ctx) => <ColorPage {...ctx} /> },
   { id: "found-type", label: "Typography", title: "Typography", render: (ctx) => <TypographyPage {...ctx} /> },
   { id: "found-space", label: "Space", title: "Spacing scale", render: (ctx) => <SpacePage {...ctx} /> },
   { id: "found-shape", label: "Shape", title: "Shape & borders", render: (ctx) => <ShapePage {...ctx} /> },

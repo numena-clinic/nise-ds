@@ -1,6 +1,6 @@
 # Checkbox
 
-A real checkbox inside its label. `indeterminate` is supported. Colour is never
+A real checkbox inside its label. `indeterminate` is supported. Color is never
 the only signal — the drawn glyph marks the state.
 
 ## Usage

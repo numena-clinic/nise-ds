@@ -52,7 +52,7 @@ Use `BreadcrumbEllipsis` in place of collapsed middle items when the path is lon
 ## Tokens consumed
 
 ```
---color-link          ancestor link colour
+--color-link          ancestor link color
 --color-link-hover    ancestor link hover
 --color-text-muted    separator and ellipsis
 --color-base-content  current page text

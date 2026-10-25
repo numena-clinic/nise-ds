@@ -2,6 +2,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "../src/components/Accordion";
 import { Alert } from "../src/components/Alert";
 import { AspectRatio } from "../src/components/AspectRatio";
 import { Avatar } from "../src/components/Avatar";
@@ -60,6 +66,7 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from "../src/components/Tooltip";
+import { BookmarkIcon, BoldIcon, ItalicIcon } from "../src/icons";
 import { InformationReview } from "../src/compositions/InformationReview";
 import { axeViolations, describeViolations } from "./axe";
 
@@ -276,11 +283,34 @@ describe("accessibility (axe)", () => {
     await expectNoViolations();
   });
 
+  it("Toggle outline with aria-label", async () => {
+    render(
+      <Toggle variant="outline" aria-label="Bookmark page">
+        <BookmarkIcon size={16} />
+      </Toggle>,
+    );
+    await expectNoViolations();
+  });
+
   it("ToggleGroup single", async () => {
     render(
       <ToggleGroup type="single" label="Session view" defaultValue="summary">
         <ToggleGroupItem value="summary">Summary</ToggleGroupItem>
         <ToggleGroupItem value="objectives">Objectives</ToggleGroupItem>
+      </ToggleGroup>,
+    );
+    await expectNoViolations();
+  });
+
+  it("ToggleGroup outline multiple", async () => {
+    render(
+      <ToggleGroup type="multiple" variant="outline" label="Formatting">
+        <ToggleGroupItem value="bold" aria-label="Bold">
+          <BoldIcon size={16} />
+        </ToggleGroupItem>
+        <ToggleGroupItem value="italic" aria-label="Italic">
+          <ItalicIcon size={16} />
+        </ToggleGroupItem>
       </ToggleGroup>,
     );
     await expectNoViolations();
@@ -361,4 +391,21 @@ describe("accessibility (axe)", () => {
     );
     await expectNoViolations();
   });
+
+  it("Accordion", async () => {
+    render(
+      <Accordion type="single" collapsible defaultValue="item-1">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Is it accessible?</AccordionTrigger>
+          <AccordionContent>Yes, full WAI-ARIA compliance.</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Is it styled?</AccordionTrigger>
+          <AccordionContent>Yes, plain CSS over design tokens.</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+    await expectNoViolations();
+  });
 });
+

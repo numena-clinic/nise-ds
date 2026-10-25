@@ -23,9 +23,9 @@
       --focus-ring-width, --opacity-disabled, --duration-fast, --ease-standard
 
    Error handling matches TextField: text + icon + a heavier boundary, never
-   colour alone (color.md §4; iconography.md §4). Since decisions.md P4 the
+   color alone (color.md §4; iconography.md §4). Since decisions.md P4 the
    heavier boundary also reads from `--color-border-error` — the operational
-   error accent, not a verdict colour — and the hint leaves the DOM when an
+   error accent, not a verdict color — and the hint leaves the DOM when an
    error shows.
 
    `portalContainer` (optional) mounts the popup somewhere other than

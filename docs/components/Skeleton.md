@@ -25,7 +25,7 @@ Accepts all `<div>` HTML attributes except `role`, `children`, and `aria-hidden`
 ## Tokens consumed
 
 ```
---color-base-200    shimmer base colour
+--color-base-200    shimmer base color
 --duration-slow     animation duration
 --ease-standard     animation easing
 --skeleton-radius   falls back to var(--radius-md) at point of use

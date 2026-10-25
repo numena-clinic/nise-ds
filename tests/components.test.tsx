@@ -2,6 +2,12 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "../src/components/Accordion";
 import { Alert } from "../src/components/Alert";
 import { AspectRatio } from "../src/components/AspectRatio";
 import { Avatar } from "../src/components/Avatar";
@@ -501,6 +507,13 @@ describe("Toggle", () => {
       "true",
     );
   });
+
+  it("applies outline variant class", () => {
+    render(<Toggle variant="outline">Bookmark</Toggle>);
+    expect(screen.getByRole("button", { name: "Bookmark" })).toHaveClass(
+      "nise-toggle--outline",
+    );
+  });
 });
 
 describe("ToggleGroup", () => {
@@ -536,6 +549,19 @@ describe("ToggleGroup", () => {
     await userEvent.click(screen.getByRole("button", { name: "Intake" }));
     await userEvent.click(screen.getByRole("button", { name: "Follow-up" }));
     expect(screen.getAllByRole("button", { pressed: true })).toHaveLength(2);
+  });
+
+  it("supports type='multiple' alias and propagates outline variant", async () => {
+    render(
+      <ToggleGroup type="multiple" variant="outline" label="Formatting">
+        <ToggleGroupItem value="bold">Bold</ToggleGroupItem>
+        <ToggleGroupItem value="italic">Italic</ToggleGroupItem>
+      </ToggleGroup>,
+    );
+    const boldBtn = screen.getByRole("button", { name: "Bold" });
+    expect(boldBtn).toHaveClass("nise-toggle-group__item--outline");
+    await userEvent.click(boldBtn);
+    expect(boldBtn).toHaveAttribute("aria-pressed", "true");
   });
 });
 
@@ -651,3 +677,86 @@ describe("Collapsible", () => {
     expect(details).toHaveAttribute("open");
   });
 });
+
+describe("Accordion", () => {
+  it("expands and collapses in single mode with collapsible", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <Accordion type="single" collapsible defaultValue="item-1" onValueChange={onValueChange}>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Section 1</AccordionTrigger>
+          <AccordionContent>Content 1</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Section 2</AccordionTrigger>
+          <AccordionContent>Content 2</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+
+    const trigger1 = screen.getByRole("button", { name: "Section 1" });
+    const trigger2 = screen.getByRole("button", { name: "Section 2" });
+
+    expect(trigger1).toHaveAttribute("aria-expanded", "true");
+    expect(trigger2).toHaveAttribute("aria-expanded", "false");
+
+    await userEvent.click(trigger2);
+    expect(trigger1).toHaveAttribute("aria-expanded", "false");
+    expect(trigger2).toHaveAttribute("aria-expanded", "true");
+    expect(onValueChange).toHaveBeenCalledWith("item-2");
+
+    await userEvent.click(trigger2);
+    expect(trigger2).toHaveAttribute("aria-expanded", "false");
+    expect(onValueChange).toHaveBeenCalledWith("");
+  });
+
+  it("supports multiple sections open simultaneously", async () => {
+    render(
+      <Accordion type="multiple" defaultValue={["item-1"]}>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Section 1</AccordionTrigger>
+          <AccordionContent>Content 1</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Section 2</AccordionTrigger>
+          <AccordionContent>Content 2</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+
+    const trigger1 = screen.getByRole("button", { name: "Section 1" });
+    const trigger2 = screen.getByRole("button", { name: "Section 2" });
+
+    await userEvent.click(trigger2);
+    expect(trigger1).toHaveAttribute("aria-expanded", "true");
+    expect(trigger2).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("navigates triggers with keyboard arrow keys", async () => {
+    render(
+      <Accordion type="single">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>First</AccordionTrigger>
+          <AccordionContent>First Content</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Second</AccordionTrigger>
+          <AccordionContent>Second Content</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+
+    const first = screen.getByRole("button", { name: "First" });
+    const second = screen.getByRole("button", { name: "Second" });
+
+    first.focus();
+    expect(document.activeElement).toBe(first);
+
+    await userEvent.keyboard("{ArrowDown}");
+    expect(document.activeElement).toBe(second);
+
+    await userEvent.keyboard("{ArrowUp}");
+    expect(document.activeElement).toBe(first);
+  });
+});
+

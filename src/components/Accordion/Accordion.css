@@ -1,0 +1,74 @@
+/* Nise Design System — Accordion.
+   Vertically stacked disclosure items with bottom dividers and rotating chevron. */
+
+.nise-accordion {
+  width: 100%;
+}
+
+.nise-accordion__item {
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.nise-accordion__header {
+  margin: 0;
+  display: flex;
+}
+
+.nise-accordion__trigger {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-4);
+  background-color: transparent;
+  border: none;
+  color: var(--color-base-content);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.nise-accordion__trigger:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.nise-accordion__trigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+.nise-accordion__trigger:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.nise-accordion__title {
+  flex: 1;
+}
+
+.nise-accordion__chevron {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.nise-accordion__trigger--open .nise-accordion__chevron {
+  transform: rotate(180deg);
+}
+
+.nise-accordion__content {
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-base-content);
+  line-height: 1.5;
+}
+
+.nise-accordion__inner {
+  padding-bottom: var(--space-4);
+}

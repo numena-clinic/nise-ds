@@ -96,7 +96,7 @@ export interface PaginationEllipsisProps extends HTMLAttributes<HTMLSpanElement>
 
 /* A presentational span inside its own PaginationItem: an <li> here would nest
    a list item inside a list item, which HTML forbids. The label is decorative
-   ("colour must not be the only signal" applies here as decoration), so it is
+   ("color must not be the only signal" applies here as decoration), so it is
    hidden from the tree and the screen reader walks the plain pages only. */
 export const PaginationEllipsis = forwardRef<HTMLSpanElement, PaginationEllipsisProps>(
   function PaginationEllipsis({ children, className, ...rest }, ref) {

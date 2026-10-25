@@ -30,7 +30,7 @@ the selected page renders on the canvas, each with a Phone / Tablet / Desktop
 width and a **Light / Dark toggle** that picks which theme mapping everything
 reads:
 
-- **Foundations** — one page per editable section (**Colour**, **Typography**,
+- **Foundations** — one page per editable section (**Color**, **Typography**,
   **Space**, **Shape**, **Motion**). Opening a foundation page also drives the
   parameter pane, so the two never disagree; the **Token graph** page is the
   reference graph (primitive → semantic → component, column by column) with the
@@ -48,16 +48,16 @@ component page is a documentation view, so return to Foundations to edit.
 
 ## What you can edit
 
-The panel is a visual editor over the active foundation section — **Colour /
+The panel is a visual editor over the active foundation section — **Color /
 Type / Space / Shape / Motion** — opened by the sidebar, with a search box that
-filters across the active section. In Colour, the palette and the roles that
+filters across the active section. In Color, the palette and the roles that
 point at it are split into two groups, because they are different edits (change
 a value vs. re-point an alias). A change is marked and can be reset, per token or
 all at once.
 
 | Section | Editable | Read-only |
 | --- | --- | --- |
-| **Colour** | the generated scale steps (swatch + hex + picker); every colour *role* retargets which primitive it points at | the ten **brand anchors** — fixed by numena-brand (color.md §2), shown with their published value and an "Immutable" badge; derived colours (`color-mix`, e.g. `--color-scrim`) — they follow the palette |
+| **Color** | the generated scale steps (swatch + hex + picker); every color *role* retargets which primitive it points at | the ten **brand anchors** — fixed by numena-brand (color.md §2), shown with their published value and an "Immutable" badge; derived colors (`color-mix`, e.g. `--color-scrim`) — they follow the palette |
 | **Type** | sizes, line heights, weights, letter spacing; font families via a constrained select | — |
 | **Space** | the spacing scale, layout measures | — |
 | **Shape** | radii, border widths, control heights, badge heights | component *aliases* (they follow lower layers) |
@@ -80,7 +80,7 @@ Since D22 an anchor is not an inert artwork swatch: the page, the body text, the
 neutral, the primary, the secondary and the accent all read one. So each anchor
 card **names the roles it drives** ("drives base-100", "drives base-content ·
 neutral"), and a role reading an anchor is marked where it appears — a "brand"
-tag on the Colour page's role grid, and a "· brand anchor" note on the role's
+tag on the Color page's role grid, and a "· brand anchor" note on the role's
 own editor. The two facts belong together: *immutable* only matters because
 something depends on it, and the explorer says what.
 
@@ -96,7 +96,7 @@ authored facts: promoting a candidate changes the light contract, and
 `tokens/themes.mjs` keeps its own target until it is edited in turn. After D22
 the difference is not a shade — the dark secondary is a different family step
 from the light one — so the explorer shows both rather than leaving the designer
-to infer it from a colour swap.
+to infer it from a color swap.
 
 ## How the preview works
 
@@ -110,7 +110,7 @@ page and the contrast re-check read. Light is the base you edit; dark is the sam
 role names mapped onto `tokens/themes.mjs`. The mechanism is the same scoped
 custom properties: besides your overrides, the wrapper pins every token that
 differs between themes to its value under the selected mode — so the preview
-follows the toggle regardless of the operating system's colour-scheme
+follows the toggle regardless of the operating system's color-scheme
 preference, and your overrides still win over the pin. Nothing is applied to
 `:root` or an ancestor, and no `[data-theme]` attribute is relied on.
 
@@ -130,7 +130,7 @@ default behaviour.
 2. **The contrast promises** — the same pairs `npm run tokens:validate` checks,
    re-resolved against your experimental values **under the mapping the preview
    is showing** (the heading says "light mapping" or "dark mapping"). A failure
-   is shown as an icon plus the word, never a colour verdict (color.md §4).
+   is shown as an icon plus the word, never a color verdict (color.md §4).
 3. **The candidate** — the portable, versioned change set.
 
 The candidate is the only thing that leaves the tool. Its shape:
@@ -183,9 +183,9 @@ immediately after any write.
   and no Tailwind toolchain; an earlier version previewed against shadcn/ui
   (D12) and was reversed (D13). Every component in the preview is plain CSS over
   tokens, so the token boundary has no path exemptions.
-- No colour is a verdict, ever. A categorical accent is emphasis, not a
+- No color is a verdict, ever. A categorical accent is emphasis, not a
   judgement (color.md §4), and the tool does not invent one. The status roles
-  (success / warning / error / info) are ordinary colour roles here, editable
+  (success / warning / error / info) are ordinary color roles here, editable
   like any other; they report a machine state, not a clinical one.
 - The generated `src/tokens/tokens.css` is never edited by hand — only
   regenerated by `tokens:build`.
@@ -203,7 +203,7 @@ src/explorer/
   theme/color.ts           hex ⇄ hsl, contrast-on, derived from tokens
   components/              TokenPanel, ColorControls, Preview, Sidebar, pages,
                            specimen, TokenReference, ReviewPanel
-tokens/color.mjs           shared colour maths (validator + explorer)
+tokens/color.mjs           shared color maths (validator + explorer)
 scripts/apply-theme.mjs    promotion CLI
 scripts/lib/promote.mjs    pure promotion helpers
 scripts/check-token-usage.mjs  the boundary (one documented waiver)

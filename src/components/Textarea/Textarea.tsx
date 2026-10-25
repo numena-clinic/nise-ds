@@ -18,7 +18,7 @@
       --ease-standard
 
    Error handling matches TextField: text, an icon and a heavier boundary —
-   never colour alone (color.md §4). When an error is present the hint is
+   never color alone (color.md §4). When an error is present the hint is
    removed from the DOM, and `aria-describedby` never points at an id that is
    not rendered. `required` maps to the native attribute and an aria-hidden
    marker, so the label reads cleanly.

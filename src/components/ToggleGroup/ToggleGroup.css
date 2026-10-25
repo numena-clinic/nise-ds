@@ -3,7 +3,7 @@
    Toggle's two states: a ghost-like rest tile carrying --color-primary, and the
    pressed selection on the validated pair (--color-selected-surface /
    --color-selected-text) — pressed and unpressed differ by tile AND tile-text,
-   never colour alone. Sizes and radius reuse the button slots. */
+   never color alone. Sizes and radius reuse the button slots. */
 
 .nise-toggle-group {
   display: inline-flex;
@@ -62,6 +62,30 @@
   font-size: var(--button-font-size-lg);
 }
 
+/* icon-only square proportion */
+.nise-toggle-group__item:has(> svg:only-child) {
+  padding-inline: 0;
+  width: var(--button-height-md);
+}
+
+.nise-toggle-group__item--sm:has(> svg:only-child) {
+  width: var(--button-height-sm);
+}
+
+.nise-toggle-group__item--lg:has(> svg:only-child) {
+  width: var(--button-height-lg);
+}
+
+/* variants */
+.nise-toggle-group__item--outline {
+  border-color: var(--color-border);
+}
+
+.nise-toggle-group__item--outline:hover:not(:disabled) {
+  background-color: var(--color-base-hover);
+  border-color: var(--color-border-hover);
+}
+
 /* states */
 .nise-toggle-group__item:hover:not(:disabled) {
   background-color: var(--color-base-hover);
@@ -78,7 +102,12 @@
   color: var(--color-selected-text);
 }
 
+.nise-toggle-group__item--outline.nise-toggle-group__item--pressed {
+  border-color: var(--color-selected-surface);
+}
+
 .nise-toggle-group__item--pressed:hover:not(:disabled),
 .nise-toggle-group__item--pressed:active:not(:disabled) {
   background-color: var(--color-selected-surface);
 }
+

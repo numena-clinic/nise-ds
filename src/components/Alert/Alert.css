@@ -12,7 +12,7 @@
 .nise-alert__icon {
   display: inline-flex;
   flex-shrink: 0;
-  /* Overridden per status variant below. Neutral keeps the content colour. */
+  /* Overridden per status variant below. Neutral keeps the content color. */
   color: var(--color-base-content);
 }
 
@@ -30,7 +30,7 @@
 
 .nise-alert__body {
   margin: 0;
-  /* Body copy is always readable over the surface — the status colour is
+  /* Body copy is always readable over the surface — the status color is
      reserved for the icon and the title, never the detail (color.md §4). */
   color: var(--color-base-content);
 }

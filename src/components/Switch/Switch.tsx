@@ -4,9 +4,9 @@
    An on/off toggle (a binary state that takes effect immediately in the UI, as
    opposed to a checkbox that belongs in a form submission). It is a real checkbox
    visually styled as a track+knob so keyboard and form semantics remain native;
-   the painted switch is a sibling. "No colour alone" (iconography.md §5): the
+   the painted switch is a sibling. "No color alone" (iconography.md §5): the
    on/off is announced by the input's checked state and the visual contrast is
-   structural (track vs knob), not a new verdict colour.
+   structural (track vs knob), not a new verdict color.
 
    Tokens consumed: --switch-width, --switch-height, --switch-knob,
    --switch-inset, plus surface/action/border/focus tokens.

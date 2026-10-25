@@ -5,7 +5,7 @@ components and patterns for the clinical reasoning workspace Numena builds for
 psychologists.
 
 Nise *consumes* the Numena brand; it does not define it. Brand decisions — the
-palette, the typefaces, the icon grid, the rules about what colour may and may
+palette, the typefaces, the icon grid, the rules about what color may and may
 not mean — live in [`numena-clinic/numena-brand`](https://github.com/numena-clinic/numena-brand)
 and are treated here as input. Everything in this repository turns those
 decisions into things an engineer can import.
@@ -17,6 +17,7 @@ npm install
 npm run tokens:build     # regenerate src/tokens/tokens.css from tokens/*.mjs
 npm run storybook        # browse the components at http://localhost:6006
 npm run dev              # Theme Explorer: bend the tokens, preview live, export
+npm run export:openpencil # export tokens and visual specimens to OpenPencil (.pen)
 npm run verify           # the full gate: tokens, usage, lint, types, tests
 ```
 
@@ -24,7 +25,7 @@ npm run verify           # the full gate: tokens, usage, lint, types, tests
 
 ```
 tokens/            canonical token source (the .mjs files) + build & validation
-  primitives.mjs   raw values: colour, type, space, radius, motion
+  primitives.mjs   raw values: color, type, space, radius, motion
   semantic.mjs     interface roles, and the contrast promises kept
   component.mjs    per-component values (control heights, paddings)
   build.mjs        source → tokens.css (+ tokens/dist/*.json: proprietary & DTCG)
@@ -58,7 +59,7 @@ The source of truth is the `.mjs` files, not the CSS. `npm run tokens:build`
 renders them to `src/tokens/tokens.css`, which is **committed** so the system is
 usable without a build step; `npm run tokens:validate` proves the committed CSS
 is exactly what the source produces, that every reference resolves, and that
-every promised colour pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/tokens.md).
+every promised color pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/tokens.md).
 
 ## Scripts
 
@@ -66,7 +67,7 @@ every promised colour pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/to
 | --- | --- |
 | `npm run tokens:build` | Regenerate `tokens.css` and `tokens/dist/*.json` (proprietary + DTCG) |
 | `npm run tokens:validate` | References, layer direction, acyclicity, contrast, reproducibility |
-| `npm run check:usage` | Fail on raw colours / off-token px / unknown tokens in `src` |
+| `npm run check:usage` | Fail on raw colors / off-token px / unknown tokens in `src` |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint (flat config) |
 | `npm run test` | Vitest: behaviour + axe |

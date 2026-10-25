@@ -37,7 +37,7 @@ import { ReviewPanel } from "./components/ReviewPanel";
 import { FOUNDATION_TAB_MAP, Sidebar } from "./components/Sidebar";
 
 const DRAFT_KEY = "nise.theme.draft";
-const DEFAULT_PAGE = "found-colour";
+const DEFAULT_PAGE = "found-color";
 
 function loadDraft(): Overrides {
   try {
@@ -58,7 +58,7 @@ export function App() {
   // a VIEW choice only — edits always target the light base (D19), and the dark
   // mapping of the same edits is what the dark toggle shows.
   const [mode, setMode] = useState<ThemeMode>("light");
-  // The selected sidebar page. Foundation pages (found-colour…found-motion)
+  // The selected sidebar page. Foundation pages (found-color…found-motion)
   // also drive the section the parameter pane edits.
   const [pageId, setPageId] = useState<string>(DEFAULT_PAGE);
 

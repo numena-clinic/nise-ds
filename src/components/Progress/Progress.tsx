@@ -13,7 +13,7 @@
    clipped for the painted width only; the announced value is the one handed in.
 
    The meter is never bare: `aria-label` is required, because a painted bar has
-   no text of its own and "colour must not carry state by itself" (color.md §4).
+   no text of its own and "color must not carry state by itself" (color.md §4).
 
    Tokens consumed:
      --progress-height

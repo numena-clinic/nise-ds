@@ -1,5 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ToggleGroup, ToggleGroupItem } from "./ToggleGroup";
+import {
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  AlignJustifyIcon,
+} from "../../icons";
 
 const meta = {
   title: "Components/ToggleGroup",
@@ -8,9 +17,11 @@ const meta = {
   args: {
     label: "Session view",
     size: "md",
+    variant: "default",
   },
   argTypes: {
-    type: { control: "inline-radio", options: ["single", "multi"] },
+    type: { control: "inline-radio", options: ["single", "multi", "multiple"] },
+    variant: { control: "inline-radio", options: ["default", "outline"] },
     size: { control: "inline-radio", options: ["sm", "md", "lg"] },
   },
   parameters: {
@@ -27,6 +38,57 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const TypeStyle: Story = {
+  render: () => (
+    <ToggleGroup type="multi" label="Text formatting" defaultValue={["bold", "italic"]}>
+      <ToggleGroupItem value="bold" aria-label="Toggle bold">
+        <BoldIcon size={16} />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="italic" aria-label="Toggle italic">
+        <ItalicIcon size={16} />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="underline" aria-label="Toggle underline">
+        <UnderlineIcon size={16} />
+      </ToggleGroupItem>
+    </ToggleGroup>
+  ),
+};
+
+export const OutlineTypeStyle: Story = {
+  render: () => (
+    <ToggleGroup variant="outline" type="multi" label="Text formatting" defaultValue={["italic"]}>
+      <ToggleGroupItem value="bold" aria-label="Toggle bold">
+        <BoldIcon size={16} />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="italic" aria-label="Toggle italic">
+        <ItalicIcon size={16} />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="underline" aria-label="Toggle underline">
+        <UnderlineIcon size={16} />
+      </ToggleGroupItem>
+    </ToggleGroup>
+  ),
+};
+
+export const Alignment: Story = {
+  render: () => (
+    <ToggleGroup variant="outline" type="single" label="Text alignment" defaultValue="left">
+      <ToggleGroupItem value="left" aria-label="Align left">
+        <AlignLeftIcon size={16} />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="center" aria-label="Align center">
+        <AlignCenterIcon size={16} />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="right" aria-label="Align right">
+        <AlignRightIcon size={16} />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="justify" aria-label="Align justify">
+        <AlignJustifyIcon size={16} />
+      </ToggleGroupItem>
+    </ToggleGroup>
+  ),
+};
 
 export const Single: Story = {
   render: (args) => (
@@ -78,3 +140,4 @@ export const Sizes: Story = {
     </div>
   ),
 };
+

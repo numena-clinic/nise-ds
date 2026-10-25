@@ -2,6 +2,20 @@
    Import components from the package root so a future move to separate entry
    points does not change call sites. */
 
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "./components/Accordion";
+export type {
+  AccordionProps,
+  AccordionItemProps,
+  AccordionTriggerProps,
+  AccordionContentProps,
+  AccordionType,
+} from "./components/Accordion";
+
 export { Button } from "./components/Button";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./components/Button";
 
@@ -130,7 +144,7 @@ export { Timeline, TimelineItem } from "./components/Timeline";
 export type { TimelineProps, TimelineItemProps, TimelineItemVariant } from "./components/Timeline";
 
 export { Toggle } from "./components/Toggle";
-export type { ToggleProps, ToggleSize } from "./components/Toggle";
+export type { ToggleProps, ToggleSize, ToggleVariant } from "./components/Toggle";
 
 export { ToggleGroup, ToggleGroupItem } from "./components/ToggleGroup";
 export type { ToggleGroupProps, ToggleGroupItemProps, ToggleGroupType } from "./components/ToggleGroup";

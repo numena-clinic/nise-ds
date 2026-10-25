@@ -1,6 +1,6 @@
 # Textarea
 
-A multi-line text control with a visible label, an optional hint and an optional error. It is TextField as a `<textarea>`: the label is always visible, the field skeleton is shared, and errors carry text, an icon, and a heavier boundary — never colour alone.
+A multi-line text control with a visible label, an optional hint and an optional error. It is TextField as a `<textarea>`: the label is always visible, the field skeleton is shared, and errors carry text, an icon, and a heavier boundary — never color alone.
 
 ## When to use
 

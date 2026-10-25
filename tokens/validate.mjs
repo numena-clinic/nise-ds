@@ -5,7 +5,7 @@
 //   2. references only point DOWN the layers (primitive < semantic < component)
 //   3. the reference graph is acyclic (no token depends on itself, directly or
 //      transitively — a cycle would make `expand()` recurse without end)
-//   4. the promised colour pairs meet their WCAG 2.2 contrast minimum, in the
+//   4. the promised color pairs meet their WCAG 2.2 contrast minimum, in the
 //      light mapping AND every theme override (dark)
 //   5. src/tokens/tokens.css is exactly what the source regenerates (reproducible)
 //
@@ -30,7 +30,7 @@ const errors = [];
 const fail = (msg) => errors.push(msg);
 
 // ── value resolution ─────────────────────────────────────────────────────────
-// The colour maths lives in tokens/color.mjs so the Theme Explorer resolves and
+// The color maths lives in tokens/color.mjs so the Theme Explorer resolves and
 // checks contrast exactly the way this validator does: `expand(name, map, path,
 // fail)` resolves a token within a given theme map, reporting through `fail`.
 
@@ -133,15 +133,15 @@ for (const [themeId, map] of Object.entries(themeTokens)) {
 // ── 5: role distinguishability, in every theme ───────────────────────────────
 //
 // Contrast proves a foreground can be read on a background. It says nothing
-// about two FILLS being the same colour — a different question, and one the
-// system has to answer: a status badge that paints the colour of a secondary
+// about two FILLS being the same color — a different question, and one the
+// system has to answer: a status badge that paints the color of a secondary
 // button is a defect no contrast ratio can see. `--color-info` once sat
 // ΔE2000 2.9 from `--color-secondary` in the dark theme, because the info
 // family was a cyan and the dark secondary IS the brand's cyan.
 //
 // Every role that paints a fill must be separable from every other, in each
 // theme. The floor is a just-noticeable difference with room to spare: below
-// ~10, two saturated colours read as the same colour on screen.
+// ~10, two saturated colors read as the same color on screen.
 
 const FILL_ROLES = [
   "--color-primary",
@@ -171,7 +171,7 @@ for (const [themeId, map] of Object.entries(themeTokens)) {
       distinctRows.push({ themeId, a, b, delta, ok });
       if (!ok) {
         fail(
-          `distinguishability (${themeId}): ${a} and ${b} are the same colour (ΔE2000 ${delta.toFixed(1)}, needs ${MIN_DELTA_E})`,
+          `distinguishability (${themeId}): ${a} and ${b} are the same color (ΔE2000 ${delta.toFixed(1)}, needs ${MIN_DELTA_E})`,
         );
       }
     }

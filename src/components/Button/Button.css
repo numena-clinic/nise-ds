@@ -66,7 +66,7 @@
   background-color: var(--color-primary-active);
 }
 
-/* Secondary is a bordered surface, and the border carries the primary colour —
+/* Secondary is a bordered surface, and the border carries the primary color —
    the label is already `--color-primary`, so the button reads as one purple
    voice with a hairline frame rather than a purple word in a grey box. The
    border moves through the primary ramp with the state. */

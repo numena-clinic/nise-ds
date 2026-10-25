@@ -20,7 +20,7 @@ export interface SpecimenPage {
 }
 
 export type FoundationId =
-  | "found-colour"
+  | "found-color"
   | "found-type"
   | "found-space"
   | "found-shape"

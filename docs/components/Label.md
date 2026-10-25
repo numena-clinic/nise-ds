@@ -37,5 +37,5 @@ Pass `required={true}` to render the asterisk marker. It is `aria-hidden` so the
 --line-height-snug      line height
 --color-base-content    label text
 --color-text-muted      hint text
---color-link            required marker colour (decorative)
+--color-link            required marker color (decorative)
 ```

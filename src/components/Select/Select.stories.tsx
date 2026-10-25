@@ -24,7 +24,7 @@ const meta = {
       description: {
         component:
           "Single-choice control for a short, known list, built on Radix Select. " +
-          "Options here express a neutral level — never a colour-coded verdict.",
+          "Options here express a neutral level — never a color-coded verdict.",
       },
     },
   },

@@ -1,8 +1,8 @@
-// Visual colour editing for the parameter pane.
+// Visual color editing for the parameter pane.
 //
-// Three shapes, matching the three ways a colour appears in the palette:
+// Three shapes, matching the three ways a color appears in the palette:
 //   · a PRIMITIVE (kind "value") is authored directly — hue/sat/light sliders,
-//     a hex field and the native colour well all write the same hex literal.
+//     a hex field and the native color well all write the same hex literal.
 //   · a ROLE (kind "alias") is never authored — it points at a primitive. You
 //     retarget it by clicking a palette swatch or picking from the list.
 //   · a BRAND ANCHOR is shown read-only: numena-brand owns its value
@@ -23,7 +23,7 @@ export interface ColorEditorProps {
   editable: EditableToken;
   /** Current raw value (override or canonical). */
   value: string;
-  /** Resolved colour, for the swatch. */
+  /** Resolved color, for the swatch. */
   resolved: string;
   changed: boolean;
   onChange: (value: string) => void;
@@ -33,7 +33,7 @@ export interface ColorEditorProps {
 const pretty = (name: string) => name.replace(/^--/, "");
 
 /* token-boundary: waive — a hue slider must show the full spectrum; this is
-   control chrome, not a themeable colour, and nothing here feeds a token. */
+   control chrome, not a themeable color, and nothing here feeds a token. */
 const HUE_SPECTRUM = "linear-gradient(to right, hsl(0,80%,50%), hsl(60,80%,50%), hsl(120,80%,50%), hsl(180,80%,50%), hsl(240,80%,50%), hsl(300,80%,50%), hsl(360,80%,50%))"; /* token-boundary: waive */
 
 function Swatch({ hex, size = 40 }: { hex: string; size?: number }) {
@@ -48,7 +48,7 @@ function Swatch({ hex, size = 40 }: { hex: string; size?: number }) {
 
 /** A brand anchor (numena-brand color.md §2): the published value, shown
  * read-only. The explorer can point roles at it; it can never change it — the
- * badge says so in words, not colour.
+ * badge says so in words, not color.
  *
  *  When the anchor is load-bearing it also names the roles it drives: since
  *  D22 the page, the body text, the secondary and the accent all read an
@@ -138,7 +138,7 @@ function Slider({
   );
 }
 
-/** A directly-authored colour: sliders + hex + colour well. */
+/** A directly-authored color: sliders + hex + color well. */
 export function PrimitiveColorEditor({
   editable,
   value,
@@ -186,7 +186,7 @@ export function PrimitiveColorEditor({
       <div className="nise-color__row">
         <input
           type="color"
-          aria-label={`${bare} colour well`}
+          aria-label={`${bare} color well`}
           value={safe}
           onChange={(e) => {
             const hex = normalizeHex(e.target.value);
@@ -248,7 +248,7 @@ export function PrimitiveColorEditor({
   );
 }
 
-/** A colour role: retarget which primitive it points at. */
+/** A color role: retarget which primitive it points at. */
 export function RoleColorEditor({
   editable,
   value,

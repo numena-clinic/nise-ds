@@ -85,7 +85,7 @@ export const emphasisDark = {
  * light mapping, and this is where the families' published BRIGHT accents get
  * their dark ground: mint-500 on the page is 13.01:1, citron-500 13.31:1,
  * blue-500 9.95:1. The content on a fill is the family's near-black step, so a
- * badge reads as the family colour rather than as a pale wash. Dark is not an
+ * badge reads as the family color rather than as a pale wash. Dark is not an
  * inversion of light: the accent steps are chosen per theme against that theme's
  * ground. */
 export const statusDark = {

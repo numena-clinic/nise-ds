@@ -7,9 +7,9 @@
    decisions, or system statuses" (color.md §4), so the words in it must carry
    the meaning on their own.
 
-   Colour is never the only signal (color.md §4): each status variant carries
+   Color is never the only signal (color.md §4): each status variant carries
    the state in text (the title), a default icon drawn per variant, and a
-   status-coloured hairline boundary — remove any one channel and the banner
+   status-colored hairline boundary — remove any one channel and the banner
    still reads as its state. Body text always stays `--color-base-content`
    so the copy stays readable over the surface.
 

@@ -8,12 +8,12 @@
 //   · It does NOT replace the proprietary `tokens/dist/tokens.json`; that
 //     artifact and every CSS/component/explorer behaviour are untouched.
 //   · `$value`/`$type` follow the Format Module 2025.10 (a stable Final
-//     Community Group Report). Colours follow the Color Module 2025.10
+//     Community Group Report). Colors follow the Color Module 2025.10
 //     `color` object ({ colorSpace, components, alpha?, hex }).
 //   · Aliases become `{group.token}` references and inherit `$type` from the
 //     token they point at, per §5.2.2.
 //   · A `color-mix(...)` value has no DTCG equivalent, so it is precomputed to
-//     a literal colour here (via tokens/color.mjs) and its derivation recipe is
+//     a literal color here (via tokens/color.mjs) and its derivation recipe is
 //     kept under the `com.numena.nise` extension.
 //   · Values the standard cannot express faithfully (em/ch dimensions) are
 //     NOT faked or silently dropped: they are listed, with their original
@@ -75,7 +75,7 @@ function colorValueFromRgba(c) {
 
 function colorValue(resolved) {
   const c = parseColor(resolved);
-  if (!c) throw new Error(`dtcg: cannot parse colour "${resolved}"`);
+  if (!c) throw new Error(`dtcg: cannot parse color "${resolved}"`);
   return colorValueFromRgba(c);
 }
 

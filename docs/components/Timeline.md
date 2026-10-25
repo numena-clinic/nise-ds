@@ -4,11 +4,11 @@ A vertical history of system events on a record — session note saved, intake f
 
 ## When to use
 
-Use Timeline to show the chronological sequence of machine events attached to a client record or workflow. The item states (`done`, `current`, `upcoming`) are operational vocabulary only — they report a machine state, never a clinical reading of colour (color.md §4).
+Use Timeline to show the chronological sequence of machine events attached to a client record or workflow. The item states (`done`, `current`, `upcoming`) are operational vocabulary only — they report a machine state, never a clinical reading of color (color.md §4).
 
 ## Item variants
 
-| Variant | Dot colour | Meaning |
+| Variant | Dot color | Meaning |
 |---------|-----------|---------|
 | `done` | `--color-tint-purple` | Completed step |
 | `current` | `--color-primary` | The step in progress now |
@@ -18,7 +18,7 @@ Use Timeline to show the chronological sequence of machine events attached to a 
 
 - `Timeline` renders `<ol role="list">` (the explicit role restores list announcement lost when `list-style: none` is applied in some browser/reader pairs).
 - Each `TimelineItem` renders `<li>`.
-- Colour is not the only differentiator — the dot position and the `title` text distinguish variants.
+- Color is not the only differentiator — the dot position and the `title` text distinguish variants.
 
 ## Composition
 

@@ -60,7 +60,7 @@ describe("Theme Explorer", () => {
     expect(preview(container).style.getPropertyValue("--space-3")).toBe("");
   });
 
-  it("retargets a colour role through its select", () => {
+  it("retargets a color role through its select", () => {
     const { container } = render(<App />);
     fireEvent.change(screen.getByLabelText("color-base-100"), {
       target: { value: "--soft-purple" },
@@ -131,7 +131,7 @@ describe("Theme Explorer", () => {
     const white = card("white");
     expect(white?.textContent).toContain("drives");
     expect(white?.textContent).toContain("base-100");
-    // …and the white anchor is also the label colour on the fills
+    // …and the white anchor is also the label color on the fills
     expect(white?.textContent).toContain("text on");
     expect(white?.textContent).toContain("primary");
 
@@ -146,10 +146,10 @@ describe("Theme Explorer", () => {
     expect(card("vibrant-tangerine")?.textContent).toContain("#F57A44");
   });
 
-  it("tags a role that reads a brand anchor on the colour page", () => {
+  it("tags a role that reads a brand anchor on the color page", () => {
     const { container } = render(<App />);
-    // navigate to the Colour page of the Foundations section
-    fireEvent.click(screen.getByRole("button", { name: /Colour/ }));
+    // navigate to the Color page of the Foundations section
+    fireEvent.click(screen.getByRole("button", { name: /^Colou?r$/i }));
     const tagged = [...container.querySelectorAll(".nise-pv__swatch")].filter((s) =>
       s.querySelector(".nise-pv__swatch-tag"),
     );

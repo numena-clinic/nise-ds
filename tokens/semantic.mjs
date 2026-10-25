@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // token source: the SEMANTIC layer, as data — LIGHT and DARK.
 //
-// SEMANTIC = a role: what a colour means. A semantic token references a
+// SEMANTIC = a role: what a color means. A semantic token references a
 // primitive and never restates a value. There is ONE contract (one set of role
 // names); light and dark are two deliberate mappings of it onto the ranges in
 // tokens/palette.mjs, not inversions of each other.
@@ -107,7 +107,7 @@ export const supporting = {
  *  secondary is the lesser emphasis. The accent is the design violet #AB62ED,
  *  and it pairs with brand ink content at 4.56:1 contrast. Neutral is the brand ink.
  *
- *  Each pairs with a content colour that clears 4.5:1 on the fill; the primary
+ *  Each pairs with a content color that clears 4.5:1 on the fill; the primary
  *  carries hover/active steps down the purple ramp. */
 export const emphasis = {
   "--color-primary": ref("--deep-purple"),
@@ -171,7 +171,7 @@ export const semantic = Object.assign({}, ...semanticGroups.map((g) => g.tokens)
 // The DARK mapping of these same role names lives in tokens/themes.mjs.
 
 /**
- * Colour pairs the system promises to be legible. The SAME pairs are resolved
+ * Color pairs the system promises to be legible. The SAME pairs are resolved
  * under both mappings by tokens/validate.mjs. `min` is the WCAG 2.2 ratio:
  * 4.5 for normal text, 3 for non-text boundaries.
  * @type {{ fg: string, bg: string, min: number, why: string }[]}

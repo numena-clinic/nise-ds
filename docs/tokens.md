@@ -1,6 +1,6 @@
 # Tokens
 
-Every visual value in Nise comes from a token. There are no raw colours, no
+Every visual value in Nise comes from a token. There are no raw colors, no
 off-scale spacing, and no magic numbers in component code — `npm run check:usage`
 fails the build if one appears.
 
@@ -18,11 +18,11 @@ component   per-component use   →   where used?
 
 - **Primitive** tokens are values with no opinion about use: `--deep-purple`,
   `--purple-600`, `--space-4`, `--radius-md`, `--duration-fast`. Spacing, radii,
-  and motion are authored literals in `tokens/primitives.mjs`. Colour primitives
+  and motion are authored literals in `tokens/primitives.mjs`. Color primitives
   are generated or authored in `tokens/palette.mjs`.
 - **Semantic** tokens are interface roles: `--color-base-100`, `--color-primary`,
   `--color-border`. A semantic token references a primitive — never restates a raw
-  value. Derived colours (such as scrim or edge) use `color-mix()` of primitives so
+  value. Derived colors (such as scrim or edge) use `color-mix()` of primitives so
   the dependency remains explicit.
 - **Themes** are not a second token set. `tokens/themes.mjs` re-points the *same*
   role names onto another ground (Light is base `:root`; Dark is `[data-theme="dark"]`).
@@ -75,7 +75,7 @@ Primary, secondary, accent, and neutral action fills with their required content
 
 ### 3. Operational Status Roles
 
-Status colours report machine state, **never clinical judgements**, and are never the sole
+Status colors report machine state, **never clinical judgements**, and are never the sole
 signal (brand `color.md §4`):
 
 | Token | Light Value | Dark Value | Status Meaning |
@@ -162,8 +162,8 @@ are fixed and immutable. Several directly back core semantic roles (decisions.md
    - Text on action fills: ≥ 5.4:1
    - Control boundaries: ≥ 3.0:1
    - Focus ring: ≥ 4.0:1
-3. **Colour is never the only carrier of meaning.** An interface error or warning is text +
-   an icon + a heavier boundary first, colour last.
+3. **Color is never the only carrier of meaning.** An interface error or warning is text +
+   an icon + a heavier boundary first, color last.
 4. **Radius is declared at the point of use.** Components write
    `border-radius: var(--button-radius, var(--radius-md))` so instances can be adjusted
    locally while defaulting to the scale primitive:
@@ -175,6 +175,42 @@ are fixed and immutable. Several directly back core semantic roles (decisions.md
    | `--radius-lg` | `12px` | Dialogs, drawers, larger panels |
    | `--radius-xl` | `16px` | Prominent containers, hero surfaces |
    | `--radius-full` | `9999px` | Pills, badges, circular avatars |
+
+5. **Spacing builds on a 4px grid with step multipliers.**  
+   Spacing tokens are named by their **4px grid multiplier**, following the formula:
+   $$\mathbf{--space\text{-}N = N \times 4\text{px}}$$
+
+   > **Naming rule**: The number suffix $N$ is the grid multiplier, **not** raw pixels.  
+   > For instance, `--space-1` is **4px** ($1 \times 4\text{px}$), and `--space-4` is **16px** ($4 \times 4\text{px}$, not 4px).
+
+   | Token | Multiplier | Value | `rem` (16px base) | Typical Use |
+   | :--- | :--- | :--- | :--- | :--- |
+   | `--space-1` | $1 \times 4\text{px}$ | `4px` | `0.25rem` | Hairline gaps, badge insets, micro alignments |
+   | `--space-2` | $2 \times 4\text{px}$ | `8px` | `0.5rem` | Button gap, input vertical padding, icon insets |
+   | `--space-3` | $3 \times 4\text{px}$ | `12px` | `0.75rem` | Input horizontal padding, compact card gaps |
+   | `--space-4` | $4 \times 4\text{px}$ | `16px` | `1rem` | Standard page gutters, body padding, dialog gap |
+   | `--space-5` | $5 \times 4\text{px}$ | `20px` | `1.25rem` | Large button horizontal padding, modal gaps |
+   | `--space-6` | $6 \times 4\text{px}$ | `24px` | `1.5rem` | Card padding, content blocks, panel insets |
+   | `--space-8` | $8 \times 4\text{px}$ | `32px` | `2rem` | Section gaps, header padding, empty states |
+   | `--space-10` | $10 \times 4\text{px}$ | `40px` | `2.5rem` | Large section dividers, hero margins |
+   | `--space-12` | $12 \times 4\text{px}$ | `48px` | `3rem` | Major landmark margins, rhythm blocks |
+   | `--space-16` | $16 \times 4\text{px}$ | `64px` | `4rem` | Expansive page header gutters |
+   | `--space-24` | $24 \times 4\text{px}$ | `96px` | `6rem` | Maximum layout boundaries, hero containers |
+
+   #### Why a 4px Base Grid Instead of Alternative Models?
+
+   Nise selects a **4px base grid** over alternative models (such as an 8px-only grid, a 5px/10px decimal system, or continuous rem scales) based on five deliberate system requirements:
+
+   1. **Micro-Hierarchy for Dense Clinical Workspaces**:  
+      Clinical diagnostic interfaces require high information density—compact form stacks, tight data table cells, subtle badge insets, and icon-to-label gaps. An **8px-only model** is too coarse: jumping directly from 8px to 16px forces excessive negative space or awkward 0px crowding. Intermediate 4px and 12px steps (`--space-1` and `--space-3`) allow fine-grained grouping without breaking the global grid.
+   2. **Nested Compatibility with the 8px Layout Standard**:  
+      4px is an exact integer factor of 8px ($4 \times 2 = 8$). It does not compete with standard 8px macro page rhythm; it refines it. Every standard 8px breakpoint and gutter (8, 16, 24, 32, 48, 64) is an exact step on the scale.
+   3. **Typographic Baseline & Icon Grid Alignment**:  
+      Our type scale line-heights (16px, 20px, 24px, 28px, 32px) and standard icon bounding boxes (16px, 20px, 24px) are all multiples of 4px. A 4px grid guarantees vertical rhythm and prevents fractional subpixel blur on high-density displays.
+   4. **Superior to Decimal (5px / 10px) Systems**:  
+      Decimal systems do not divide cleanly into powers of 2, standard 16px root font sizes, or 24px icon viewboxes ($24 / 5 = 4.8\text{px}$). 4px divides evenly into all three.
+   5. **Exact Quarter-`rem` Accessibility Scaling**:  
+      At the standard 16px root font size, 4px equals exactly **`0.25rem`** ($1/4\text{rem}$), 8px is `0.5rem`, 12px is `0.75rem`, and 16px is `1.0rem`. Every step maps to a clean two-digit decimal quarter fraction, allowing proportional browser font scaling and zoom (WCAG 1.4.4) without rounding jitter.
 
 
 ---

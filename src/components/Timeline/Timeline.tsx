@@ -52,7 +52,7 @@ export const Timeline = forwardRef<HTMLOListElement, TimelineProps>(
 
 export interface TimelineItemProps
   extends Omit<LiHTMLAttributes<HTMLLIElement>, "title"> {
-  /** The event, in words — the state never rides on colour alone. */
+  /** The event, in words — the state never rides on color alone. */
   title: ReactNode;
   /** Right-aligned supplementary text, typically a time. */
   meta?: ReactNode;

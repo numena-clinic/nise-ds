@@ -22,7 +22,7 @@ const meta = {
       description: {
         component:
           "A banner that reports a machine state: none, info, success, warning, " +
-          "error. It never reads as a clinical verdict, and colour is never the " +
+          "error. It never reads as a clinical verdict, and color is never the " +
           "only signal — the title, an icon and a hairline boundary carry the state.",
       },
     },

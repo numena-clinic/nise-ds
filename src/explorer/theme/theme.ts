@@ -83,7 +83,7 @@ export function validateValue(e: EditableToken, raw: string): string | null {
   if (value === "") return "Value is required";
   switch (e.control) {
     case "color":
-      return parseColor(value) ? null : `Enter a hex colour (e.g. ${ALL_TOKENS["--deep-purple"]})`;
+      return parseColor(value) ? null : `Enter a hex color (e.g. ${ALL_TOKENS["--deep-purple"]})`;
     case "number":
       return NUMBER_RE.test(value) ? null : "Enter a number (e.g. 1.5)";
     case "time":
@@ -154,7 +154,7 @@ export function previewStyle(overrides: Overrides, mode: ThemeMode = "light"): R
   return style;
 }
 
-/** Fully resolve one token (colour → hex, length → as written) in a token map. */
+/** Fully resolve one token (color → hex, length → as written) in a token map. */
 export function resolve(name: string, map: Record<string, string>): string {
   const raw = map[name];
   if (raw === undefined) return "";
@@ -170,7 +170,7 @@ export function resolve(name: string, map: Record<string, string>): string {
  *  changes the light contract, and `tokens/themes.mjs` keeps its own target
  *  for a role until it is edited in turn. Showing both is the difference
  *  between "the dark theme re-points this role" and "the dark theme is a
- *  different colour". */
+ *  different color". */
 export function darkTarget(
   name: string,
   map: Record<string, string>,
@@ -330,7 +330,7 @@ export function parseCandidate(text: string): ParseResult {
     const layer = e.layer;
     if (t.kind === "alias") {
       if (typeof t.ref !== "string" || !(e.options ?? []).includes(t.ref)) {
-        errors.push(`${at} ${name}: ref "${String(t.ref)}" is not a colour primitive`);
+        errors.push(`${at} ${name}: ref "${String(t.ref)}" is not a color primitive`);
         continue;
       }
       tokens.push({ name, layer, kind: "alias", ref: t.ref, from: `var(${e.canonicalRef})` });

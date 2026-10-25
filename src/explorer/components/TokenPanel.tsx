@@ -1,10 +1,10 @@
 // The parameter pane — a visual editor over the real token graph.
 //
-// Colour is split the way a designer thinks about it: the PALETTE (primitive
-// colours — the ten brand anchors shown fixed, plus the generated scale steps
+// Color is split the way a designer thinks about it: the PALETTE (primitive
+// colors — the ten brand anchors shown fixed, plus the generated scale steps
 // you author) and the ROLES (semantic tokens that point at them).
 // Everything else — type, space, shape, motion — is a labelled row with the
-// input that matches its kind. Derived colours are listed read-only so the
+// input that matches its kind. Derived colors are listed read-only so the
 // dependency stays visible.
 //
 // Edits emit an override; the token source is untouched until a candidate is
@@ -48,9 +48,9 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
   const tokens = experimentalTokens(overrides);
   const darkTokens = useMemo(() => experimentalTokens(overrides, "dark"), [overrides]);
 
-  const colourTokens = bySection.color ?? {};
-  const palette = Object.values(colourTokens).flat().filter((e) => e.kind === "value");
-  const roles = Object.values(colourTokens).flat().filter((e) => e.kind === "alias");
+  const colorTokens = bySection.color ?? {};
+  const palette = Object.values(colorTokens).flat().filter((e) => e.kind === "value");
+  const roles = Object.values(colorTokens).flat().filter((e) => e.kind === "alias");
   const locked = IMMUTABLE_TOKENS;
 
   const visible = query.trim().toLowerCase();
@@ -95,7 +95,7 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
                 An anchor names the roles it drives — in the light base, which is what the dark
                 mapping re-points. Since D22 the page, the panel, the body text, the neutral, the
                 primary, the secondary and the accent all read an anchor, so those are the
-                interface&rsquo;s own colours.
+                interface&rsquo;s own colors.
               </p>
               <div className="nise-panel__cards">
                 {locked.filter((t) => matches(t, visible)).map((t) => (
@@ -143,7 +143,7 @@ export function TokenPanel({ overrides, onChange, onReset, tab }: Props) {
             </section>
 
             <details className="nise-panel__derived">
-              <summary>{DERIVED_TOKENS.length} derived colours (read-only)</summary>
+              <summary>{DERIVED_TOKENS.length} derived colors (read-only)</summary>
               <p className="nise-panel__hint">
                 Mixed from the palette — they follow it. Edit the palette or a role to change them.
               </p>

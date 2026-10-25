@@ -8,7 +8,7 @@ Use Toggle for a control whose state belongs to the surface it acts on (a view m
 
 ## Pressed state
 
-The pressed state is a SELECTION, not a status: it draws `--color-selected-surface` under `--color-selected-text`. Pressed and unpressed differ by fill AND text colour — never colour alone.
+The pressed state is a SELECTION, not a status: it draws `--color-selected-surface` under `--color-selected-text`. Pressed and unpressed differ by fill AND text color — never color alone.
 
 ## Sizes
 
@@ -22,6 +22,7 @@ The pressed state is a SELECTION, not a status: it draws `--color-selected-surfa
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| `variant` | `ToggleVariant` | `"default"` | `"default"` (ghost tile) \| `"outline"` (bordered) |
 | `defaultPressed` | `boolean` | `false` | Initial pressed state (uncontrolled) |
 | `pressed` | `boolean` | — | Controlled pressed state |
 | `onPressedChange` | `(p: boolean) => void` | — | Called on press state change |
@@ -37,7 +38,7 @@ The pressed state is a SELECTION, not a status: it draws `--color-selected-surfa
 --button-gap                  icon + label gap
 --color-selected-surface      pressed fill
 --color-selected-text         pressed text
---color-primary               unpressed label colour
+--color-primary               unpressed label color
 --color-base-hover            unpressed hover fill
 --color-focus-ring            focus outline
 ```

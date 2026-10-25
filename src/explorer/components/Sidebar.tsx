@@ -10,7 +10,7 @@ import { COMPONENT_PAGES, FOUNDATION_PAGES, PATTERN_PAGES } from "./pages";
 export const TOKEN_GRAPH_PAGE = "found-graph";
 
 export const FOUNDATION_TAB_MAP: Record<string, "color" | "typography" | "space" | "shape" | "motion"> = {
-  "found-colour": "color",
+  "found-color": "color",
   "found-type": "typography",
   "found-space": "space",
   "found-shape": "shape",

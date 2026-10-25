@@ -10,7 +10,7 @@
 //   · "value"   a literal (primitives, and a few component sizes)
 //   · "alias"   exactly `var(--other)` — a reference to another token
 //   · "derived" a `color-mix(...)` derivation (e.g. --color-text-muted)
-// Only "value" tokens and colour "alias" roles are directly editable; derived
+// Only "value" tokens and color "alias" roles are directly editable; derived
 // tokens are shown read-only because they follow the values they are derived from.
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -65,7 +65,7 @@ const ALIAS_RE = /^var\(\s*(--[a-zA-Z0-9_-]+)\s*\)$/;
 function groupSection(layer: LayerId, group: string, name: string): Section {
   const key = `${layer}:${group}`;
   const map: Record<string, Section> = {
-    "primitive:colour": "color",
+    "primitive:color": "color",
     "primitive:typography": "typography",
     "primitive:spacing": "space",
     "primitive:layout": "space",
@@ -81,8 +81,8 @@ function groupSection(layer: LayerId, group: string, name: string): Section {
   };
   const hit = map[key];
   if (hit) return hit;
-  // An unlisted group still lands in the right tab if its tokens are colour
-  // roles — every colour role in the contract is named --color-*.
+  // An unlisted group still lands in the right tab if its tokens are color
+  // roles — every color role in the contract is named --color-*.
   if (name.startsWith("--color-")) return "color";
   return "shape";
 }
@@ -111,10 +111,10 @@ export const INFO_BY_NAME: Record<string, TokenInfo> = Object.fromEntries(
   TOKEN_INFOS.map((t) => [t.name, t]),
 );
 
-/** Colour primitives (brand anchors + generated scales) — the targets a colour
+/** Color primitives (brand anchors + generated scales) — the targets a color
  * role may point at. */
 export const COLOR_PRIMITIVES: string[] = TOKEN_INFOS.filter(
-  (t) => t.layer === "primitive" && t.group === "colour",
+  (t) => t.layer === "primitive" && (t.group === "color" || t.group === "color"),
 ).map((t) => t.name);
 
 const COLOR_PRIMITIVE_SET = new Set(COLOR_PRIMITIVES);
@@ -149,13 +149,13 @@ export function transitiveDependents(name: string): string[] {
   return [...seen];
 }
 
-/** The colour roles that point at a primitive in the LIGHT base (D19 — the
+/** The color roles that point at a primitive in the LIGHT base (D19 — the
  *  explorer edits the light base; dark is a view of it).
  *
  *  Since D22 several brand anchors are load-bearing: the page, the body text,
  *  the secondary fill and the accent fill all read an anchor, so an anchor is
  *  not an inert artwork swatch any more. Naming the roles an anchor drives is
- *  what makes the immutability legible — "the page cannot be re-coloured here"
+ *  what makes the immutability legible — "the page cannot be re-colored here"
  *  is a different statement from "this hex is fixed". */
 export function rolesPointingAt(primitive: string): string[] {
   return directDependents(primitive)
@@ -227,7 +227,7 @@ const UNIT_RE = /(-?\d*\.?\d+)(px|rem|em|ch|%|ms)?$/;
 
 function controlFor(info: TokenInfo): { control: Control; unit?: string } | null {
   const { name, raw } = info;
-  if (info.group === "colour") return { control: "color" };
+  if (info.group === "color" || info.group === "color") return { control: "color" };
   if (name === "--font-sans" || name === "--font-serif") return { control: "fontFamily" };
   const m = raw.match(UNIT_RE);
   if (!m) return null;
@@ -241,13 +241,13 @@ function isEditable(info: TokenInfo): boolean {
   if (info.immutable) return false;
   if (info.form === "derived") return false;
   if (info.primitive) {
-    // Colour, sizes, spacing, radius, borders, layout, durations — but not the
+    // Color, sizes, spacing, radius, borders, layout, durations — but not the
     // two shadow strings or the two cubic-bezier easings (not safely editable
     // as a single control yet).
     return controlFor(info) !== null;
   }
   if (info.layer === "semantic") {
-    // Only colour roles that alias a colour primitive.
+    // Only color roles that alias a color primitive.
     return info.form === "alias" && info.name.startsWith("--color-") && COLOR_PRIMITIVE_SET.has(info.ref!);
   }
   if (info.layer === "component") {

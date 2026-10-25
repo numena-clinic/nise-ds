@@ -25,7 +25,7 @@
    Accessibility: a visible label is required and wraps the input, so clicking
    the text toggles the control. The focus ring is drawn on the painted box from
    `:focus-visible` on the input, never from `:focus`, so a mouse click does not
-   ring. Colour is never the only signal — the checked state draws a glyph.
+   ring. Color is never the only signal — the checked state draws a glyph.
    ============================================================================= */
 
 import { forwardRef, useEffect, useId, useRef, type InputHTMLAttributes, type ReactNode } from "react";

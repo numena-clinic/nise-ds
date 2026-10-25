@@ -1,7 +1,7 @@
 // A single theme control in the left panel. One row per editable token: its
 // name, its current value, and the right input for its kind —
-//   · a colour swatch + hex + picker for colour literals,
-//   · a native <select> for colour ROLES (retarget which primitive a role uses),
+//   · a color swatch + hex + picker for color literals,
+//   · a native <select> for color ROLES (retarget which primitive a role uses),
 //   · a text input with inline validation for lengths, numbers, durations,
 //   · a constrained <select> for font families (the policy keeps us to the
 //     families already in the repo).
@@ -18,7 +18,7 @@ import {
   type Override,
 } from "../theme/theme";
 
-/** The colour picker needs a valid hex even while the text field is mid-edit. */
+/** The color picker needs a valid hex even while the text field is mid-edit. */
 const PICKER_FALLBACK = ALL_TOKENS["--ink-plum"] ?? "";
 
 interface Props {
@@ -109,7 +109,7 @@ export function TokenControl({ editable, override, onChange, onReset }: Props) {
           <input
             type="color"
             className="nise-explorer__color"
-            aria-label={`${editable.name} colour picker`}
+            aria-label={`${editable.name} color picker`}
             value={/^#[0-9a-fA-F]{6}$/.test(value) ? value : PICKER_FALLBACK}
             onChange={(e) => onChange({ kind: "value", value: e.target.value.toUpperCase() })}
           />

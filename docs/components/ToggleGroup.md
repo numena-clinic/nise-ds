@@ -28,7 +28,8 @@ Use ToggleGroup when multiple related Toggle controls share a single selection: 
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `type` | `ToggleGroupType` | **required** | `"single"` \| `"multi"` |
+| `type` | `ToggleGroupType` | `"single"` | `"single"` \| `"multi"` (or `"multiple"`) |
+| `variant` | `ToggleVariant` | `"default"` | `"default"` (ghost) \| `"outline"` (bordered) |
 | `label` | `string` | **required** | Accessible group name |
 | `value` | `string \| string[]` | — | Controlled selection |
 | `defaultValue` | `string \| string[]` | — | Initial selection (uncontrolled) |

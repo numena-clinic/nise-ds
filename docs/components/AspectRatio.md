@@ -25,4 +25,4 @@ The outer `<div>` has `aspect-ratio: <ratio>` set as an inline style, so the bro
 
 ## Tokens consumed
 
-None. AspectRatio is geometry only — the ratio is a prop, not a themeable value. Apply surface colour and radius on the children or a wrapper.
+None. AspectRatio is geometry only — the ratio is a prop, not a themeable value. Apply surface color and radius on the children or a wrapper.

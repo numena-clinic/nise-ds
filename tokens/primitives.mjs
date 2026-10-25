@@ -5,12 +5,12 @@
 // tokens:build` renders it into src/tokens/tokens.css (the artifact the app
 // ships). Never edit the CSS by hand — it is overwritten.
 //
-// PRIMITIVE = a raw value with no opinion about where it is used. Colour values
+// PRIMITIVE = a raw value with no opinion about where it is used. Color values
 // are generated from the OKLCH palette model (tokens/palette.mjs); the other
 // groups author their literals here. Every other layer references these through
 // `var(...)`. See docs/tokens.md and docs/color.md.
 //
-// Colour provenance: the ten brand anchors are numena-brand color.md §2, values
+// Color provenance: the ten brand anchors are numena-brand color.md §2, values
 // unchanged (tokens/palette.mjs keeps their published hex and derives their
 // OKLCH). The OKLCH neutral/purple/cyan/tangerine scales are the design system's
 // own contribution, built around those anchors. The type scale, spacing scale,
@@ -22,7 +22,7 @@ import { colorTokens } from "./palette.mjs";
 
 /** @typedef {{ label: string, note?: string, tokens: Record<string, string> }} Group */
 
-/** Colour — the ten brand anchors (color.md §2) plus the generated OKLCH scales. */
+/** Color — the ten brand anchors (color.md §2) plus the generated OKLCH scales. */
 export const color = colorTokens;
 
 /** Type families (typography.md §3) plus a provisional scale and weights. */
@@ -107,7 +107,7 @@ export const motion = {
 /** @type {Group[]} Output order follows this array. */
 export const primitiveGroups = [
   {
-    label: "colour",
+    label: "color",
     note: "Brand anchors (color.md §2, unchanged) + OKLCH-generated scales (tokens/palette.mjs).",
     tokens: color,
   },

@@ -54,6 +54,30 @@
   font-size: var(--button-font-size-lg);
 }
 
+/* icon-only square proportion */
+.nise-toggle:has(> svg:only-child) {
+  padding-inline: 0;
+  width: var(--button-height-md);
+}
+
+.nise-toggle--sm:has(> svg:only-child) {
+  width: var(--button-height-sm);
+}
+
+.nise-toggle--lg:has(> svg:only-child) {
+  width: var(--button-height-lg);
+}
+
+/* variants */
+.nise-toggle--outline {
+  border-color: var(--color-border);
+}
+
+.nise-toggle--outline:hover:not(:disabled) {
+  background-color: var(--color-base-hover);
+  border-color: var(--color-border-hover);
+}
+
 /* states */
 /* Rest is a ghost-like tile: the transparent fill keeps the surface visible and
    the label carries the primary voice. */
@@ -74,7 +98,12 @@
   color: var(--color-selected-text);
 }
 
+.nise-toggle--outline.nise-toggle--pressed {
+  border-color: var(--color-selected-surface);
+}
+
 .nise-toggle--pressed:hover:not(:disabled),
 .nise-toggle--pressed:active:not(:disabled) {
   background-color: var(--color-selected-surface);
 }
+

@@ -50,7 +50,7 @@ describe("token classification", () => {
     }
   });
 
-  it("reads a semantic colour role as a retargetable alias", () => {
+  it("reads a semantic color role as a retargetable alias", () => {
     const t = INFO_BY_NAME["--color-base-100"]!;
     expect(t.form).toBe("alias");
     expect(t.ref).toBe("--white");
@@ -59,7 +59,7 @@ describe("token classification", () => {
     expect(e.options).toEqual(COLOR_PRIMITIVES);
   });
 
-  it("reads the generated colour scales as editable colour primitives", () => {
+  it("reads the generated color scales as editable color primitives", () => {
     const t = INFO_BY_NAME["--purple-600"]!;
     expect(t.form).toBe("value");
     expect(t.primitive).toBe(true);
@@ -78,7 +78,7 @@ describe("token classification", () => {
     expect(EDITABLE_BY_NAME["--button-height-md"]).toBeUndefined();
   });
 
-  it("only lets a colour role point at a colour primitive", () => {
+  it("only lets a color role point at a color primitive", () => {
     const role = EDITABLE_BY_NAME["--color-primary"]!;
     expect(role.kind).toBe("alias");
     expect(role.options?.every((o) => COLOR_PRIMITIVES.includes(o))).toBe(true);
@@ -118,10 +118,10 @@ describe("value validation", () => {
   const space = EDITABLE_BY_NAME["--space-3"]!;
   const lh = EDITABLE_BY_NAME["--line-height-normal"]!;
   const dur = EDITABLE_BY_NAME["--duration-fast"]!;
-  const colour = EDITABLE_BY_NAME["--purple-600"]!;
+  const colorToken = EDITABLE_BY_NAME["--purple-600"]!;
 
   it("accepts a valid value for each control", () => {
-    expect(validateValue(colour, "#4C207F")).toBeNull();
+    expect(validateValue(colorToken, "#4C207F")).toBeNull();
     expect(validateValue(space, "12px")).toBeNull();
     expect(validateValue(lh, "1.5")).toBeNull();
     expect(validateValue(dur, "120ms")).toBeNull();
@@ -129,7 +129,7 @@ describe("value validation", () => {
 
   it("rejects a wrong unit or malformed value", () => {
     expect(validateValue(space, "12rem")).toMatch(/Expected a px/);
-    expect(validateValue(colour, "purple")).toMatch(/hex colour/);
+    expect(validateValue(colorToken, "purple")).toMatch(/hex colou?r/);
     expect(validateValue(lh, "tall")).toMatch(/number/);
     expect(validateValue(dur, "fast")).toMatch(/ms/);
     expect(validateValue(space, "")).toMatch(/required/);

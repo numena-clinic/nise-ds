@@ -1,4 +1,4 @@
-// Colour conversion helpers for the visual editor.
+// Color conversion helpers for the visual editor.
 //
 // The browser-side picker needs hex ⇄ rgb ⇄ hsl so a token can be edited with
 // hue/saturation/lightness sliders instead of a bare hex field. Only the forms
@@ -24,7 +24,7 @@ export function isHex(value: string): boolean {
   return HEX_RE.test(value.trim());
 }
 
-/** Expand #abc → #aabbcc so the colour input always receives six digits. */
+/** Expand #abc → #aabbcc so the color input always receives six digits. */
 export function normalizeHex(value: string): string {
   const hex = value.trim().replace(/^#/, "");
   if (hex.length === 3) {

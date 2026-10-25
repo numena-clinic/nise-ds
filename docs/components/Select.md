@@ -53,7 +53,7 @@ hint or error
   `--color-selected-text` — the **same foreground as the selected item's text**,
   so the mark and the label read as one signal — and the item is set in
   `--font-weight-medium`. Selection is therefore carried by an icon and a
-  weight, not by colour alone (iconography.md §4).
+  weight, not by color alone (iconography.md §4).
 - The chevron is `ChevronDownIcon size={20}` — the brand's default icon size.
 
 ## Accessibility

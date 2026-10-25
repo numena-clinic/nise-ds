@@ -7,7 +7,7 @@
 
    The icon slot is purely decorative (aria-hidden): the title and description
    carry the meaning in words (iconography.md §5). It is not a status banner —
-   no success/error information, no verdict; colour here is categorical tint
+   no success/error information, no verdict; color here is categorical tint
    and the copy is what reads (color.md §4).
 
    Tokens consumed:

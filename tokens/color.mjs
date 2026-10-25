@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Colour maths shared by the token validator (Node, `npm run tokens:validate`)
+// Color maths shared by the token validator (Node, `npm run tokens:validate`)
 // and the Theme Explorer (browser). Keeping one implementation means the
 // contrast the validator proves is the contrast the explorer reports.
 //
@@ -40,7 +40,7 @@ export function hexToRgb(hex) {
  * Parse a CSS `oklch(l c h [/ a])` string → sRGB { r, g, b, a }, else null.
  * Follows the Color 4 grammar: L is 0–1 (or 0–100%), C is 0–0.4 (or 0–100%),
  * H is a bare number in degrees, alpha is 0–1 (or a percentage). `none` channels
- * and relative `from` colours are not supported and return null.
+ * and relative `from` colors are not supported and return null.
  */
 export function parseOklch(raw) {
   const m = String(raw)
@@ -59,7 +59,7 @@ export function parseOklch(raw) {
 }
 
 /**
- * Any CSS colour → { r, g, b, a } (a defaults to 1), else null.
+ * Any CSS color → { r, g, b, a } (a defaults to 1), else null.
  * Handles "#hex" (3/4/6/8 digits), "transparent", "oklch(...)", and rgb()/rgba()
  * with either legacy commas or modern space/slash syntax and percentage channels.
  */
@@ -88,7 +88,7 @@ export function parseColor(raw) {
 // generates scales here). Nothing downstream needs OKLCH to *be* the runtime
 // value: `parseColor` accepts an `oklch(...)` and resolves it to sRGB through the
 // exact path the browser uses, so contrast and the DTCG export are computed from
-// the final rendered colour (WCAG is defined on sRGB luminance, not OKLCH L).
+// the final rendered color (WCAG is defined on sRGB luminance, not OKLCH L).
 //
 // All matrices are Björn Ottosson's OKLab reference transforms; the gamut map is
 // the CSS Color 4 §13 strategy (reduce OKLCH chroma, keep L and H) implemented as
@@ -170,7 +170,7 @@ function inSrgbGamut({ r, g, b }, eps = 1e-4) {
 /**
  * OKLCH → sRGB { r, g, b, a } (0..255), gamut-mapped if necessary.
  *
- * CSS Color 4 §13: when the colour is out of gamut, reduce chroma (holding L and
+ * CSS Color 4 §13: when the color is out of gamut, reduce chroma (holding L and
  * H) until it fits — the browser's `gamut mapping` for oklch(). Deterministic:
  * a fixed-iteration binary search on C, so the same input always yields the same
  * 8-bit sRGB. `l` is expected 0..1, `h` in degrees.
@@ -182,7 +182,7 @@ export function oklchToRgb({ l, c, h }) {
 
   let linear = linearAt(C);
   if (!inSrgbGamut(linear)) {
-    // Reduce chroma (holding L and H) until the colour fits the sRGB cube.
+    // Reduce chroma (holding L and H) until the color fits the sRGB cube.
     let lo = 0;
     let hi = C;
     for (let i = 0; i < 24; i += 1) {
@@ -204,7 +204,7 @@ export function toHex({ r, g, b, a = 1 }) {
   return a >= 1 ? `#${h}` : `#${h}${clamp8(a * 255).toString(16).padStart(2, "0")}`;
 }
 
-/** An OKLCH colour as a CSS string, e.g. `oklch(0.55 0.19 288.6)`. */
+/** An OKLCH color as a CSS string, e.g. `oklch(0.55 0.19 288.6)`. */
 export function formatOklch({ l, c, h }, round = 4) {
   const r = (n) => Number(n.toFixed(round));
   return `oklch(${r(l)} ${r(c)} ${r(h)})`;
@@ -240,20 +240,20 @@ export function srgbToLab({ r, g, b }) {
 }
 
 /**
- * CIEDE2000 colour difference between two CIE L*a*b* triples.
+ * CIEDE2000 color difference between two CIE L*a*b* triples.
  *
  * Contrast says whether a foreground can be read on a background. It says
- * nothing about whether two FILLS are the same colour — which is a separate
+ * nothing about whether two FILLS are the same color — which is a separate
  * question, and one a design system has to answer: a status badge that paints
- * the same colour as a secondary button is a defect no contrast ratio catches.
+ * the same color as a secondary button is a defect no contrast ratio catches.
  * ΔE2000 is the standard perceptual metric for that; the plain Lab ΔE
- * under-weights hue differences between two saturated colours at similar
+ * under-weights hue differences between two saturated colors at similar
  * lightness, which is exactly the shape of the collision it has to catch.
  *
  * The formulation is Sharma, Wu & Dalal (2005), and the hue term is folded
  * into [0, 360) before it is differenced — atan2 returns negative angles for
  * the third and fourth quadrants, and an un-normalised hue silently reports
- * two clearly different colours as identical.
+ * two clearly different colors as identical.
  */
 export function deltaE2000Lab([L1, a1, b1], [L2, a2, b2]) {
   const rad = (deg) => (deg * Math.PI) / 180;
@@ -305,7 +305,7 @@ export function deltaE2000Lab([L1, a1, b1], [L2, a2, b2]) {
   );
 }
 
-/** CIEDE2000 colour difference between two sRGB { r, g, b } colours. */
+/** CIEDE2000 color difference between two sRGB { r, g, b } colors. */
 export function deltaE2000(fg, bg) {
   return deltaE2000Lab(srgbToLab(fg), srgbToLab(bg));
 }
@@ -363,7 +363,7 @@ export function substituteVars(value, tokenMap, path = [], onError = () => {}) {
   });
 }
 
-/** Fully resolve a token to a plain value (hex for colours, e.g. "12px" else). */
+/** Fully resolve a token to a plain value (hex for colors, e.g. "12px" else). */
 export function expand(name, tokenMap, path = [name], onError = () => {}) {
   const raw = tokenMap[name];
   if (raw === undefined) {

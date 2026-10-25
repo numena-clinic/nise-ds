@@ -15,7 +15,7 @@ const scanTsx = (text: string) => scanSource(text, { isCss: false, isKnownToken 
 const messages = (problems: { message: string }[]) => problems.map((p) => p.message);
 
 describe("comment handling", () => {
-  it("ignores a colour inside a multi-line block comment but still sees the code after it", () => {
+  it("ignores a color inside a multi-line block comment but still sees the code after it", () => {
     const problems = scanCss(`/* a note
    about #abcdef and rgb(1,2,3)
    that spans lines */
@@ -25,11 +25,11 @@ describe("comment handling", () => {
     expect(problems[0]!.message).toMatch(/off-token px/);
   });
 
-  it("ignores a colour in a single-line block comment", () => {
+  it("ignores a color in a single-line block comment", () => {
     expect(scanCss(`.a { /* was #fff */ padding: var(--space-3); }`)).toEqual([]);
   });
 
-  it("ignores a colour in a trailing // comment", () => {
+  it("ignores a color in a trailing // comment", () => {
     expect(scanTsx(`const x = 1; // old value was #abcdef`)).toEqual([]);
   });
 
@@ -90,18 +90,18 @@ describe("var() references", () => {
   });
 });
 
-describe("raw colour literals", () => {
+describe("raw color literals", () => {
   it.each([
-    [`.a { color: #fff; }`, /raw colour literal/],
-    [`.a { color: #ffffff80; }`, /raw colour literal/],
-    [`.a { color: rgb(1, 2, 3); }`, /raw colour literal/],
-    [`.a { color: oklch(0.5 0.1 20); }`, /raw colour literal/],
-    [`.a { color: red; }`, /named colour/],
+    [`.a { color: #fff; }`, /raw color literal/],
+    [`.a { color: #ffffff80; }`, /raw color literal/],
+    [`.a { color: rgb(1, 2, 3); }`, /raw color literal/],
+    [`.a { color: oklch(0.5 0.1 20); }`, /raw color literal/],
+    [`.a { color: red; }`, /named color/],
   ])("flags %s", (css, pattern) => {
     expect(messages(scanCss(css)).some((m) => pattern.test(m))).toBe(true);
   });
 
-  it("accepts a colour that comes through a token", () => {
+  it("accepts a color that comes through a token", () => {
     expect(scanCss(`.a { color: var(--color-base-content); background: var(--color-base-100); }`)).toEqual([]);
   });
 });

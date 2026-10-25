@@ -6,7 +6,7 @@
    Visuals follow the same box logic as Checkbox but with a round indicator.
 
    Tokens consumed: the same `--choice-*` and surface/focus tokens as Checkbox.
-   Accessibility: the label is visible and wraps the input. Colour is not the
+   Accessibility: the label is visible and wraps the input. Color is not the
    only signal — the selected state fills a disc. No ARIA role is asserted that
    duplicates the native control.
    ============================================================================= */

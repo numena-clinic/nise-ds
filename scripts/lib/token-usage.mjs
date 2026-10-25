@@ -3,7 +3,7 @@
 // The mechanical half of "tokens are the only source of visual truth": given a
 // file's text, it finds
 //   1. a `var()` that references a token which does not exist
-//   2. a raw colour literal instead of a semantic token
+//   2. a raw color literal instead of a semantic token
 //   3. an off-token `px` value on a spacing / radius / type property
 //
 // It performs no I/O and never exits the process, so it is unit-testable
@@ -15,8 +15,8 @@
 //     line, so a `//` inside a multi-line template literal is not detected.
 //   · A CSS declaration is only recognised when it is delimited by `{`/`;` and
 //     ends at `;`/`}` — a selector colon (`a:hover`) is never a declaration.
-//   · `var()` and colour rules are line-oriented: a `var()` name split across a
-//     newline is not seen, and a bare named colour is only caught when followed
+//   · `var()` and color rules are line-oriented: a `var()` name split across a
+//     newline is not seen, and a bare named color is only caught when followed
 //     by `;`.
 //   · JSX is only inspected inside an inline `style={{ … }}`; a unitless
 //     React style number (which React renders as px) is out of scope — only an
@@ -27,8 +27,8 @@
 export const GENERATED = ["src/tokens/tokens.css"];
 
 // One documented exemption: a single line carrying the marker
-// `token-boundary: waive` — used only for colour-picker affordances (a hue
-// slider's spectrum) that are UI chrome, not themeable colour.
+// `token-boundary: waive` — used only for color-picker affordances (a hue
+// slider's spectrum) that are UI chrome, not themeable color.
 export const WAIVER = /token-boundary:\s*waive/;
 
 export const COLOR_LITERAL =
@@ -107,15 +107,15 @@ export function checkVars(text, isKnownToken) {
   return out;
 }
 
-/** Reports a raw colour literal, or a bare named colour in a declaration. */
+/** Reports a raw color literal, or a bare named color in a declaration. */
 export function checkColor(text) {
   const out = [];
   if (COLOR_LITERAL.test(text)) {
-    return [`raw colour literal — use a semantic token: ${text.trim()}`];
+    return [`raw color literal — use a semantic token: ${text.trim()}`];
   }
   for (const m of text.matchAll(/:\s*([a-zA-Z]+)\s*;/g)) {
     const word = m[1].toLowerCase();
-    if (NAMED_COLORS.has(word)) out.push(`named colour "${word}" — use a semantic token`);
+    if (NAMED_COLORS.has(word)) out.push(`named color "${word}" — use a semantic token`);
   }
   return out;
 }

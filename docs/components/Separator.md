@@ -28,5 +28,5 @@ Use Separator when the visual grouping of adjacent regions needs a thin line to 
 
 ```
 --separator-thickness   → 1 px (component layer, matches --border-width)
---color-border          hairline colour
+--color-border          hairline color
 ```

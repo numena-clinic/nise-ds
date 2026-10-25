@@ -78,7 +78,7 @@ describe("planPromotion (against the real token source)", () => {
     expect(readFileSync(resolve(root, TOKEN_FILES.primitive), "utf8")).toBe(before);
   });
 
-  it("plans a colour-role retarget in the semantic file", () => {
+  it("plans a color-role retarget in the semantic file", () => {
     const plan = planPromotion(root, {
       schema: "nise.theme-candidate",
       version: 1,

@@ -29,11 +29,11 @@ export const TOKEN_FILES = {
 const ALIAS_RE = /^var\(\s*(--[a-zA-Z0-9_-]+)\s*\)$/;
 const LINE_RE = /^(\s*)"(--[a-zA-Z0-9_-]+)":\s*(.*),\s*$/;
 
-/** Colour primitives — the only legal targets for a colour-role retarget. Read
+/** Color primitives — the only legal targets for a color-role retarget. Read
  * from the source (the brand anchors plus the generated scales), so a scale step
  * becomes a legal target the moment it exists. */
 export const COLOR_PRIMITIVES = Object.keys(
-  primitiveGroups.find((group) => group.label === "colour")?.tokens ?? {},
+  primitiveGroups.find((group) => group.label === "color" || group.label === "color")?.tokens ?? {},
 );
 
 /** Named consts already defined in semantic.mjs, so a retarget reuses them. */
@@ -54,7 +54,7 @@ export function aliasExpr(layer, ref) {
   return `ref(${quote(ref)})`;
 }
 
-/** True when a token is a colour role we allow retargeting (semantic alias). */
+/** True when a token is a color role we allow retargeting (semantic alias). */
 export function isColorRole(name) {
   const raw = allTokens[name];
   return (
@@ -121,11 +121,11 @@ export function planPromotion(root, candidate) {
 
     if (t.kind === "alias") {
       if (!isColorRole(t.name)) {
-        errors.push(`${t.name}: not a retargetable colour role`);
+        errors.push(`${t.name}: not a retargetable color role`);
         continue;
       }
       if (!COLOR_PRIMITIVES.includes(t.ref)) {
-        errors.push(`${t.name}: "${String(t.ref)}" is not a colour primitive`);
+        errors.push(`${t.name}: "${String(t.ref)}" is not a color primitive`);
         continue;
       }
       const rel = TOKEN_FILES.semantic;

@@ -8,7 +8,7 @@
    The image is presentational unless the caller names it, and an image that
    fails to load falls back to the initials rather than to a broken glyph, so
    the avatar always shows a person. The fallback uses a brand tint with
-   content-coloured text; it is an identity colour, not a status or a verdict.
+   content-colored text; it is an identity color, not a status or a verdict.
 
    Tokens consumed:
       --avatar-size, --avatar-font-size → --control-height-md, --font-size-sm
