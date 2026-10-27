@@ -663,18 +663,64 @@ describe("Timeline", () => {
 });
 
 describe("Collapsible", () => {
-  it("opens via its summary and reveals the content", async () => {
+  it("opens and closes via its trigger and reveals the content", async () => {
     render(
       <Collapsible>
         <CollapsibleTrigger>Advanced export options</CollapsibleTrigger>
         <CollapsibleContent>Includes the anonymised sequence check.</CollapsibleContent>
       </Collapsible>,
     );
-    const summary = screen.getByText("Advanced export options");
-    const details = summary.closest("details") as HTMLDetailsElement;
-    expect(details.hasAttribute("open")).toBe(false);
-    await userEvent.click(summary);
-    expect(details).toHaveAttribute("open");
+    const trigger = screen.getByRole("button", { name: /Advanced export options/i });
+    const content = screen.getByText("Includes the anonymised sequence check.");
+
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(content).not.toBeVisible();
+
+    await userEvent.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(content).toBeVisible();
+
+    await userEvent.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(content).not.toBeVisible();
+  });
+
+  it("supports controlled state via open and onOpenChange", async () => {
+    const onOpenChange = vi.fn();
+    const { rerender } = render(
+      <Collapsible open={false} onOpenChange={onOpenChange}>
+        <CollapsibleTrigger>Controlled trigger</CollapsibleTrigger>
+        <CollapsibleContent>Controlled content</CollapsibleContent>
+      </Collapsible>,
+    );
+
+    const trigger = screen.getByRole("button", { name: /Controlled trigger/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+    await userEvent.click(trigger);
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+
+    rerender(
+      <Collapsible open={true} onOpenChange={onOpenChange}>
+        <CollapsibleTrigger>Controlled trigger</CollapsibleTrigger>
+        <CollapsibleContent>Controlled content</CollapsibleContent>
+      </Collapsible>,
+    );
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("supports asChild delegation on CollapsibleTrigger", async () => {
+    render(
+      <Collapsible defaultOpen>
+        <CollapsibleTrigger asChild>
+          <button type="button" className="custom-btn">Custom Trigger</button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>Panel Body</CollapsibleContent>
+      </Collapsible>,
+    );
+    const customButton = screen.getByRole("button", { name: "Custom Trigger" });
+    expect(customButton).toHaveClass("custom-btn");
+    expect(customButton).toHaveAttribute("aria-expanded", "true");
   });
 });
 

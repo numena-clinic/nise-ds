@@ -19,7 +19,8 @@
   flex: 1;
   align-items: center;
   justify-content: space-between;
-  padding-block: var(--space-4);
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
   background-color: transparent;
   border: none;
   color: var(--color-base-content);
@@ -66,9 +67,17 @@
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
   color: var(--color-base-content);
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
 }
 
 .nise-accordion__inner {
   padding-bottom: var(--space-4);
+}
+
+.nise-accordion__inner > :first-child {
+  margin-top: 0;
+}
+
+.nise-accordion__inner > :last-child {
+  margin-bottom: 0;
 }

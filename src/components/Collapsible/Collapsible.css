@@ -1,44 +1,45 @@
 .nise-collapsible {
+  width: 100%;
   font-family: var(--font-sans);
 }
 
 .nise-collapsible__trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-2);
-  cursor: pointer;
-  list-style: none;
-  border-radius: var(--collapsible-radius, var(--radius-sm));
+  justify-content: flex-start;
+  background-color: transparent;
+  border: none;
   color: var(--color-base-content);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-}
-
-.nise-collapsible__trigger::-webkit-details-marker {
-  display: none;
-}
-
-.nise-collapsible__trigger:hover {
-  background-color: var(--color-base-hover);
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  transition: color var(--duration-fast) var(--ease-standard);
 }
 
 .nise-collapsible__trigger:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
 }
 
-.nise-collapsible__chevron {
-  flex-shrink: 0;
-  transition: transform var(--duration-fast) var(--ease-standard);
-}
-
-.nise-collapsible[open] > .nise-collapsible__trigger .nise-collapsible__chevron {
-  transform: rotate(90deg);
+.nise-collapsible__trigger:disabled,
+.nise-collapsible[data-disabled] .nise-collapsible__trigger {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
 }
 
 .nise-collapsible__content {
   color: var(--color-base-content);
   font-size: var(--font-size-sm);
-  line-height: var(--line-height-snug);
-  padding-block-start: var(--space-2);
+  line-height: var(--line-height-normal);
 }
+
+.nise-collapsible__content[hidden],
+.nise-collapsible__content[data-state="closed"] {
+  display: none;
+}
+

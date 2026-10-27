@@ -63,9 +63,165 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from "../../index";
-import { InfoIcon, BookmarkIcon, BoldIcon, ItalicIcon, UnderlineIcon } from "../../icons";
+import { useState } from "react";
+import {
+  InfoIcon,
+  BookmarkIcon,
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  ChevronsUpDownIcon,
+  ChevronDownIcon,
+} from "../../icons";
 import { Block, Cell, Column, Row } from "../components/specimen";
 import type { SpecimenPage } from "./types";
+
+function ExplorerCollapsibleSpecimen() {
+  const [open, setOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  return (
+    <Row>
+      <Cell label="starred repositories (shadcn card demo)">
+        <div style={{ width: 350 }}>
+          <Collapsible
+            open={open}
+            onOpenChange={setOpen}
+            style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingInline: "var(--space-4)",
+              }}
+            >
+              <h4
+                style={{
+                  margin: 0,
+                  fontSize: "var(--font-size-sm)",
+                  fontWeight: "var(--font-weight-medium)",
+                  color: "var(--color-base-content)",
+                }}
+              >
+                @peduarte starred 3 repositories
+              </h4>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Toggle repository list"
+                  style={{
+                    width: 32,
+                    height: 32,
+                    padding: 0,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ChevronsUpDownIcon size={16} />
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+
+            <div
+              style={{
+                padding: "var(--space-2) var(--space-4)",
+                border: "var(--border-width) solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                backgroundColor: "var(--color-base-100)",
+                fontSize: "var(--font-size-sm)",
+                fontFamily: "var(--font-mono, monospace)",
+                color: "var(--color-base-content)",
+                boxShadow: "var(--shadow-sm)",
+              }}
+            >
+              @radix-ui/primitives
+            </div>
+
+            <CollapsibleContent
+              style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}
+            >
+              <div
+                style={{
+                  padding: "var(--space-2) var(--space-4)",
+                  border: "var(--border-width) solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  backgroundColor: "var(--color-base-100)",
+                  fontSize: "var(--font-size-sm)",
+                  fontFamily: "var(--font-mono, monospace)",
+                  color: "var(--color-base-content)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+              >
+                @radix-ui/colors
+              </div>
+              <div
+                style={{
+                  padding: "var(--space-2) var(--space-4)",
+                  border: "var(--border-width) solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  backgroundColor: "var(--color-base-100)",
+                  fontSize: "var(--font-size-sm)",
+                  fontFamily: "var(--font-mono, monospace)",
+                  color: "var(--color-base-content)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+              >
+                @stitches/react
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </Cell>
+
+      <Cell label="card disclosure (product details)">
+        <div style={{ width: 350 }}>
+          <Card>
+            <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingInline: "var(--space-3)",
+                  }}
+                >
+                  <span>Product details</span>
+                  <ChevronDownIcon
+                    size={16}
+                    style={{
+                      transition: "transform var(--duration-fast) var(--ease-standard)",
+                      transform: detailsOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      color: "var(--color-text-muted)",
+                    }}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent
+                style={{
+                  paddingTop: "var(--space-2)",
+                  paddingInline: "var(--space-3)",
+                  fontSize: "var(--font-size-sm)",
+                  color: "var(--color-text-muted)",
+                  lineHeight: "var(--line-height-relaxed)",
+                }}
+              >
+                An open-source UI component library for building high-quality,
+                accessible design systems and web apps.
+              </CollapsibleContent>
+            </Collapsible>
+          </Card>
+        </div>
+      </Cell>
+    </Row>
+  );
+}
 
 export const COMPONENT_PAGES: SpecimenPage[] = [
   {
@@ -850,12 +1006,12 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
     id: "cmp-collapsible",
     label: "Collapsible",
     title: "Collapsible",
-    note: "disclosure region — details/summary native",
+    note: "expandable disclosure panel (shadcn/ui compatible)",
     render: () => (
       <Block
         id="collapsible"
         title="Collapsible"
-        note="disclosure region — details/summary native"
+        note="expandable disclosure panel (shadcn/ui compatible)"
         tokens={[
           "--color-base-content",
           "--color-base-hover",
@@ -864,25 +1020,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
           "--space-2",
         ]}
       >
-        <Column>
-          <Collapsible>
-            <CollapsibleTrigger>Advanced export options</CollapsibleTrigger>
-            <CollapsibleContent>
-              <Column>
-                <Checkbox label="Include archived notes" />
-                <Checkbox label="Redact personally identifiable fields" defaultChecked />
-              </Column>
-            </CollapsibleContent>
-          </Collapsible>
-          <Collapsible defaultOpen>
-            <CollapsibleTrigger>Clinical history</CollapsibleTrigger>
-            <CollapsibleContent>
-              <p style={{ margin: 0, fontSize: "var(--font-size-sm)", color: "var(--color-text-muted)" }}>
-                Four sessions completed. Next review in two weeks.
-              </p>
-            </CollapsibleContent>
-          </Collapsible>
-        </Column>
+        <ExplorerCollapsibleSpecimen />
       </Block>
     ),
   },

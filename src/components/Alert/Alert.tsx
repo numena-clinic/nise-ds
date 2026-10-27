@@ -57,11 +57,15 @@ export function Alert({
     .filter(Boolean)
     .join(" ");
 
+  const resolvedIcon = icon !== undefined ? icon : DEFAULT_ICONS[variant];
+
   return (
     <div {...rest} role="alert" className={classes}>
-      <span className="nise-alert__icon" aria-hidden="true">
-        {icon ?? DEFAULT_ICONS[variant]}
-      </span>
+      {resolvedIcon ? (
+        <span className="nise-alert__icon" aria-hidden="true">
+          {resolvedIcon}
+        </span>
+      ) : null}
       <span className="nise-alert__content">
         {title != null ? <p className="nise-alert__title">{title}</p> : null}
         {children != null ? <p className="nise-alert__body">{children}</p> : null}

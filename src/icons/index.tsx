@@ -121,6 +121,14 @@ export function ChevronLeftIcon(props: IconProps) {
   );
 }
 
+export function ChevronsUpDownIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M7 15l5 5 5-5M7 9l5-5 5 5" />
+    </Icon>
+  );
+}
+
 export function BookmarkIcon(props: IconProps) {
   return (
     <Icon {...props}>

@@ -1,97 +1,249 @@
 /* =============================================================================
    Collapsible
    -----------------------------------------------------------------------------
-   A disclosure region — release notes, advanced options — built on the native
-   <details>/<summary> pair. The disclosure is accessible natively: the name
-   comes from the summary text, the toggle from the summary itself; the
-   component adds styling, a trailing chevron and nothing else.
+   An interactive component which expands/collapses a panel. Matches the
+   shadcn/ui and Radix Collapsible API and design pattern.
 
-   The chevron is decorative (aria-hidden) and rotates a quarter turn when the
-   region is open. Content of a closed region stays in the DOM (native
-   details hides it) rather than unmounting. `open`, when passed, is one-way:
-   the component re-applies it on render, so native user toggles are corrected
-   back on the next re-render — prefer `defaultOpen` for initial state only.
-   Animation is native and therefore instant; an open/close transition would
-   need To Do JS and looks intentional in its absence here for now.
+   Supports both controlled (`open`, `onOpenChange`) and uncontrolled
+   (`defaultOpen`) states, disabled state, and flexible trigger composition
+   with `asChild` (e.g. delegating behavior to a custom Button or icon trigger).
 
-   Tokens consumed:
+   Tokens consumed (component layer → semantic → primitive):
      --color-base-content, --color-base-hover, --color-focus-ring,
-     --focus-ring-width, --focus-ring-offset
-     --font-sans, --font-weight-medium, --radius-sm --space-{1,2}
-     (point of use: var(--collapsible-radius, var(--radius-sm)))
+     --focus-ring-width, --focus-ring-offset,
+     --font-sans, --font-weight-medium, --font-size-sm,
+     --radius-sm, --space-1, --space-2,
      --duration-fast, --ease-standard
+
+   Accessibility:
+     - `CollapsibleTrigger` renders a real <button> with `aria-expanded` and `aria-controls`.
+     - `CollapsibleContent` renders with `role="region"` and `aria-labelledby`.
+     - When closed, the content panel is hidden (`hidden`, `data-state="closed"`).
    ============================================================================= */
 
 import {
+  createContext,
   forwardRef,
+  isValidElement,
+  cloneElement,
+  useContext,
+  useId,
+  useState,
+  type ButtonHTMLAttributes,
   type HTMLAttributes,
+  type MouseEvent,
+  type ReactElement,
   type ReactNode,
 } from "react";
-import { ChevronRightIcon } from "../../icons";
 import "./Collapsible.css";
 
-export interface CollapsibleProps extends HTMLAttributes<HTMLDetailsElement> {
-  /** Open on render, then left to the user. */
-  defaultOpen?: boolean;
-  /** One-way controlled state: re-applied against user toggles on re-render. */
+export interface CollapsibleContextValue {
+  open: boolean;
+  disabled?: boolean;
+  contentId: string;
+  triggerId: string;
+  toggle: () => void;
+}
+
+const CollapsibleContext = createContext<CollapsibleContextValue | null>(null);
+
+export function useCollapsible() {
+  const context = useContext(CollapsibleContext);
+  if (!context) {
+    throw new Error("Collapsible compound components must be used within a Collapsible");
+  }
+  return context;
+}
+
+export interface CollapsibleProps extends HTMLAttributes<HTMLDivElement> {
+  /** The controlled open state of the collapsible. */
   open?: boolean;
+  /** The open state of the collapsible when it is initially rendered (uncontrolled). */
+  defaultOpen?: boolean;
+  /** Event handler called when the open state of the collapsible changes. */
+  onOpenChange?: (open: boolean) => void;
+  /** When true, prevents the user from interacting with the collapsible. */
+  disabled?: boolean;
+  /** Change the default rendered element for the one passed as a child, merging their props and behavior. */
+  asChild?: boolean;
   children?: ReactNode;
 }
 
-export const Collapsible = forwardRef<HTMLDetailsElement, CollapsibleProps>(
+export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(
   function Collapsible(
-    { defaultOpen, open, children, className, ...rest },
+    {
+      open: controlledOpen,
+      defaultOpen = false,
+      onOpenChange,
+      disabled = false,
+      asChild = false,
+      children,
+      className,
+      ...rest
+    },
     ref,
   ) {
-    const initial = defaultOpen ? true : undefined;
+    const isControlled = controlledOpen !== undefined;
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+    const isOpen = isControlled ? controlledOpen : uncontrolledOpen;
+
+    const id = useId();
+    const contentId = `${id}-content`;
+    const triggerId = `${id}-trigger`;
+
+    const toggle = () => {
+      if (disabled) return;
+      const next = !isOpen;
+      if (!isControlled) {
+        setUncontrolledOpen(next);
+      }
+      onOpenChange?.(next);
+    };
+
+    const sharedProps = {
+      ref,
+      className: ["nise-collapsible", className].filter(Boolean).join(" "),
+      "data-state": isOpen ? "open" : "closed",
+      "data-disabled": disabled ? "" : undefined,
+    };
+
     return (
-      <details
-        {...rest}
-        ref={ref}
-        className={["nise-collapsible", className].filter(Boolean).join(" ")}
-        open={open !== undefined ? open : initial}
+      <CollapsibleContext.Provider
+        value={{
+          open: isOpen,
+          disabled,
+          contentId,
+          triggerId,
+          toggle,
+        }}
       >
-        {children}
-      </details>
+        {asChild && isValidElement(children) ? (
+          (cloneElement as (elem: ReactElement, props: Record<string, unknown>) => ReactElement)(
+            children as ReactElement<HTMLAttributes<HTMLDivElement>>,
+            {
+              ...sharedProps,
+              className: [
+                (children as ReactElement<{ className?: string }>).props.className,
+                sharedProps.className,
+              ]
+                .filter(Boolean)
+                .join(" "),
+            },
+          )
+        ) : (
+          <div {...rest} {...sharedProps}>
+            {children}
+          </div>
+        )}
+      </CollapsibleContext.Provider>
     );
   },
 );
 
 export interface CollapsibleTriggerProps
-  extends HTMLAttributes<HTMLElement> {
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Change the default rendered element for the one passed as a child, merging their props and behavior. */
+  asChild?: boolean;
   children?: ReactNode;
 }
 
-export const CollapsibleTrigger = forwardRef<HTMLElement, CollapsibleTriggerProps>(
-  function CollapsibleTrigger({ children, className, ...rest }, ref) {
+export const CollapsibleTrigger = forwardRef<HTMLButtonElement, CollapsibleTriggerProps>(
+  function CollapsibleTrigger(
+    { asChild = false, children, className, onClick, ...rest },
+    ref,
+  ) {
+    const { open, disabled, contentId, triggerId, toggle } = useCollapsible();
+
+    const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+      if (!disabled) {
+        toggle();
+      }
+      onClick?.(e);
+    };
+
+    if (asChild && isValidElement(children)) {
+      const child = children as ReactElement<ButtonHTMLAttributes<HTMLButtonElement>>;
+      return (cloneElement as (elem: ReactElement, props: Record<string, unknown>) => ReactElement)(
+        child,
+        {
+          ref,
+          id: triggerId,
+          type: child.props.type ?? "button",
+          "aria-expanded": open,
+          "aria-controls": contentId,
+          "data-state": open ? "open" : "closed",
+          "data-disabled": disabled ? "" : undefined,
+          disabled: disabled || child.props.disabled,
+          onClick: (e: MouseEvent<HTMLButtonElement>) => {
+            child.props.onClick?.(e);
+            if (!e.defaultPrevented) {
+              handleClick(e);
+            }
+          },
+        },
+      );
+    }
+
     return (
-      <summary
+      <button
         {...rest}
         ref={ref}
+        type="button"
+        id={triggerId}
+        aria-expanded={open}
+        aria-controls={contentId}
+        data-state={open ? "open" : "closed"}
+        data-disabled={disabled ? "" : undefined}
+        disabled={disabled}
+        onClick={handleClick}
         className={["nise-collapsible__trigger", className]
           .filter(Boolean)
           .join(" ")}
       >
         {children}
-        <ChevronRightIcon size={16} className="nise-collapsible__chevron" />
-      </summary>
+      </button>
     );
   },
 );
 
 export interface CollapsibleContentProps
   extends HTMLAttributes<HTMLDivElement> {
+  /** Change the default rendered element for the one passed as a child, merging their props and behavior. */
+  asChild?: boolean;
   children?: ReactNode;
 }
 
 export const CollapsibleContent = forwardRef<HTMLDivElement, CollapsibleContentProps>(
-  function CollapsibleContent({ className, ...rest }, ref) {
+  function CollapsibleContent({ asChild = false, className, children, ...rest }, ref) {
+    const { open, disabled, contentId, triggerId } = useCollapsible();
+
+    const sharedProps = {
+      ref,
+      id: contentId,
+      role: "region",
+      "aria-labelledby": triggerId,
+      "aria-hidden": !open,
+      hidden: !open,
+      "data-state": open ? "open" : "closed",
+      "data-disabled": disabled ? "" : undefined,
+      className: ["nise-collapsible__content", className].filter(Boolean).join(" "),
+    };
+
+    if (asChild && isValidElement(children)) {
+      const child = children as ReactElement<HTMLAttributes<HTMLDivElement>>;
+      return (cloneElement as (elem: ReactElement, props: Record<string, unknown>) => ReactElement)(
+        child,
+        {
+          ...sharedProps,
+          className: [child.props.className, sharedProps.className].filter(Boolean).join(" "),
+        },
+      );
+    }
+
     return (
-      <div
-        {...rest}
-        ref={ref}
-        className={["nise-collapsible__content", className].filter(Boolean).join(" ")}
-      />
+      <div {...rest} {...sharedProps}>
+        {children}
+      </div>
     );
   },
 );

@@ -7,29 +7,42 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--alert-radius, var(--radius-lg));
   font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
 }
 
 .nise-alert__icon {
   display: inline-flex;
   flex-shrink: 0;
+  /* Optical alignment with the title line (like in Shadcn) */
+  transform: translateY(2px);
   /* Overridden per status variant below. Neutral keeps the content color. */
   color: var(--color-base-content);
+}
+
+.nise-alert__icon:empty {
+  display: none;
 }
 
 .nise-alert__content {
   display: flex;
   flex-direction: column;
-  gap: var(--alert-gap);
+  gap: var(--space-1);
 }
 
 .nise-alert__title {
   margin: 0;
   color: inherit;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .nise-alert__body {
   margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
   /* Body copy is always readable over the surface — the status color is
      reserved for the icon and the title, never the detail (color.md §4). */
   color: var(--color-base-content);
