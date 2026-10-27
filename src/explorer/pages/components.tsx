@@ -1104,45 +1104,35 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
         tokens={["--color-tint-cyan", "--radius-md"]}
       >
         <Row>
-          <Cell label="16 / 9">
+          <Cell label="16 / 9 image">
             <div style={{ width: 240 }}>
               <AspectRatio ratio={16 / 9}>
-                <div
+                <img
+                  src="https://images.pexels.com/photos/23962080/pexels-photo-23962080.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="River with lake in forest"
                   style={{
                     width: "100%",
                     height: "100%",
-                    background: "var(--color-tint-cyan)",
+                    objectFit: "cover",
                     borderRadius: "var(--radius-md)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "var(--font-size-sm)",
-                    color: "var(--color-base-content)",
                   }}
-                >
-                  16 : 9
-                </div>
+                />
               </AspectRatio>
             </div>
           </Cell>
-          <Cell label="4 / 3">
+          <Cell label="4 / 3 image">
             <div style={{ width: 240 }}>
               <AspectRatio ratio={4 / 3}>
-                <div
+                <img
+                  src="https://images.pexels.com/photos/23962080/pexels-photo-23962080.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="River with lake in forest"
                   style={{
                     width: "100%",
                     height: "100%",
-                    background: "var(--color-tint-purple)",
+                    objectFit: "cover",
                     borderRadius: "var(--radius-md)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "var(--font-size-sm)",
-                    color: "var(--color-base-content)",
                   }}
-                >
-                  4 : 3
-                </div>
+                />
               </AspectRatio>
             </div>
           </Cell>

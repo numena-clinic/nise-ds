@@ -1,9 +1,10 @@
 .nise-table__container {
   width: 100%;
   overflow-x: auto;
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--table-radius, var(--radius-lg));
   background-color: var(--color-base-100);
+  box-shadow: var(--shadow-sm);
 }
 
 .nise-table {

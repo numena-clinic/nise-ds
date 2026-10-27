@@ -187,6 +187,7 @@ export const contrastChecks = [
   { fg: "--color-link", bg: "--color-base-100", min: 4.5, why: "link text on the page" },
   { fg: "--color-link-hover", bg: "--color-base-100", min: 4.5, why: "hovered link on the page" },
   { fg: "--color-selected-text", bg: "--color-selected-surface", min: 4.5, why: "selected tile text" },
+  { fg: "--color-base-content", bg: "--color-selected-surface", min: 4.5, why: "neutral badge text" },
 
   // ── the emphasis fills ───────────────────────────────────────────────────
   { fg: "--color-primary-content", bg: "--color-primary", min: 4.5, why: "text on the primary fill" },

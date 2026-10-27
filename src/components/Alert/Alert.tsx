@@ -17,7 +17,7 @@
       --alert-padding, --alert-gap → --space-4, --space-3
       --color-base-100, --color-base-200, --color-base-content
       --color-success/-content, --color-warning, --color-error, --color-info,
-      --color-border
+      --color-border (status tints mixed at 10% with --color-base-100)
    ============================================================================= */
 
 import type { HTMLAttributes, ReactNode } from "react";

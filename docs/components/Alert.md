@@ -38,9 +38,9 @@ Color is never the only signal (color.md §4). Each variant also carries:
 --alert-padding     → --space-4
 --alert-gap         → --space-3
 --color-base-100    page surface behind the banner
---color-base-200    tinted surface of the banner itself
+--color-base-200    neutral surface of the banner
 --color-base-content body text
 --color-info / -content, --color-success / -content,
---color-warning, --color-error   status accent + icon
+--color-warning, --color-error   status accent, border + icon; mixed at 10% with --color-base-100 for status tint
 --color-border      hairline rule
 ```

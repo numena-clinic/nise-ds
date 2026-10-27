@@ -41,6 +41,7 @@
 }
 
 .nise-alert--info {
+  background-color: color-mix(in srgb, var(--color-info) 10%, var(--color-base-100));
   color: var(--color-info);
   border-color: var(--color-info);
 }
@@ -52,6 +53,7 @@
 }
 
 .nise-alert--success {
+  background-color: color-mix(in srgb, var(--color-success) 10%, var(--color-base-100));
   color: var(--color-success);
   border-color: var(--color-success);
 }
@@ -63,6 +65,7 @@
 }
 
 .nise-alert--warning {
+  background-color: color-mix(in srgb, var(--color-warning) 10%, var(--color-base-100));
   color: var(--color-warning);
   border-color: var(--color-warning);
 }
@@ -74,6 +77,7 @@
 }
 
 .nise-alert--error {
+  background-color: color-mix(in srgb, var(--color-error) 10%, var(--color-base-100));
   color: var(--color-error);
   border-color: var(--color-error);
 }

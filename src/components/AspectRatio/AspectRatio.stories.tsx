@@ -61,6 +61,32 @@ export const WidescreenChart: Story = {
   ),
 };
 
+const PEXELS_RIVER_IMAGE =
+  "https://images.pexels.com/photos/23962080/pexels-photo-23962080.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
+
+export const WithImage: Story = {
+  args: {
+    ratio: 16 / 9,
+    children: (
+      <img
+        src={PEXELS_RIVER_IMAGE}
+        alt="River flowing through forest into lake"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          borderRadius: "var(--radius-md)",
+        }}
+      />
+    ),
+  },
+  render: ({ children, ...rest }) => (
+    <div style={{ maxWidth: 480 }}>
+      <AspectRatio {...rest}>{children}</AspectRatio>
+    </div>
+  ),
+};
+
 export const SquareScan: Story = {
   args: { ratio: 1, children: <ChartIllustration /> },
   render: ({ children, ...rest }) => (
@@ -69,3 +95,4 @@ export const SquareScan: Story = {
     </div>
   ),
 };
+

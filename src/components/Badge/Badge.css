@@ -22,8 +22,13 @@
 }
 
 .nise-badge--neutral {
-  background-color: var(--color-base-200);
+  background-color: var(--color-selected-surface);
   color: var(--color-base-content);
+}
+
+.nise-badge__label {
+  display: inline-block;
+  line-height: inherit;
 }
 
 .nise-badge--purple {
