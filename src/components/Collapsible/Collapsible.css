@@ -32,6 +32,16 @@
   opacity: var(--opacity-disabled);
 }
 
+.nise-collapsible__chevron {
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+[data-state="open"] > .nise-collapsible__chevron,
+[data-state="open"] .nise-collapsible__chevron {
+  transform: rotate(90deg);
+}
+
 .nise-collapsible__content {
   color: var(--color-base-content);
   font-size: var(--font-size-sm);
@@ -42,4 +52,18 @@
 .nise-collapsible__content[data-state="closed"] {
   display: none;
 }
+
+.nise-collapsible__tree-item {
+  width: 100%;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  padding-inline: var(--space-2);
+  font-weight: var(--font-weight-regular);
+}
+
+.nise-collapsible__tree-item--root-file {
+  padding-left: calc(var(--space-2) + var(--space-5));
+}
+
+
 

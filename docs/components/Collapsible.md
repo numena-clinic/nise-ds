@@ -46,6 +46,44 @@ Use Collapsible for optional supplemental content that most users skip but some 
 </Card>
 ```
 
+### File Tree (nested collapsibles)
+
+```tsx
+<Card style={{ maxWidth: 300 }}>
+  <Tabs defaultValue="explorer">
+    <TabsList style={{ width: "100%" }}>
+      <TabsTrigger value="explorer" style={{ flex: 1 }}>Explorer</TabsTrigger>
+      <TabsTrigger value="outline" style={{ flex: 1 }}>Outline</TabsTrigger>
+    </TabsList>
+    <TabsContent value="explorer">
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
+        <Collapsible defaultOpen>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="nise-collapsible__tree-item">
+              <ChevronRightIcon size={16} className="nise-collapsible__chevron" />
+              <FolderIcon size={16} />
+              <span>components</span>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent style={{ paddingLeft: "var(--space-4)" }}>
+            <Button variant="ghost" size="sm" className="nise-collapsible__tree-item">
+              <FileIcon size={16} />
+              <span>Button.tsx</span>
+            </Button>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <Button variant="ghost" size="sm" className="nise-collapsible__tree-item nise-collapsible__tree-item--root-file">
+          <FileIcon size={16} />
+          <span>package.json</span>
+        </Button>
+      </div>
+    </TabsContent>
+  </Tabs>
+</Card>
+```
+
+
 ## Props
 
 ### Collapsible

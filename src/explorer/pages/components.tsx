@@ -72,9 +72,181 @@ import {
   UnderlineIcon,
   ChevronsUpDownIcon,
   ChevronDownIcon,
+  ChevronRightIcon,
+  FolderIcon,
+  FileIcon,
 } from "../../icons";
 import { Block, Cell, Column, Row } from "../components/specimen";
 import type { SpecimenPage } from "./types";
+
+function ExplorerFileTree() {
+  return (
+    <div style={{ width: 260 }}>
+      <Card>
+        <Tabs defaultValue="explorer">
+        <TabsList style={{ width: "100%", marginBottom: "var(--space-2)" }}>
+          <TabsTrigger value="explorer" style={{ flex: 1 }}>Explorer</TabsTrigger>
+          <TabsTrigger value="outline" style={{ flex: 1 }}>Outline</TabsTrigger>
+        </TabsList>
+        <TabsContent value="explorer">
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
+            <Collapsible defaultOpen>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <ChevronRightIcon
+                    size={16}
+                    className="nise-collapsible__chevron"
+                  />
+                  <FolderIcon size={16} />
+                  <span>components</span>
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent
+                style={{
+                  paddingLeft: "var(--space-4)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-1)",
+                  paddingTop: "var(--space-1)",
+                }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <FileIcon size={16} />
+                  <span>Button.tsx</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <FileIcon size={16} />
+                  <span>Card.tsx</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <FileIcon size={16} />
+                  <span>Collapsible.tsx</span>
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <Collapsible>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <ChevronRightIcon
+                    size={16}
+                    className="nise-collapsible__chevron"
+                  />
+                  <FolderIcon size={16} />
+                  <span>lib</span>
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent
+                style={{
+                  paddingLeft: "var(--space-4)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-1)",
+                  paddingTop: "var(--space-1)",
+                }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <FileIcon size={16} />
+                  <span>utils.ts</span>
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <Collapsible>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <ChevronRightIcon
+                    size={16}
+                    className="nise-collapsible__chevron"
+                  />
+                  <FolderIcon size={16} />
+                  <span>hooks</span>
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent
+                style={{
+                  paddingLeft: "var(--space-4)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-1)",
+                  paddingTop: "var(--space-1)",
+                }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <FileIcon size={16} />
+                  <span>use-collapsible.ts</span>
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="nise-collapsible__tree-item nise-collapsible__tree-item--root-file"
+            >
+              <FileIcon size={16} />
+              <span>app.tsx</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="nise-collapsible__tree-item nise-collapsible__tree-item--root-file"
+            >
+              <FileIcon size={16} />
+              <span>globals.css</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="nise-collapsible__tree-item nise-collapsible__tree-item--root-file"
+            >
+              <FileIcon size={16} />
+              <span>package.json</span>
+            </Button>
+          </div>
+        </TabsContent>
+        <TabsContent value="outline">
+          <div style={{ padding: "var(--space-2)", color: "var(--color-text-muted)", fontSize: "var(--font-size-sm)" }}>
+            No outline items available.
+          </div>
+        </TabsContent>
+      </Tabs>
+    </Card>
+  </div>
+  );
+}
 
 function ExplorerCollapsibleSpecimen() {
   const [open, setOpen] = useState(false);
@@ -83,7 +255,7 @@ function ExplorerCollapsibleSpecimen() {
   return (
     <Row>
       <Cell label="starred repositories (shadcn card demo)">
-        <div style={{ width: 350 }}>
+        <div style={{ width: 340 }}>
           <Collapsible
             open={open}
             onOpenChange={setOpen}
@@ -177,8 +349,12 @@ function ExplorerCollapsibleSpecimen() {
         </div>
       </Cell>
 
+      <Cell label="file tree (nested collapsibles)">
+        <ExplorerFileTree />
+      </Cell>
+
       <Cell label="card disclosure (product details)">
-        <div style={{ width: 350 }}>
+        <div style={{ width: 320 }}>
           <Card>
             <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
               <CollapsibleTrigger asChild>
