@@ -18,6 +18,11 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
+.nise-button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
 .nise-button:disabled {
   cursor: not-allowed;
   opacity: var(--opacity-disabled);
@@ -104,6 +109,36 @@
 .nise-button__label {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.nise-button__icon > svg,
+.nise-button > svg {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+/* icon-only square proportion */
+.nise-button:has(> svg:only-child),
+.nise-button:has(> .nise-button__icon:only-child) {
+  padding-inline: 0;
+}
+
+.nise-button--sm:has(> svg:only-child),
+.nise-button--sm:has(> .nise-button__icon:only-child) {
+  width: var(--button-height-sm);
+}
+
+.nise-button--md:has(> svg:only-child),
+.nise-button--md:has(> .nise-button__icon:only-child) {
+  width: var(--button-height-md);
+}
+
+.nise-button--lg:has(> svg:only-child),
+.nise-button--lg:has(> .nise-button__icon:only-child) {
+  width: var(--button-height-lg);
 }
 
 .nise-button__spinner {

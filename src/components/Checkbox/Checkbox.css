@@ -58,7 +58,7 @@
 
 .nise-checkbox__input:focus-visible + .nise-checkbox__box {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
-  outline-offset: 0;
+  outline-offset: var(--focus-ring-offset);
 }
 
 .nise-checkbox__box::after {

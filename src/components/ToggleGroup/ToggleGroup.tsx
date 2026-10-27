@@ -33,6 +33,7 @@
 import {
   createContext,
   forwardRef,
+  isValidElement,
   useContext,
   useState,
   type ButtonHTMLAttributes,
@@ -162,11 +163,16 @@ export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProp
     const isPressed = group ? group.isPressed(value) : false;
     const variant = itemVariantProp ?? group?.variant ?? "default";
     const size = itemSizeProp ?? group?.size ?? "md";
+    const content = children ?? label;
+    const isIconOnly =
+      size === "icon" ||
+      (isValidElement(content) && !Array.isArray(content));
 
     const classes = [
       "nise-toggle-group__item",
       `nise-toggle-group__item--${variant}`,
-      `nise-toggle-group__item--${size}`,
+      `nise-toggle-group__item--${size === "icon" ? "md" : size}`,
+      isIconOnly ? "nise-toggle-group__item--icon" : null,
       isPressed ? "nise-toggle-group__item--pressed" : null,
       className,
     ]

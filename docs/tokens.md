@@ -170,10 +170,10 @@ are fixed and immutable. Several directly back core semantic roles (decisions.md
 
    | Token | Value | Target Roles |
    | :--- | :--- | :--- |
-   | `--radius-sm` | `4px` | Checkboxes, compact controls |
-   | `--radius-md` | `8px` | Buttons, inputs, cards, popovers |
-   | `--radius-lg` | `12px` | Dialogs, drawers, larger panels |
-   | `--radius-xl` | `16px` | Prominent containers, hero surfaces |
+   | `--radius-sm` | `2px` | Checkboxes, micro-controls, inner indicators |
+   | `--radius-md` | `4px` | Buttons, inputs, toggles, selects, tabs |
+   | `--radius-lg` | `8px` | Cards, alerts, popovers, surface containers |
+   | `--radius-xl` | `12px` | Dialogs, drawers, large panels |
    | `--radius-full` | `9999px` | Pills, badges, circular avatars |
 
 5. **Spacing builds on a 4px grid with step multipliers.**  

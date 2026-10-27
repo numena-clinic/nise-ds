@@ -8,6 +8,11 @@
 }
 
 .nise-tabs__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  line-height: 1;
   height: var(--tab-height);
   padding-inline: var(--tab-padding-x);
   border-radius: calc(var(--radius-md) - var(--space-1) / 2);

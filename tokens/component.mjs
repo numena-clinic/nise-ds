@@ -48,7 +48,7 @@ export const control = register({
   "--control-height-md": "40px",
   "--control-height-lg": "48px",
   "--control-padding-x": ref("--space-3"),
-  "--control-font-size": ref("--font-size-md"),
+  "--control-font-size": ref("--font-size-sm"),
   "--control-gap": ref("--space-2"),
   "--control-label-gap": "2px",
 });
@@ -59,10 +59,10 @@ export const button = register({
   "--button-height-lg": ref("--control-height-lg"),
   "--button-padding-x-sm": ref("--space-3"),
   "--button-padding-x-md": ref("--space-4"),
-  "--button-padding-x-lg": ref("--space-5"),
-  "--button-font-size-sm": ref("--font-size-sm"),
-  "--button-font-size-md": ref("--font-size-md"),
-  "--button-font-size-lg": ref("--font-size-lg"),
+  "--button-padding-x-lg": ref("--space-6"),
+  "--button-font-size-sm": ref("--font-size-xs"),
+  "--button-font-size-md": ref("--font-size-sm"),
+  "--button-font-size-lg": ref("--font-size-md"),
   "--button-gap": ref("--space-2"),
 });
 

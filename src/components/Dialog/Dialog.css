@@ -13,7 +13,7 @@
   width: min(var(--dialog-width), 95vw);
   max-height: 85vh;
   overflow-y: auto;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   border: var(--border-width) solid var(--color-border-strong);
   background-color: var(--color-base-100);
   box-shadow: var(--shadow-md);

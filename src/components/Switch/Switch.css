@@ -72,7 +72,7 @@
 
 .nise-switch__input:focus-visible + .nise-switch__track {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
-  outline-offset: 0;
+  outline-offset: var(--focus-ring-offset);
 }
 
 .nise-switch__text {

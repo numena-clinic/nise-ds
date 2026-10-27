@@ -20,22 +20,25 @@
   top: var(--space-1);
   width: var(--timeline-dot);
   height: var(--timeline-dot);
-  box-sizing: content-box;
+  box-sizing: border-box;
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--timeline-radius, var(--radius-full));
   background-color: var(--color-tint-purple);
+  z-index: 1;
 }
 
 /* The connector is drawn per item so it stays token-parameterised and
-   self-aligning: from below the dot to above the next item's dot. */
+   self-aligning: running seamlessly from dot-center to next dot-center
+   beneath the opaque circular dots. */
 .nise-timeline__item:not(:last-child)::after {
   content: "";
   position: absolute;
-  left: calc(var(--timeline-dot) / 2 - var(--timeline-rail) / 2);
-  top: calc(var(--timeline-dot) + var(--space-1));
-  bottom: calc(-1 * (var(--timeline-gap) + var(--space-1)));
+  left: calc((var(--timeline-dot) - var(--timeline-rail)) / 2);
+  top: calc(var(--space-1) + var(--timeline-dot) / 2);
+  bottom: calc(-1 * (var(--timeline-gap) + var(--space-1) + var(--timeline-dot) / 2));
   width: var(--timeline-rail);
   background-color: var(--color-border);
+  z-index: 0;
 }
 
 .nise-timeline__item--done::before {

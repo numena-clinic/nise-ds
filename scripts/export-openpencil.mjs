@@ -265,6 +265,7 @@ function createButton({ text, variant = "primary", size = "md" }) {
   const height = size === "sm" ? 32 : size === "lg" ? 48 : 40;
   const padX = size === "sm" ? 12 : size === "lg" ? 20 : 16;
   const fSize = size === "sm" ? 12 : size === "lg" ? 16 : 14;
+  const width = Math.max(height, text.length * 8 + padX * 2);
 
   return createFrame({
     name: `Button/${variant}/${size}`,
@@ -273,9 +274,10 @@ function createButton({ text, variant = "primary", size = "md" }) {
     justifyContent: "center",
     padding: [0, padX],
     height,
+    width,
     fill: bg,
     stroke,
-    cornerRadius: 8,
+    cornerRadius: 4,
     children: [createText(text, { fontSize: fSize, fontWeight: 600, fill: fg })],
   });
 }
@@ -295,15 +297,17 @@ function createBadge({ text, fill = "#147061", textColor = "#FFFFFF" }) {
 }
 
 function createToggle({ text, icon = null, variant = "default", pressed = false, size = "md" }) {
-  const height = size === "sm" ? 32 : size === "lg" ? 44 : 36;
+  const height = size === "sm" ? 32 : size === "lg" ? 48 : 40;
   const isOutline = variant === "outline";
   const bg = pressed ? "#AB62ED" : "transparent";
   const fg = pressed ? "#221A2A" : "#4C207F";
   const stroke = isOutline
     ? { align: "inside", thickness: 1, fill: pressed ? "#AB62ED" : "#DFD8E8" }
     : null;
-  const padX = text ? (size === "sm" ? 10 : 14) : 0;
-  const width = text ? undefined : height;
+  const padX = text ? (size === "sm" ? 12 : 16) : 0;
+  const width = text
+    ? Math.max(height, (icon ? 22 : 0) + (text.length * 8) + padX * 2)
+    : height;
 
   const children = [];
   if (icon) {
@@ -324,7 +328,7 @@ function createToggle({ text, icon = null, variant = "default", pressed = false,
     width,
     fill: bg,
     stroke,
-    cornerRadius: 8,
+    cornerRadius: 4,
     children,
   });
 }
@@ -335,7 +339,7 @@ const componentBoard = createFrame({
   gap: 28,
   padding: 32,
   fill: "#F4F1F8",
-  cornerRadius: 12,
+  cornerRadius: 8,
   width: 960,
   children: [
     createText("Component Specimens (Production-Ready)", { fontSize: 20, fontWeight: 700, fill: "#221A2A" }),
@@ -375,7 +379,7 @@ const componentBoard = createFrame({
           padding: 4,
           fill: "#FFFFFF",
           stroke: { align: "inside", thickness: 1, fill: "#DFD8E8" },
-          cornerRadius: 8,
+          cornerRadius: 4,
           children: [
             createToggle({ icon: "B", variant: "outline", pressed: true, size: "sm" }),
             createToggle({ icon: "I", variant: "outline", pressed: true, size: "sm" }),
@@ -410,7 +414,7 @@ const componentBoard = createFrame({
       padding: 24,
       fill: "#FFFFFF",
       stroke: { align: "inside", thickness: 1, fill: "#DFD8E8" },
-      cornerRadius: 12,
+      cornerRadius: 8,
       width: 520,
       children: [
         createFrame({

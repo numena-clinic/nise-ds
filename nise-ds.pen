@@ -1447,19 +1447,19 @@
     },
     "--radius-sm": {
       "type": "number",
-      "value": 4
+      "value": 2
     },
     "--radius-md": {
       "type": "number",
-      "value": 8
+      "value": 4
     },
     "--radius-lg": {
       "type": "number",
-      "value": 12
+      "value": 8
     },
     "--radius-xl": {
       "type": "number",
-      "value": 16
+      "value": 12
     },
     "--radius-full": {
       "type": "number",
@@ -3587,7 +3587,7 @@
           "gap": 28,
           "padding": 32,
           "fill": "#F4F1F8",
-          "cornerRadius": 12,
+          "cornerRadius": 8,
           "children": [
             {
               "type": "text",
@@ -3632,7 +3632,7 @@
                     16
                   ],
                   "fill": "#4C207F",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3646,6 +3646,7 @@
                       "fill": "#FFFFFF"
                     }
                   ],
+                  "width": 144,
                   "height": 40,
                   "alignItems": "center",
                   "justifyContent": "center"
@@ -3661,7 +3662,7 @@
                     16
                   ],
                   "fill": "#FFFFFF",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3675,6 +3676,7 @@
                       "fill": "#4C207F"
                     }
                   ],
+                  "width": 168,
                   "height": 40,
                   "stroke": {
                     "align": "inside",
@@ -3695,7 +3697,7 @@
                     16
                   ],
                   "fill": "#AB62ED",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3709,6 +3711,7 @@
                       "fill": "#221A2A"
                     }
                   ],
+                  "width": 136,
                   "height": 40,
                   "alignItems": "center",
                   "justifyContent": "center"
@@ -3724,7 +3727,7 @@
                     12
                   ],
                   "fill": "#4C207F",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3738,6 +3741,7 @@
                       "fill": "#FFFFFF"
                     }
                   ],
+                  "width": 104,
                   "height": 32,
                   "alignItems": "center",
                   "justifyContent": "center"
@@ -3753,7 +3757,7 @@
                     20
                   ],
                   "fill": "#4C207F",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3767,6 +3771,7 @@
                       "fill": "#FFFFFF"
                     }
                   ],
+                  "width": 136,
                   "height": 48,
                   "alignItems": "center",
                   "justifyContent": "center"
@@ -3806,7 +3811,7 @@
                     0
                   ],
                   "fill": "transparent",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3820,8 +3825,8 @@
                       "fill": "#4C207F"
                     }
                   ],
-                  "width": 36,
-                  "height": 36,
+                  "width": 40,
+                  "height": 40,
                   "alignItems": "center",
                   "justifyContent": "center"
                 },
@@ -3836,7 +3841,7 @@
                     0
                   ],
                   "fill": "#AB62ED",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3850,8 +3855,8 @@
                       "fill": "#221A2A"
                     }
                   ],
-                  "width": 36,
-                  "height": 36,
+                  "width": 40,
+                  "height": 40,
                   "stroke": {
                     "align": "inside",
                     "thickness": 1,
@@ -3868,10 +3873,10 @@
                   "gap": 6,
                   "padding": [
                     0,
-                    14
+                    16
                   ],
                   "fill": "#AB62ED",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3896,7 +3901,8 @@
                       "fill": "#221A2A"
                     }
                   ],
-                  "height": 36,
+                  "width": 102,
+                  "height": 40,
                   "alignItems": "center",
                   "justifyContent": "center"
                 },
@@ -3908,10 +3914,10 @@
                   "gap": 6,
                   "padding": [
                     0,
-                    14
+                    16
                   ],
                   "fill": "transparent",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "text",
@@ -3925,7 +3931,8 @@
                       "fill": "#4C207F"
                     }
                   ],
-                  "height": 36,
+                  "width": 96,
+                  "height": 40,
                   "stroke": {
                     "align": "inside",
                     "thickness": 1,
@@ -3942,7 +3949,7 @@
                   "gap": 4,
                   "padding": 4,
                   "fill": "#FFFFFF",
-                  "cornerRadius": 8,
+                  "cornerRadius": 4,
                   "children": [
                     {
                       "type": "frame",
@@ -3955,7 +3962,7 @@
                         0
                       ],
                       "fill": "#AB62ED",
-                      "cornerRadius": 8,
+                      "cornerRadius": 4,
                       "children": [
                         {
                           "type": "text",
@@ -3990,7 +3997,7 @@
                         0
                       ],
                       "fill": "#AB62ED",
-                      "cornerRadius": 8,
+                      "cornerRadius": 4,
                       "children": [
                         {
                           "type": "text",
@@ -4025,7 +4032,7 @@
                         0
                       ],
                       "fill": "transparent",
-                      "cornerRadius": 8,
+                      "cornerRadius": 4,
                       "children": [
                         {
                           "type": "text",
@@ -4247,7 +4254,7 @@
               "gap": 16,
               "padding": 24,
               "fill": "#FFFFFF",
-              "cornerRadius": 12,
+              "cornerRadius": 8,
               "children": [
                 {
                   "type": "frame",
@@ -4335,7 +4342,7 @@
                         12
                       ],
                       "fill": "#4C207F",
-                      "cornerRadius": 8,
+                      "cornerRadius": 4,
                       "children": [
                         {
                           "type": "text",
@@ -4349,6 +4356,7 @@
                           "fill": "#FFFFFF"
                         }
                       ],
+                      "width": 176,
                       "height": 32,
                       "alignItems": "center",
                       "justifyContent": "center"
@@ -4364,7 +4372,7 @@
                         12
                       ],
                       "fill": "#FFFFFF",
-                      "cornerRadius": 8,
+                      "cornerRadius": 4,
                       "children": [
                         {
                           "type": "text",
@@ -4378,6 +4386,7 @@
                           "fill": "#4C207F"
                         }
                       ],
+                      "width": 144,
                       "height": 32,
                       "stroke": {
                         "align": "inside",

@@ -40,7 +40,7 @@
 
 .nise-toggle-group__item:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
-  outline-offset: 0;
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* sizes */
@@ -63,17 +63,23 @@
 }
 
 /* icon-only square proportion */
-.nise-toggle-group__item:has(> svg:only-child) {
+.nise-toggle-group__item--icon {
   padding-inline: 0;
   width: var(--button-height-md);
 }
 
-.nise-toggle-group__item--sm:has(> svg:only-child) {
+.nise-toggle-group__item--sm.nise-toggle-group__item--icon {
   width: var(--button-height-sm);
 }
 
-.nise-toggle-group__item--lg:has(> svg:only-child) {
+.nise-toggle-group__item--lg.nise-toggle-group__item--icon {
   width: var(--button-height-lg);
+}
+
+.nise-toggle-group__item svg {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
 }
 
 /* variants */

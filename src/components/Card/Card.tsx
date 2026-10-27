@@ -11,7 +11,7 @@
      --color-base-100, --color-base-content, --color-text-muted, --color-border,
      --shadow-sm, --font-serif, --font-size-{xl,sm}, --line-height-*, --letter-spacing-tight
 
-   Radius is declared at the point of use: var(--card-radius, var(--radius-md)).
+   Radius is declared at the point of use: var(--card-radius, var(--radius-lg)).
    The heading is an <h3> by default; pass a different level via `headingLevel`
    when the card sits deeper in the page outline.
    ============================================================================= */

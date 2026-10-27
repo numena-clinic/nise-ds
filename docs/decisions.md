@@ -155,6 +155,18 @@ A **4px base** was selected over alternative models:
 - **Over 5px/10px decimal**: Decimal grids fail to align with binary powers of 2, 24px icon viewboxes, or the 16px rem baseline.
 - **For exact quarter-rem scaling**: At 16px base, 4px is exactly `0.25rem` ($1/4\text{rem}$), ensuring fluid and jitter-free accessibility zoom (WCAG 1.4.4).
 
+**D25 — Crisp 4px control radius scale aligned with the 4px base spacing grid.**  
+To achieve a sharp, clinical-grade appearance and mathematical concentricity, corner radii step down one level:
+- `--radius-sm`: `2px` (micro controls, checkboxes, inner indicators)
+- `--radius-md`: `4px` (interactive controls: buttons, inputs, selects, toggles, tabs)
+- `--radius-lg`: `8px` (surface containers: cards, alerts, floating popovers)
+- `--radius-xl`: `12px` (modals: dialogs, drawers, hero surfaces)
+- `--radius-full`: `9999px` (pills, badges, circular avatars)
+
+This guarantees:
+1. Exact $1:1$ alignment between the primary control corner radius (`4px`) and the fundamental grid unit (`--space-1 = 4px`).
+2. Concentric nested curvature ($R_{\text{inner}} \approx R_{\text{outer}} - \text{padding}$), where 4px buttons sit inside 8px cards and 12px dialogs with zero optical distortion.
+
 ---
 
 ## Provisional
@@ -164,7 +176,7 @@ Typography follows a standard `xs` to `4xl` ramp based on Inter. Brand guideline
 real layout testing.
 
 **P2 — Spacing and Radii scale.**  
-A 4px spacing grid (`--space-1` = 4px up to `--space-24` = 96px) and five radius steps: `--radius-sm` (4px: checkboxes, compact controls), `--radius-md` (8px: buttons, inputs, cards, popovers), `--radius-lg` (12px: dialogs, drawers, larger panels), `--radius-xl` (16px: prominent containers, hero surfaces), and `--radius-full` (9999px: pills, badges, circular avatars).
+A 4px spacing grid (`--space-1` = 4px up to `--space-24` = 96px) and five radius steps: `--radius-sm` (2px: checkboxes, micro-controls), `--radius-md` (4px: buttons, inputs, toggles, selects, tabs), `--radius-lg` (8px: cards, alerts, floating popovers), `--radius-xl` (12px: dialogs, drawers, larger panels), and `--radius-full` (9999px: pills, badges, circular avatars).
 
 **P3 — Iconography set.**  
 A 24px grid with 1.5px stroke weight. Icons are added on demand as needed by clinical workflows.

@@ -17,8 +17,8 @@
      --color-text-muted, --color-base-hover, --color-base-content,
      --color-tint-purple, --color-focus-ring, --focus-ring-width,
      --focus-ring-offset
-     --font-sans, --font-weight-{regular,medium}, --radius-sm (point of use:
-     var(--pagination-radius, var(--radius-sm))), --duration-fast,
+     --font-sans, --font-weight-{regular,medium}, --radius-md (point of use:
+     var(--pagination-radius, var(--radius-md))), --duration-fast,
      --ease-standard
    ============================================================================= */
 

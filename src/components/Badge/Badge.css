@@ -43,5 +43,14 @@
 
 .nise-badge__icon {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nise-badge__icon > svg,
+.nise-badge > svg {
+  width: 1em;
+  height: 1em;
   flex-shrink: 0;
 }

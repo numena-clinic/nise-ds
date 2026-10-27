@@ -33,6 +33,7 @@
 
 import {
   forwardRef,
+  isValidElement,
   useState,
   type ButtonHTMLAttributes,
   type MouseEvent,
@@ -41,7 +42,7 @@ import {
 import "./Toggle.css";
 
 export type ToggleVariant = "default" | "outline";
-export type ToggleSize = "sm" | "md" | "lg";
+export type ToggleSize = "sm" | "md" | "lg" | "icon";
 
 export interface ToggleProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "aria-pressed"> {
@@ -78,10 +79,15 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
   const controlled = pressed !== undefined;
   const isPressed = controlled ? pressed : internalPressed;
 
+  const isIconOnly =
+    size === "icon" ||
+    (isValidElement(children) && !Array.isArray(children));
+
   const classes = [
     "nise-toggle",
     `nise-toggle--${variant}`,
-    `nise-toggle--${size}`,
+    `nise-toggle--${size === "icon" ? "md" : size}`,
+    isIconOnly ? "nise-toggle--icon" : null,
     isPressed ? "nise-toggle--pressed" : null,
     className,
   ]

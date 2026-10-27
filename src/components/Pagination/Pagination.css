@@ -26,7 +26,7 @@
   white-space: nowrap;
   color: var(--color-text-muted);
   text-decoration: none;
-  border-radius: var(--pagination-radius, var(--radius-sm));
+  border-radius: var(--pagination-radius, var(--radius-md));
   transition:
     background-color var(--duration-fast) var(--ease-standard),
     color var(--duration-fast) var(--ease-standard);

@@ -42,10 +42,10 @@ const Section = ({ title, note, children }: { title: string; note?: string; chil
 );
 
 const RADII = [
-  { name: "--radius-sm", value: radii["--radius-sm"], usage: "Checkboxes, compact controls" },
-  { name: "--radius-md", value: radii["--radius-md"], usage: "Buttons, inputs, cards, popovers" },
-  { name: "--radius-lg", value: radii["--radius-lg"], usage: "Dialogs, drawers, larger panels" },
-  { name: "--radius-xl", value: radii["--radius-xl"], usage: "Prominent containers, hero surfaces" },
+  { name: "--radius-sm", value: radii["--radius-sm"], usage: "Checkboxes, micro-controls, inner indicators" },
+  { name: "--radius-md", value: radii["--radius-md"], usage: "Buttons, inputs, toggles, selects, tabs" },
+  { name: "--radius-lg", value: radii["--radius-lg"], usage: "Cards, alerts, popovers, surface containers" },
+  { name: "--radius-xl", value: radii["--radius-xl"], usage: "Dialogs, drawers, large panels" },
   { name: "--radius-full", value: radii["--radius-full"], usage: "Pills, badges, circular avatars" },
 ];
 
@@ -239,10 +239,10 @@ const meta: Meta = {
           "### Corner Radius Scale\n\n" +
           "| Token | Value | Target Roles |\n" +
           "| :--- | :--- | :--- |\n" +
-          "| `--radius-sm` | `4px` | Checkboxes, compact controls |\n" +
-          "| `--radius-md` | `8px` | Buttons, inputs, cards, popovers |\n" +
-          "| `--radius-lg` | `12px` | Dialogs, drawers, larger panels |\n" +
-          "| `--radius-xl` | `16px` | Prominent containers, hero surfaces |\n" +
+          "| `--radius-sm` | `2px` | Checkboxes, micro-controls, inner indicators |\n" +
+          "| `--radius-md` | `4px` | Buttons, inputs, toggles, selects, tabs |\n" +
+          "| `--radius-lg` | `8px` | Cards, alerts, popovers, surface containers |\n" +
+          "| `--radius-xl` | `12px` | Dialogs, drawers, large panels |\n" +
           "| `--radius-full` | `9999px` | Pills, badges, circular avatars |",
       },
     },

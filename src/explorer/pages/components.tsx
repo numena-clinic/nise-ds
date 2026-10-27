@@ -490,7 +490,7 @@ export const COMPONENT_PAGES: SpecimenPage[] = [
           header={["Token", "Layer", "Value"]}
           rows={[
             { key: "action", cells: ["--color-primary", "semantic", "var(--deep-purple)"] },
-            { key: "radius", cells: ["--radius-md", "primitive", "8px"] },
+            { key: "radius", cells: ["--radius-md", "primitive", "4px"] },
           ]}
         />
       </Block>
