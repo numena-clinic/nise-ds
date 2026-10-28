@@ -112,6 +112,11 @@ export function planPromotion(root, candidate) {
     return { files: {}, edits: [], errors: validation.errors };
   }
 
+  const drift = validation.candidate.tokens.filter(token => token.from !== allTokens[token.name]);
+  if (drift.length) {
+    return { files: {}, edits: [], errors: drift.map(token => `${token.name}: source changed since this candidate was authored; export a fresh candidate`) };
+  }
+
   const edits = [];
   const errors = [];
 

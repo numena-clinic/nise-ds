@@ -1,19 +1,10 @@
 # Tabs
 
-Radix-backed horizontal tabs. Roving tabindex and keyboard navigation are
-provided by Radix.
+`Tabs`, `TabsList`, `TabsTrigger` and `TabsContent` wrap React Aria Tabs, TabList,
+Tab and TabPanel. Nise maps string `value`/`defaultValue`/`onValueChange` to
+React Aria selection keys. Give each trigger and panel the same `value`.
 
-## Usage
-```tsx
-<Tabs defaultValue="a">
-  <TabsList>
-    <TabsTrigger value="a">Notes</TabsTrigger>
-    <TabsTrigger value="b">Attachments</TabsTrigger>
-  </TabsList>
-  <TabsContent value="a">...</TabsContent>
-  <TabsContent value="b">...</TabsContent>
-</Tabs>
-```
-
-## Tokens
-`--tabs-gap`, `--tab-padding-x`, `--tab-height`.
+Label `TabsList` when its purpose is not otherwise clear. React Aria owns
+selection, focus navigation and panel relationships. Selected styling uses its
+`data-selected` attribute. A Tab is a focusable tab element; callers should use
+roles rather than assume a native button. See the session workspace composition.

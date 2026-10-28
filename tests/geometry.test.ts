@@ -1,22 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
-import { toggle, slider } from "../tokens/component.mjs";
+import { toggle } from "../tokens/component.mjs";
 
-/**
- * The geometry of the switch knob and the slider thumb.
- *
- * jsdom has no layout engine, so neither component can be measured in a unit
- * test. The rules that decide the geometry are asserted against the source
- * instead, and the proportions they assume are checked against the tokens.
- * Both were verified in a browser: the knob keeps the inset on every side in
- * both states, and the thumb's centre sits on the rail's centre line at 0, 40
- * and 100 with the thumb inside the track's ends.
- */
+/** Switch proportions. Slider positioning is measured by the browser suite. */
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 const switchCss = read("../src/components/Switch/Switch.css");
-const sliderCss = read("../src/components/Slider/Slider.css");
 
 /** The declarations of the first rule with this exact selector. */
 function rule(css: string, selector: string): string {
@@ -82,31 +72,5 @@ describe("the switch knob", () => {
     const top = (height - knobSize) / 2;
     expect(top).toBe(inset);
     expect(height - knobSize - top).toBe(inset);
-  });
-});
-
-describe("the slider thumb", () => {
-  const root = rule(sliderCss, ".nise-slider__root");
-  const thumb = rule(sliderCss, ".nise-slider__thumb");
-
-  it("centres the thumb on the value point", () => {
-    // Radix positions a zero-size wrapper at the value point; the thumb has to
-    // be centred on that origin or it hangs below the rail and off to the side.
-    expect(decl(thumb, "position")).toBe("absolute");
-    expect(decl(thumb, "top")).toBe("50%");
-    expect(decl(thumb, "left")).toBe("50%");
-    expect(decl(thumb, "transform")).toBe("translate(-50%, -50%)");
-  });
-
-  it("keeps the thumb wrapper on the rail's centre line", () => {
-    // `align-items: center` is what puts the wrapper's static position — the
-    // origin the thumb is centred on — on the root's centre line.
-    expect(decl(root, "align-items")).toBe("center");
-  });
-
-  it("sizes the thumb from the token", () => {
-    expect(decl(thumb, "width")).toBe("var(--slider-thumb-size)");
-    expect(decl(thumb, "height")).toBe("var(--slider-thumb-size)");
-    expect(px(slider["--slider-thumb-size"])).toBeGreaterThan(px(slider["--slider-track-height"]));
   });
 });

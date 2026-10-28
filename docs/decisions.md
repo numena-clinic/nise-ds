@@ -52,9 +52,7 @@ interactive components (`Collapsible` via `Disclosure`, `Accordion` via `Disclos
 - **When native HTML is appropriate**: Simple, structural, or largely static elements (`Button`, `Card`,
   `Badge`, `Alert`, `Kbd`, `Separator`, `Avatar`, `Table`, `Progress`, `Skeleton`) use native HTML to keep
   dependencies lean.
-- **Policy for existing Radix components**: Pre-existing Radix components (`Select`, `Slider`, `Tabs`,
-  `Dialog`, `Tooltip`) remain active and unchanged during the `Collapsible` pilot. Future component updates
-  will evaluate migration to React Aria on an intentional, component-by-component basis.
+- **Portfolio release**: Select, Slider, Tabs, Dialog and Tooltip now use React Aria Components as well. Nise preserves its existing composition API where practical; native HTML remains appropriate for simple controls.
 - **Evaluation criteria**: New headless dependencies must earn their place by replacing error-prone custom
   state machines with audited accessibility, without bringing CSS-in-JS or Tailwind into the bundle.
 
@@ -211,3 +209,31 @@ A 24px grid with 1.5px stroke weight. Icons are added on demand as needed by cli
 - **Cloud visual regression service (Chromatic)**: Local real browser verification runs via Playwright in the verification pipeline; hosted cloud snapshot services remain deferred.
 - **Package registry publishing**: Deferred while Nise is consumed within the primary monorepo/workspace.
 - **Multi-brand theming**: Architecture supports third-party themes, but active implementation remains focused on Numena Light and Dark.
+
+## Portfolio release decisions
+
+**D29 — One headless dependency for complex controls.**
+Select, Slider, Tabs, Dialog and Tooltip move from Radix to React Aria Components.
+Radix dependencies are removed. Wrapper tests verify the Nise API and integration;
+the native range input and button/listbox semantics are intentionally preserved.
+
+**D30 — Storybook is the portfolio release surface.**
+The session workspace and 30-family gallery ship as light/dark stories. The
+experimental theme editor, promotion and OpenPencil exporter are retained but
+excluded from the release path. No component catalog expansion blocks the demo.
+
+**D31 — Official integrations over custom infrastructure.**
+`@storybook/addon-mcp` supplies MCP and the component manifest. `@playwright/test`
+replaces the handwritten browser runner with standard assertions, traces and CI
+execution. The Chromatic CLI publishes the built Storybook using a repository
+secret; visual changes require review. Albert Sans is bundled via
+`@fontsource/albert-sans` (OFL), avoiding external font requests during visual
+tests. These dependencies each replace custom infrastructure or a concrete
+source of rendering variability. React 19 is the release target.
+
+**D32 — Match claims to evidence.**
+The public API composition test imports source rather than requiring unbuilt
+artifacts during typechecking. Library build remains experimental; registry
+publishing and React 18 compatibility are not release claims. A copied rollback
+simulation was removed because it did not execute the real promotion command;
+end-to-end promotion failure testing remains deferred experimental-tool work.

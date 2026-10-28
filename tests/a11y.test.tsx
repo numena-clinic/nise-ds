@@ -109,7 +109,7 @@ describe("accessibility (axe)", () => {
         ]}
       />,
     );
-    await userEvent.click(screen.getByRole("combobox", { name: /Confidence/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Confidence/ }));
     await screen.findByRole("listbox");
     await expectNoViolations();
   });

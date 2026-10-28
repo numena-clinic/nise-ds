@@ -6,7 +6,7 @@ const meta = {
   title: "Components/Tooltip",
   component: TooltipRoot,
   tags: ["autodocs"],
-  args: {},
+  args: { children: null },
 } satisfies Meta<typeof TooltipRoot>;
 
 export default meta;

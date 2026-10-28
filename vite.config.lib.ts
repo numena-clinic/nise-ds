@@ -19,7 +19,6 @@ export default defineConfig({
         "react-dom",
         "react/jsx-runtime",
         "react-aria-components",
-        /^@radix-ui\/.*/,
       ],
       output: {
         preserveModules: false,

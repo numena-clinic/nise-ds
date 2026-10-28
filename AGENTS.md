@@ -97,11 +97,12 @@ npm run verify           # the gate — run before saying you are done
   the rest of the native attributes.
 - Accessibility: a visible label always; never color alone; `aria-describedby`
   only points at rendered ids; decorative icons `aria-hidden`. Prefer a headless
-  primitive (React Aria Components / Radix) for complex interactive patterns and
+  primitive (React Aria Components) for complex interactive patterns and
   native HTML otherwise (D6).
-- Thirty components now. React Aria Components backs `Collapsible` (`Disclosure`),
+- Thirty components now. React Aria Components backs `Select`, `Slider`, `Tabs`, `Dialog`, `Tooltip`,
+  `Collapsible` (`Disclosure`),
   `Accordion` (`DisclosureGroup`), `Toggle` (`ToggleButton`), and `ToggleGroup`
-  (`ToggleButtonGroup`); Radix backs `Select`, `Slider`, `Tabs`, `Dialog` and `Tooltip`;
+  (`ToggleButtonGroup`);
   the rest are native HTML (`Alert`, `AspectRatio`, `Avatar`, `Badge`, `Breadcrumb`, `Button`,
   `Card`, `Checkbox`, `Empty`, `Kbd`, `Label`, `Pagination`, `Progress`, `Radio`,
   `Separator`, `Skeleton`, `Switch`, `Table`, `TextField`, `Textarea`, `Timeline`).
@@ -133,7 +134,7 @@ npm run verify           # the gate — run before saying you are done
 - Preview overrides are **scoped custom properties on the preview wrapper**, never
   on `:root`. The wrapper also pins every theme-varying token to the value of the
   selected Light/Dark mode (`previewStyle(overrides, mode)`), so the preview's
-  theme does not depend on `data-theme` cascading or the OS preference. Radix
+  theme does not depend on `data-theme` cascading or the OS preference. React Aria
   overlays inside a scoped theme (Select, Dialog, Tooltip) get the wrapper via
   their optional `container` / `portalContainer` prop (default behaviour
   unchanged).
@@ -184,3 +185,21 @@ When you change something a doc describes, update the doc: `docs/tokens.md`,
   that is not in `palette.mjs`. The token boundary is enforced everywhere, with
   no path exemptions (D13). The four status families in the palette are the
   complete status vocabulary; do not add a role or a fifth family beside them.
+
+## Portfolio release and agent consumption
+
+- The portfolio entry is `src/showcase/Portfolio.stories.tsx`: a session workspace
+  and a live 30-family component gallery, with light/dark stories.
+- Import shipped components from `src/index.ts`. Check props in component source
+  and its story before use. Reuse components; do not invent props or duplicate
+  controls in a composition.
+- With Storybook running, the official MCP addon is at `http://localhost:6006/mcp`.
+  Use `docs-list` and `docs-show` when your agent client has this server configured.
+  Without MCP, read the same source/stories directly; there is no custom MCP server.
+- Run `npm run verify`, then `npm run build-storybook`, then `npm run test:browser`.
+  The last command requires `npx playwright install chromium` once locally.
+- Chromatic publishes the built Storybook and reviews visual changes. The repo
+  needs `CHROMATIC_PROJECT_TOKEN` in Actions secrets; do not claim publication
+  before a real Chromatic build returns a public URL.
+- Theme Explorer, promotion and OpenPencil export are retained experimental tools.
+  They are outside the portfolio release path. Do not expand them to finish a demo.

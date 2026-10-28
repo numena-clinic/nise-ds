@@ -27,7 +27,7 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
-.nise-tabs__trigger:hover:not([data-state="active"]):not(:disabled) {
+.nise-tabs__trigger:hover:not([data-selected]):not(:disabled) {
   color: var(--color-base-content);
   background-color: var(--color-base-hover);
 }
@@ -36,7 +36,7 @@
   background-color: var(--color-base-active);
 }
 
-.nise-tabs__trigger[data-state="active"] {
+.nise-tabs__trigger[data-selected] {
   background-color: var(--color-base-100);
   color: var(--color-base-content);
   box-shadow: var(--shadow-sm);

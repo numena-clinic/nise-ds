@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { tmpdir } from "node:os";
 import {
   quote,
   aliasExpr,
@@ -170,47 +169,15 @@ describe("planPromotion (against the real token source)", () => {
   });
 });
 
-describe("isolated rollback simulation", () => {
-  it("restores source files and all generated artifacts on failure", () => {
-    const testDir = resolve(tmpdir(), `nise-rollback-test-${Date.now()}`);
-    mkdirSync(resolve(testDir, "tokens"), { recursive: true });
-    mkdirSync(resolve(testDir, "src/tokens"), { recursive: true });
-    mkdirSync(resolve(testDir, "tokens/dist"), { recursive: true });
 
-    const files = {
-      "tokens/primitives.mjs": 'export const primitives = { "--space-3": "12px" };',
-      "tokens/semantic.mjs": 'export const semantic = {};',
-      "tokens/component.mjs": 'export const component = {};',
-      "src/tokens/tokens.css": "/* original css */",
-      "tokens/dist/tokens.json": '{"original": true}',
-      "tokens/dist/nise.tokens.json": '{"originalDtcg": true}',
-    };
-
-    for (const [rel, content] of Object.entries(files)) {
-      writeFileSync(resolve(testDir, rel), content, "utf8");
-    }
-
-    // Capture backup state as apply-theme does
-    const backups = new Map();
-    for (const rel of Object.keys(files)) {
-      backups.set(rel, readFileSync(resolve(testDir, rel), "utf8"));
-    }
-
-    // Simulate partial/failing write to source and artifacts
-    writeFileSync(resolve(testDir, "tokens/primitives.mjs"), 'corrupted source', "utf8");
-    writeFileSync(resolve(testDir, "src/tokens/tokens.css"), 'corrupted css', "utf8");
-    writeFileSync(resolve(testDir, "tokens/dist/tokens.json"), 'corrupted json', "utf8");
-
-    // Perform rollback
-    for (const [rel, original] of backups) {
-      writeFileSync(resolve(testDir, rel), original, "utf8");
-    }
-
-    // Verify all restored
-    for (const [rel, original] of Object.entries(files)) {
-      expect(readFileSync(resolve(testDir, rel), "utf8")).toBe(original);
-    }
-
-    rmSync(testDir, { recursive: true, force: true });
+describe("candidate source drift", () => {
+  it("refuses to overwrite a token changed since candidate export", () => {
+    const plan = planPromotion(process.cwd(), {
+      schema: "nise.theme-candidate", version: 1,
+      tokens: [{ name: "--space-3", kind: "value", value: "16px", from: "8px" }],
+    });
+    expect(plan.errors).toEqual([expect.stringContaining("source changed")]);
+    expect(plan.files).toEqual({});
+    expect(plan.edits).toEqual([]);
   });
 });

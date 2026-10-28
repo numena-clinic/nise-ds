@@ -23,7 +23,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Single-choice control for a short, known list, built on Radix Select. " +
+          "Single-choice control for a short, known list, built on React Aria Select. " +
           "Options here express a neutral level — never a color-coded verdict.",
       },
     },

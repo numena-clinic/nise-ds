@@ -18,9 +18,6 @@
 
 /* Native form controls and scrollbars follow the theme; the generated token
    layer sets the concrete scheme per theme (see src/tokens/tokens.css). */
-:root {
-  color-scheme: light dark;
-}
 
 html {
   -webkit-text-size-adjust: 100%;

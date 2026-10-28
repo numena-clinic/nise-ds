@@ -1,70 +1,13 @@
 # Select
 
-A single-choice control for a short, known list.
+A labelled single-selection field over React Aria Select, Button, Popover and
+ListBox. React Aria owns keyboard navigation, typeahead, dismissal, hidden form
+submission and selection semantics. The trigger is a button, not a text combobox.
 
-## When to use
+Use `label`, `options: { value, label, disabled? }[]`, and either `defaultValue`
+or controlled `value`/`onValueChange`. `hint` is replaced by `error` when invalid.
+`name`, `required` and `disabled` map to the headless control. `portalContainer`
+keeps a popup inside a scoped theme; the default portal is the document body.
 
-- The options are mutually exclusive and the list is short (roughly 5–15).
-- The user must pick one value from a set they can scan.
-
-## When not to use
-
-- Two or three options — radio tiles read better and need no menu.
-- A long or free-form set — use a combobox (not built yet).
-- Multiple selection — not supported here.
-
-## Props
-
-| Prop | Type | Notes |
-| --- | --- | --- |
-| `label` | `string` | Required, always visible |
-| `options` | `SelectOption[]` | `{ value, label, disabled? }` |
-| `value` / `defaultValue` | `string` | Controlled / uncontrolled |
-| `onValueChange` | `(value: string) => void` | — |
-| `placeholder` | `string` | Shown before a choice is made |
-| `hint` / `error` | `ReactNode` | Same behaviour as `TextField` |
-| `disabled`, `required`, `name` | — | Forwarded to the primitive |
-| `portalContainer` | `HTMLElement \| null` | Where to mount the popup. Defaults to `document.body`; pass a container when the Select sits inside a scoped theme so the popup inherits the same CSS custom properties |
-
-## Why Radix
-
-`Select` is built on `@radix-ui/react-select`. Listbox semantics, typeahead,
-keyboard navigation, focus management and the portal are the primitive's job —
-classes of accessibility bug we do not want to re-solve. We own only the
-appearance and the token mapping. A native `<select>` is not used because it
-cannot be styled consistently across the system.
-
-## Anatomy & tokens
-
-```
-Label  *
-[ value              ▾ ]   chevron 20, muted → action on hover
-hint or error
-```
-
-- Trigger height `--select-height` → `--control-height-md` (40px); padding,
-  font size and item height come from the same `--control-*` slots.
-- The trigger reads as a text field, so it takes the field radius
-  `var(--select-radius, var(--radius-sm))` — the same as `TextField` — and its
-  border is `--color-border-strong`.
-- The open menu is a floating surface: `--shadow-md`, `--radius-md`,
-  `--color-base-100`.
-- The reserved 16px indicator slot holds the check. The check is drawn in
-  `--color-selected-text` — the **same foreground as the selected item's text**,
-  so the mark and the label read as one signal — and the item is set in
-  `--font-weight-medium`. Selection is therefore carried by an icon and a
-  weight, not by color alone (iconography.md §4).
-- The chevron is `ChevronDownIcon size={20}` — the brand's default icon size.
-
-## Accessibility
-
-- The trigger owns `role="combobox"` and is labelled by the visible label via
-  `aria-labelledby`.
-- `aria-describedby` follows the same rule as `TextField`: hint or error, never a
-  missing id, and the hint leaves the DOM on error.
-- The check is reserved, not injected, so opening the menu does not reflow rows.
-
-## Do / Don't
-
-- **Don't** use the check icon anywhere but the selected item — it is reserved
-  for the system's "this option is chosen" state (iconography.md §5).
+Use radios for a few visible alternatives. A searchable combobox is not part
+of this release. See Select stories and the gallery for actual examples.

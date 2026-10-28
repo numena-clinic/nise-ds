@@ -51,10 +51,11 @@ const preview: Preview = {
     },
   },
   initialGlobals: {
-    theme: "system",
+    theme: "light",
   },
   parameters: {
     controls: { expanded: true },
+    options: { storySort: { order: ["Portfolio", "Foundations", "Components", "Compositions"] } },
     a11y: {
       // 'error' turns every found violation into a failing check in the a11y panel.
       test: "error",

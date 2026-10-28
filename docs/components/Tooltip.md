@@ -1,22 +1,11 @@
 # Tooltip
 
-Supplemental text only. Never the sole means of conveying information.
+`TooltipProvider` sets a default `delayDuration` (700ms). `TooltipRoot`,
+`TooltipTrigger` and `TooltipContent` use React Aria TooltipTrigger, Button and
+Tooltip for keyboard-focus and hover behavior, Escape and the trigger's
+accessible description. `asChild` accepts a ref-forwarding Nise Button.
 
-## Usage
-```tsx
-<TooltipProvider>
-  <TooltipRoot>
-    <TooltipTrigger asChild><Button>Hover</Button></TooltipTrigger>
-    <TooltipContent>More info</TooltipContent>
-  </TooltipRoot>
-</TooltipProvider>
-```
-
-## Tokens
-`--tooltip-padding-x`, `--tooltip-padding-y`, `--tooltip-font-size`.
-
-## Appearance
-- The bubble is a floating surface: `--color-base-100`, `--radius-md`,
-  `--shadow-sm`, and a **light** boundary — `var(--border-width) solid
-  var(--color-border)`. A tooltip is a small, temporary surface; the strong
-  boundary is reserved for controls that take input.
+Content supports `container` for scoped themes and `sideOffset` for positioning.
+A tooltip supplies supplemental information; visible labels and essential
+instructions must not depend on hovering. Browser tests exercise keyboard
+opening and Escape dismissal. Use component stories for the supported API.

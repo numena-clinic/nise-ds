@@ -10,6 +10,9 @@ export default tseslint.config(
       "node_modules/**",
       "storybook-static/**",
       "dist/**",
+      "dist-explorer/**",
+      "playwright-report/**",
+      "test-results/**",
       "coverage/**",
       // Generated from tokens/*.mjs — never hand-edited.
       "src/tokens/tokens.css",

@@ -123,7 +123,7 @@ describe("Select", () => {
 
   it("associates its label and opens the listbox", async () => {
     render(<Select label="Confidence" options={options} />);
-    const trigger = screen.getByRole("combobox", { name: /Confidence/ });
+    const trigger = screen.getByRole("button", { name: /Confidence/ });
     await userEvent.click(trigger);
     expect(await screen.findByRole("listbox")).toBeInTheDocument();
     expect(screen.getAllByRole("option")).toHaveLength(3);
@@ -132,14 +132,14 @@ describe("Select", () => {
   it("reports the chosen value", async () => {
     const onValueChange = vi.fn();
     render(<Select label="Confidence" options={options} onValueChange={onValueChange} />);
-    await userEvent.click(screen.getByRole("combobox", { name: /Confidence/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Confidence/ }));
     await userEvent.click(await screen.findByRole("option", { name: "Moderate" }));
     expect(onValueChange).toHaveBeenCalledWith("moderate");
   });
 
   it("surfaces an error through aria-describedby", async () => {
     render(<Select label="Confidence" options={options} error="Choose a level" />);
-    const trigger = screen.getByRole("combobox", { name: /Confidence/ });
+    const trigger = screen.getByRole("button", { name: /Confidence/ });
     await waitFor(() => {
       expect(trigger).toHaveAccessibleDescription("Choose a level");
     });
@@ -250,10 +250,10 @@ describe("Slider", () => {
   it("is a labelled slider that steps with the arrow keys", async () => {
     render(<Slider label="Intensity" defaultValue={[50]} min={0} max={100} step={1} />);
     const thumb = screen.getByRole("slider", { name: "Intensity" });
-    expect(thumb).toHaveAttribute("aria-valuenow", "50");
+    expect(thumb).toHaveValue("50");
     thumb.focus();
     await userEvent.keyboard("{ArrowRight}");
-    await waitFor(() => expect(thumb).toHaveAttribute("aria-valuenow", "51"));
+    await waitFor(() => expect(thumb).toHaveValue("51"));
   });
 });
 
@@ -297,7 +297,7 @@ describe("Dialog", () => {
 });
 
 describe("Tooltip", () => {
-  it("reveals supplemental text on hover", async () => {
+  it("reveals supplemental text on keyboard focus", async () => {
     render(
       <TooltipProvider delayDuration={0}>
         <TooltipRoot>
@@ -306,7 +306,8 @@ describe("Tooltip", () => {
         </TooltipRoot>
       </TooltipProvider>,
     );
-    await userEvent.hover(screen.getByRole("button", { name: "More info" }));
+    await userEvent.tab();
+    expect(screen.getByRole("button", { name: "More info" })).toHaveFocus();
     expect(await screen.findByRole("tooltip")).toHaveTextContent("Shown on the summary");
   });
 });

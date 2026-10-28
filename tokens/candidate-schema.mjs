@@ -97,6 +97,9 @@ export function validateTokenValue(name, rawValue) {
     case "number": {
       if (!NUMBER_RE.test(value)) return `expected a number: "${value}"`;
       const num = parseFloat(value);
+      if (!Number.isFinite(num)) return "number must be finite";
+      if (name.startsWith("--line-height-") && num <= 0) return "line height must be positive";
+      if (name.startsWith("--font-weight-") && (num < 1 || num > 1000)) return "font weight must be between 1 and 1000";
       if (name.includes("opacity")) {
         if (num < 0 || num > 1) return `opacity must be between 0 and 1: "${value}"`;
       }
@@ -115,7 +118,8 @@ export function validateTokenValue(name, rawValue) {
         return `expected unit "${ctrl.unit}": "${value}"`;
       }
       if (
-        (name.startsWith("--space-") ||
+        (name.startsWith("--font-size-") ||
+          name.startsWith("--space-") ||
           name.startsWith("--radius-") ||
           name.startsWith("--control-height-") ||
           name.startsWith("--badge-height-") ||
@@ -128,7 +132,8 @@ export function validateTokenValue(name, rawValue) {
       return null;
     }
     case "fontFamily": {
-      const valid = FONT_FAMILIES.some((f) => value.replace(/^["']/, "").startsWith(f));
+      const first = value.split(",")[0].trim().replace(/^["']|["']$/g, "");
+      const valid = FONT_FAMILIES.includes(first);
       if (!valid) {
         return `start font stack with one of: ${FONT_FAMILIES.join(", ")}`;
       }
@@ -199,8 +204,7 @@ export function validateCandidate(data) {
 
     const layer = layerOf[name];
     const canonicalRaw = allTokens[name];
-    const aliasMatch = canonicalRaw.match(ALIAS_RE);
-    const expectedCanonicalFrom = aliasMatch ? canonicalRaw : canonicalRaw;
+    const expectedCanonicalFrom = canonicalRaw;
 
     // Preserve incoming `from` if provided, else fallback to current canonical
     const tokenFrom = typeof from === "string" ? from : expectedCanonicalFrom;
