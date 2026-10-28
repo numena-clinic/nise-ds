@@ -19,8 +19,11 @@
    accent (`--color-border-error`), but it is the third channel, not the first:
    remove the text and the icon and the field must still read as invalid.
    When an error is present the hint is removed
-   from the DOM, and `aria-describedby` never points at an id that is not
-   rendered. `required` maps to the native attribute and an aria-hidden marker,
+   from the DOM, and `aria-describedby` merges caller-provided descriptions
+   with rendered hint/error IDs without clobbering.
+   Invalid state precedence: an explicit `error` prop forces `aria-invalid={true}`.
+   When `error` is absent, caller-provided `aria-invalid` values are preserved.
+   `required` maps to the native attribute and an aria-hidden marker,
    so the label reads cleanly.
 
    Radius is declared at the point of use: `var(--input-radius, var(--radius-md))`.
@@ -46,15 +49,18 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     const hintId = `${fieldId}-hint`;
     const errorId = `${fieldId}-error`;
 
+    const isInvalid = error != null ? true : rest["aria-invalid"];
+    const hasErrorClass = error != null || isInvalid === true || isInvalid === "true";
+
     const showHint = hint != null && error == null;
     const describedBy =
-      [showHint ? hintId : null, error != null ? errorId : null]
+      [rest["aria-describedby"], showHint ? hintId : null, error != null ? errorId : null]
         .filter(Boolean)
         .join(" ") || undefined;
 
     const classes = [
       "nise-field",
-      error != null ? "nise-field--error" : null,
+      hasErrorClass ? "nise-field--error" : null,
       disabled ? "nise-field--disabled" : null,
       className,
     ]
@@ -79,7 +85,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           className="nise-field__control"
           disabled={disabled}
           required={required}
-          aria-invalid={error != null ? true : undefined}
+          aria-invalid={isInvalid}
           aria-describedby={describedBy}
         />
 

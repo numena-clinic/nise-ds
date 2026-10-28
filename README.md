@@ -106,7 +106,7 @@ A change is done when `npm run verify` is green and:
 
 ## Status
 
-Foundation, plus the Theme Explorer previewing the full Nise component set. See
+Foundation, plus the Theme Explorer previewing the full Nise component set in both Light and Dark themes. See
 [`docs/decisions.md`](docs/decisions.md) for what is settled, what is
-provisional, and what is deliberately deferred (visual-regression tooling,
-package publishing, a full icon catalogue, dark mode, multi-theme authoring).
+provisional, and what is deliberately deferred (cloud visual-regression services,
+package registry publishing, a full icon catalogue, multi-theme authoring).

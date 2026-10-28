@@ -28,6 +28,9 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const reactId = useId();
   const fieldId = id ?? `nise-radio-${reactId}`;
   const hintId = `${fieldId}-hint`;
+  const describedBy = [rest["aria-describedby"], hint != null ? hintId : null]
+    .filter(Boolean)
+    .join(" ") || undefined;
 
   const classes = ["nise-radio", disabled ? "nise-radio--disabled" : null, className]
     .filter(Boolean)
@@ -42,7 +45,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           id={fieldId}
           type="radio"
           disabled={disabled}
-          aria-describedby={hint != null ? hintId : undefined}
+          aria-describedby={describedBy}
           className="nise-radio__input"
         />
         <span className="nise-radio__box" aria-hidden="true" />

@@ -42,10 +42,11 @@ const SEMANTIC_CONSTS = {
   "--ink-plum": "inkPlum",
 };
 
-/** Quote a value as a JS string literal, matching the source's own style. */
+import { validateCandidate } from "../../tokens/candidate-schema.mjs";
+
+/** Quote a value as a safe JS string literal using JSON.stringify. */
 export function quote(value) {
-  if (value.includes('"')) return `'${value.replace(/'/g, "\\'")}'`;
-  return `"${value}"`;
+  return JSON.stringify(value).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
 }
 
 /** The expression to write for an alias retarget, in the given layer. */
@@ -97,7 +98,6 @@ export function replaceTokenInFile(text, name, newExpr) {
  * @returns {{ files: Record<string,string>, edits: object[], errors: string[] }}
  */
 export function planPromotion(root, candidate) {
-  const errors = [];
   const originals = {};
   const files = {};
   for (const rel of Object.values(TOKEN_FILES)) {
@@ -107,27 +107,18 @@ export function planPromotion(root, candidate) {
     files[rel] = text;
   }
 
-  const edits = [];
-  if (!candidate || !Array.isArray(candidate.tokens)) {
-    return { files, edits, errors: ["candidate.tokens is not an array"] };
+  const validation = validateCandidate(candidate);
+  if (!validation.ok) {
+    return { files: {}, edits: [], errors: validation.errors };
   }
 
-  for (const t of candidate.tokens) {
-    if (typeof t?.name !== "string" || !(t.name in allTokens)) {
-      errors.push(`unknown token: ${String(t?.name)}`);
-      continue;
-    }
-    const layer = layerOf[t.name];
+  const edits = [];
+  const errors = [];
+
+  for (const t of validation.candidate.tokens) {
+    const layer = t.layer;
 
     if (t.kind === "alias") {
-      if (!isColorRole(t.name)) {
-        errors.push(`${t.name}: not a retargetable color role`);
-        continue;
-      }
-      if (!COLOR_PRIMITIVES.includes(t.ref)) {
-        errors.push(`${t.name}: "${String(t.ref)}" is not a color primitive`);
-        continue;
-      }
       const rel = TOKEN_FILES.semantic;
       const res = replaceTokenInFile(files[rel], t.name, aliasExpr(layer, t.ref));
       if (!res.changed) {
@@ -137,14 +128,6 @@ export function planPromotion(root, candidate) {
       files[rel] = res.text;
       edits.push({ name: t.name, layer, from: res.from, to: aliasExpr(layer, t.ref), file: rel, line: res.line });
     } else if (t.kind === "value") {
-      if (!isPrimitiveLiteral(t.name) && layer !== "component") {
-        errors.push(`${t.name}: only primitive and component literals are editable`);
-        continue;
-      }
-      if (typeof t.value !== "string" || t.value.trim() === "") {
-        errors.push(`${t.name}: empty value`);
-        continue;
-      }
       const rel = TOKEN_FILES[layer];
       const res = replaceTokenInFile(files[rel], t.name, quote(t.value));
       if (!res.changed) {
@@ -153,8 +136,6 @@ export function planPromotion(root, candidate) {
       }
       files[rel] = res.text;
       edits.push({ name: t.name, layer, from: res.from, to: quote(t.value), file: rel, line: res.line });
-    } else {
-      errors.push(`${t.name}: kind must be "value" or "alias"`);
     }
   }
 

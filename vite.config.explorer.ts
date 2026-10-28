@@ -18,7 +18,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: "dist",
+    outDir: "dist-explorer",
     target: "es2022",
   },
   server: {

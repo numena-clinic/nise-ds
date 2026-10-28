@@ -33,15 +33,12 @@ const Slider = React.forwardRef<
 >(function Slider({ className, label, hint, ...props }, ref) {
   const reactId = React.useId();
   const baseId = props.id ?? `nise-slider-${reactId}`;
-  const described = [hint ? `${baseId}-hint` : null, props["aria-describedby"] || null]
+  const described = [props["aria-describedby"], hint ? `${baseId}-hint` : null]
     .filter(Boolean)
     .join(" ") || undefined;
 
-  const rootProps = {
-    ...props,
-    id: baseId,
-    "aria-describedby": described || props["aria-describedby"],
-  };
+  const restProps = { ...props };
+  delete restProps["aria-describedby"];
 
   return (
     <div className={["nise-slider", className].filter(Boolean).join(" ")}>
@@ -57,8 +54,9 @@ const Slider = React.forwardRef<
       ) : null}
       <SliderPrimitive.Root
         ref={ref}
+        id={baseId}
         className="nise-slider__root"
-        {...rootProps}
+        {...restProps}
         aria-labelledby={label ? `${baseId}-label` : props["aria-labelledby"]}
       >
         <SliderPrimitive.Track className="nise-slider__track">
@@ -68,6 +66,7 @@ const Slider = React.forwardRef<
           className="nise-slider__thumb"
           aria-label={props["aria-label"]}
           aria-labelledby={label ? `${baseId}-label` : props["aria-labelledby"]}
+          aria-describedby={described}
         />
       </SliderPrimitive.Root>
     </div>

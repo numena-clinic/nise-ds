@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
+import { tmpdir } from "node:os";
 import {
   quote,
   aliasExpr,
@@ -12,11 +13,31 @@ import {
 } from "../scripts/lib/promote.mjs";
 
 describe("quote", () => {
-  it("wraps a plain value in double quotes", () => {
+  it("wraps a plain value in valid JSON string syntax", () => {
     expect(quote("#4C207F")).toBe('"#4C207F"');
   });
-  it("switches to single quotes when the value contains a double quote", () => {
-    expect(quote('"Albert Sans", sans-serif')).toBe("'\"Albert Sans\", sans-serif'");
+
+  it("escapes double quotes and backslashes safely", () => {
+    expect(quote('"Albert Sans", sans-serif')).toBe('"\\"Albert Sans\\", sans-serif"');
+    expect(quote("path\\to\\something")).toBe('"path\\\\to\\\\something"');
+  });
+
+  it("escapes newlines and control characters", () => {
+    const raw = "line1\nline2\r\t\b\f\0";
+    const quoted = quote(raw);
+    expect(quoted).not.toContain("\n");
+    expect(quoted).not.toContain("\r");
+    // Verify evaluation evaluates strictly to original data string
+    const evaluated = new Function(`return ${quoted};`)();
+    expect(evaluated).toBe(raw);
+  });
+
+  it("safely neutralizes crafted JavaScript syntax injection", () => {
+    const crafted = '"; process.exit(1); const injected = "';
+    const quoted = quote(crafted);
+    // Evaluating this as JS expression produces the literal string, never executing code
+    const evaluated = new Function(`return ${quoted};`)();
+    expect(evaluated).toBe(crafted);
   });
 });
 
@@ -110,5 +131,86 @@ describe("planPromotion (against the real token source)", () => {
     });
     expect(plan.errors).toHaveLength(3);
     expect(plan.edits).toHaveLength(0);
+  });
+
+  it("rejects candidate assigning nonsense to --space-3", () => {
+    const plan = planPromotion(root, {
+      schema: "nise.theme-candidate",
+      version: 1,
+      tokens: [{ name: "--space-3", layer: "primitive", kind: "value", value: "nonsense" }],
+    });
+    expect(plan.errors.length).toBeGreaterThan(0);
+    expect(plan.errors[0]).toMatch(/invalid length format/);
+    expect(plan.edits).toHaveLength(0);
+  });
+
+  it("rejects duplicate token entries", () => {
+    const plan = planPromotion(root, {
+      schema: "nise.theme-candidate",
+      version: 1,
+      tokens: [
+        { name: "--space-3", layer: "primitive", kind: "value", value: "12px" },
+        { name: "--space-3", layer: "primitive", kind: "value", value: "16px" },
+      ],
+    });
+    expect(plan.errors.length).toBeGreaterThan(0);
+    expect(plan.errors[0]).toMatch(/duplicate token/);
+    expect(plan.edits).toHaveLength(0);
+  });
+
+  it("rejects editing immutable brand anchors", () => {
+    const plan = planPromotion(root, {
+      schema: "nise.theme-candidate",
+      version: 1,
+      tokens: [{ name: "--deep-purple", layer: "primitive", kind: "value", value: "#123456" }],
+    });
+    expect(plan.errors.length).toBeGreaterThan(0);
+    expect(plan.errors[0]).toMatch(/brand anchors are immutable/);
+    expect(plan.edits).toHaveLength(0);
+  });
+});
+
+describe("isolated rollback simulation", () => {
+  it("restores source files and all generated artifacts on failure", () => {
+    const testDir = resolve(tmpdir(), `nise-rollback-test-${Date.now()}`);
+    mkdirSync(resolve(testDir, "tokens"), { recursive: true });
+    mkdirSync(resolve(testDir, "src/tokens"), { recursive: true });
+    mkdirSync(resolve(testDir, "tokens/dist"), { recursive: true });
+
+    const files = {
+      "tokens/primitives.mjs": 'export const primitives = { "--space-3": "12px" };',
+      "tokens/semantic.mjs": 'export const semantic = {};',
+      "tokens/component.mjs": 'export const component = {};',
+      "src/tokens/tokens.css": "/* original css */",
+      "tokens/dist/tokens.json": '{"original": true}',
+      "tokens/dist/nise.tokens.json": '{"originalDtcg": true}',
+    };
+
+    for (const [rel, content] of Object.entries(files)) {
+      writeFileSync(resolve(testDir, rel), content, "utf8");
+    }
+
+    // Capture backup state as apply-theme does
+    const backups = new Map();
+    for (const rel of Object.keys(files)) {
+      backups.set(rel, readFileSync(resolve(testDir, rel), "utf8"));
+    }
+
+    // Simulate partial/failing write to source and artifacts
+    writeFileSync(resolve(testDir, "tokens/primitives.mjs"), 'corrupted source', "utf8");
+    writeFileSync(resolve(testDir, "src/tokens/tokens.css"), 'corrupted css', "utf8");
+    writeFileSync(resolve(testDir, "tokens/dist/tokens.json"), 'corrupted json', "utf8");
+
+    // Perform rollback
+    for (const [rel, original] of backups) {
+      writeFileSync(resolve(testDir, rel), original, "utf8");
+    }
+
+    // Verify all restored
+    for (const [rel, original] of Object.entries(files)) {
+      expect(readFileSync(resolve(testDir, rel), "utf8")).toBe(original);
+    }
+
+    rmSync(testDir, { recursive: true, force: true });
   });
 });

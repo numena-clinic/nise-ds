@@ -6,16 +6,19 @@ Accessibility is checked mechanically, not asserted in prose.
 
 | Check | Where | Proves |
 | --- | --- | --- |
-| Token contrast | `npm run tokens:validate` | Every relied-on color pair meets its WCAG 2.2 ratio |
+| Token contrast | `npm run tokens:validate` | Every declared color pair meets its WCAG 2.2 ratio analytically |
 | axe (component) | `npm run test` (`tests/a11y.test.tsx`) | No axe violations on rendered components, closed and open |
-| axe (Storybook) | `.storybook/preview.ts`, `a11y.test: "error"` | Every story is audited in the addon panel |
+| axe (Storybook) | `.storybook/preview.ts`, `a11y.test: "error"` | Every story is audited in the addon panel during local authoring |
 | Behaviour | `npm run test` (`tests/components.test.tsx`) | Names, descriptions, states behave as documented |
+| Browser verification | `npm run test:browser` (`scripts/test-browser.mjs`) | Real Chrome verifies light/dark rendering, scoped tokens, focus, and portaled overlays |
 
-Color contrast is proven analytically rather than in axe, because jsdom has no
+Color contrast is proven analytically for declared pairs because jsdom has no
 layout. `tokens/semantic.mjs` lists every foreground/background pair the system
 depends on with its minimum ratio; the validator resolves the tokens (through
-`color-mix`) to sRGB and computes the real ratio, under **both** themes. The
-palette is generated in OKLCH (`docs/tokens.md`), so the ratios are the system's
+`color-mix`) to sRGB and computes the real ratio, under **both** themes. Note that
+analytical token-contrast checks validate declared pairs rather than establishing
+complete rendered accessibility across arbitrary compositions or runtime layouts.
+The palette is generated in OKLCH (`docs/tokens.md`), so the ratios are the system's
 own, not a reproduction of the brand's published figures.
 
 ## Principles the components hold to

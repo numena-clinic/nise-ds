@@ -183,6 +183,8 @@ export interface ToggleGroupItemProps
   /** Visual variant. Defaults to the group's variant. */
   variant?: ToggleVariant;
   size?: ToggleSize;
+  /** Explicitly mark item as icon-only (renders square geometry). */
+  iconOnly?: boolean;
   /** Visible content used when no children are given. */
   label?: string;
   /** Disables this item. */
@@ -192,12 +194,27 @@ export interface ToggleGroupItemProps
   className?: string;
 }
 
+/** Check if a node is an SVG or icon element rather than textual content */
+function isIconChild(node: ReactNode): boolean {
+  if (!isValidElement(node)) return false;
+  if (typeof node.type === "string") return node.type === "svg";
+  const comp = node.type as { displayName?: string; name?: string };
+  const name = comp.displayName || comp.name || "";
+  if (name.endsWith("Icon") || name === "Icon") return true;
+  const props = node.props as Record<string, unknown> | undefined;
+  if (props?.["aria-hidden"] === true || props?.["aria-hidden"] === "true" || props?.role === "img") {
+    return true;
+  }
+  return false;
+}
+
 export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProps>(
   function ToggleGroupItem(
     {
       value,
       variant: itemVariantProp,
       size: itemSizeProp,
+      iconOnly,
       label,
       disabled,
       isDisabled,
@@ -214,8 +231,10 @@ export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProp
 
     const content = children ?? label;
     const isIconOnly =
-      size === "icon" ||
-      (isValidElement(content) && !Array.isArray(content));
+      iconOnly !== undefined
+        ? iconOnly
+        : size === "icon" ||
+          (isValidElement(content) && !Array.isArray(content) && isIconChild(content));
 
     return (
       <RACToggleButton
