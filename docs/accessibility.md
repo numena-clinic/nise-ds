@@ -10,7 +10,7 @@ Accessibility is checked mechanically, not asserted in prose.
 | axe (component) | `npm run test` (`tests/a11y.test.tsx`) | No axe violations on rendered components, closed and open |
 | axe (Storybook) | `.storybook/preview.ts`, `a11y.test: "error"` | Every story is audited in the addon panel during local authoring |
 | Behaviour | `npm run test` (`tests/components.test.tsx`) | Names, descriptions, states behave as documented |
-| Browser verification | `npm run test:browser` (`tests/browser/portfolio.spec.ts`) | Chromium verifies portfolio interactions, light/dark rendering, phone reflow, dialog focus restoration and slider geometry |
+| Browser verification | `npm run test:browser` (`tests/browser/portfolio.spec.ts`) | Chromium verifies portfolio interactions, light/dark rendering, full-story axe checks, phone reflow, dialog focus restoration and slider geometry |
 
 Color contrast is proven analytically for declared pairs because jsdom has no
 layout. `tokens/semantic.mjs` lists every foreground/background pair the system

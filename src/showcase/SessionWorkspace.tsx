@@ -108,17 +108,13 @@ export function SessionWorkspace() {
     <TooltipProvider>
       <div className="nise-workspace">
         <header className="nise-workspace__top">
-          <a
-            className="nise-workspace__brand"
-            href="#workspace-main"
-            aria-label="Numena workspace"
-          >
+          <a className="nise-workspace__brand" href="#workspace-main">
             <img
               className="nise-workspace__symbol"
               src="./numena-symbol.svg"
               alt=""
             />
-            numena<span className="nise-workspace__edition">workspace</span>
+            numena <span className="nise-workspace__edition">workspace</span>
           </a>
           <span className="nise-workspace__sample">
             Interactive preview · synthetic data

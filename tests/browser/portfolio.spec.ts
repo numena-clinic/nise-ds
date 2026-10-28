@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import axe from "axe-core";
 const story = (id: string) =>
   `/iframe.html?id=portfolio-session-workspace--${id}&viewMode=story`;
 
@@ -108,6 +109,22 @@ for (const id of [
           ? "rgb(244, 241, 248)"
           : "rgb(255, 255, 255)",
     );
+    // Capture an independent axe instance synchronously: Storybook's addon
+    // can audit the same document concurrently using its own imported instance.
+    const violations = await page.evaluate(async (source) => {
+      const script = document.createElement("script");
+      script.textContent = source;
+      document.head.appendChild(script);
+      const audit = (window as unknown as { axe: typeof axe }).axe;
+      const result = await audit.run(document, {
+        runOnly: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"],
+      });
+      return result.violations.map((violation) => ({
+        id: violation.id,
+        targets: violation.nodes.map((node) => node.target),
+      }));
+    }, axe.source);
+    expect(violations).toEqual([]);
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     expect(

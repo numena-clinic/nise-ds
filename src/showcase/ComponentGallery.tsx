@@ -400,10 +400,7 @@ export function ComponentGallery() {
             <Progress value={68} aria-label="Preparing export" />
           </Tile>
           <Tile name="Skeleton" number={24}>
-            <div
-              className="nise-gallery__skeleton"
-              aria-label="Decorative loading example"
-            >
+            <div className="nise-gallery__skeleton">
               <Skeleton />
               <Skeleton />
               <Skeleton />
