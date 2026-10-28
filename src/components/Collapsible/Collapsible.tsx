@@ -1,12 +1,12 @@
 /* =============================================================================
    Collapsible
    -----------------------------------------------------------------------------
-   An interactive component which expands/collapses a panel. Matches the
-   shadcn/ui and Radix Collapsible API and design pattern.
+   An interactive component that expands/collapses a panel.
+   Backed by React Aria Components (`Disclosure`).
 
-   Supports both controlled (`open`, `onOpenChange`) and uncontrolled
-   (`defaultOpen`) states, disabled state, and flexible trigger composition
-   with `asChild` (e.g. delegating behavior to a custom Button or icon trigger).
+   Supports controlled (`open`/`isExpanded`, `onOpenChange`/`onExpandedChange`)
+   and uncontrolled (`defaultOpen`/`defaultExpanded`) states, disabled state,
+   and clean trigger composition.
 
    Tokens consumed (component layer → semantic → primitive):
      --color-base-content, --color-base-hover, --color-focus-ring,
@@ -16,234 +16,152 @@
      --duration-fast, --ease-standard
 
    Accessibility:
-     - `CollapsibleTrigger` renders a real <button> with `aria-expanded` and `aria-controls`.
-     - `CollapsibleContent` renders with `role="region"` and `aria-labelledby`.
-     - When closed, the content panel is hidden (`hidden`, `data-state="closed"`).
+     - Backed by React Aria Components `Disclosure`.
+     - `CollapsibleTrigger` receives `aria-expanded` and `aria-controls`.
+     - `CollapsibleContent` receives `role="region"` and `aria-labelledby`.
+     - Full keyboard navigation (Space, Enter), focus ring, and disabled handling.
    ============================================================================= */
 
 import {
-  createContext,
   forwardRef,
-  isValidElement,
-  cloneElement,
   useContext,
-  useId,
-  useState,
-  type ButtonHTMLAttributes,
-  type HTMLAttributes,
-  type MouseEvent,
-  type ReactElement,
   type ReactNode,
 } from "react";
+import {
+  Disclosure as RACDisclosure,
+  DisclosurePanel as RACDisclosurePanel,
+  DisclosureStateContext,
+  Button as RACButton,
+  type DisclosureProps as RACDisclosureProps,
+  type DisclosurePanelProps as RACDisclosurePanelProps,
+  type ButtonProps as RACButtonProps,
+} from "react-aria-components";
+import type { ButtonSize, ButtonVariant } from "../Button";
 import "./Collapsible.css";
 
-export interface CollapsibleContextValue {
-  open: boolean;
-  disabled?: boolean;
-  contentId: string;
-  triggerId: string;
-  toggle: () => void;
-}
-
-const CollapsibleContext = createContext<CollapsibleContextValue | null>(null);
-
-export function useCollapsible() {
-  const context = useContext(CollapsibleContext);
-  if (!context) {
-    throw new Error("Collapsible compound components must be used within a Collapsible");
-  }
-  return context;
-}
-
-export interface CollapsibleProps extends HTMLAttributes<HTMLDivElement> {
-  /** The controlled open state of the collapsible. */
+export interface CollapsibleProps
+  extends Omit<RACDisclosureProps, "children" | "className"> {
+  /** Controlled open state (alias for `isExpanded`). */
   open?: boolean;
-  /** The open state of the collapsible when it is initially rendered (uncontrolled). */
+  /** Initial open state when uncontrolled (alias for `defaultExpanded`). */
   defaultOpen?: boolean;
-  /** Event handler called when the open state of the collapsible changes. */
+  /** Callback fired when the open state changes (alias for `onExpandedChange`). */
   onOpenChange?: (open: boolean) => void;
-  /** When true, prevents the user from interacting with the collapsible. */
+  /** When true, disables interaction (alias for `isDisabled`). */
   disabled?: boolean;
-  /** Change the default rendered element for the one passed as a child, merging their props and behavior. */
-  asChild?: boolean;
+  className?: string;
   children?: ReactNode;
 }
 
 export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(
   function Collapsible(
     {
-      open: controlledOpen,
-      defaultOpen = false,
+      open,
+      isExpanded: controlledExpanded,
+      defaultOpen,
+      defaultExpanded,
       onOpenChange,
-      disabled = false,
-      asChild = false,
-      children,
+      onExpandedChange,
+      disabled,
+      isDisabled,
       className,
+      children,
       ...rest
     },
     ref,
   ) {
-    const isControlled = controlledOpen !== undefined;
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-    const isOpen = isControlled ? controlledOpen : uncontrolledOpen;
+    const isExpanded = open !== undefined ? open : controlledExpanded;
+    const initialExpanded = defaultOpen !== undefined ? defaultOpen : defaultExpanded;
+    const isComponentDisabled = disabled !== undefined ? disabled : isDisabled;
 
-    const id = useId();
-    const contentId = `${id}-content`;
-    const triggerId = `${id}-trigger`;
-
-    const toggle = () => {
-      if (disabled) return;
-      const next = !isOpen;
-      if (!isControlled) {
-        setUncontrolledOpen(next);
-      }
-      onOpenChange?.(next);
-    };
-
-    const sharedProps = {
-      ref,
-      className: ["nise-collapsible", className].filter(Boolean).join(" "),
-      "data-state": isOpen ? "open" : "closed",
-      "data-disabled": disabled ? "" : undefined,
+    const handleExpandedChange = (expanded: boolean) => {
+      onOpenChange?.(expanded);
+      onExpandedChange?.(expanded);
     };
 
     return (
-      <CollapsibleContext.Provider
-        value={{
-          open: isOpen,
-          disabled,
-          contentId,
-          triggerId,
-          toggle,
-        }}
+      <RACDisclosure
+        {...rest}
+        ref={ref}
+        isExpanded={isExpanded}
+        defaultExpanded={initialExpanded}
+        onExpandedChange={handleExpandedChange}
+        isDisabled={isComponentDisabled}
+        className={["nise-collapsible", className].filter(Boolean).join(" ")}
+        data-state={isExpanded !== undefined ? (isExpanded ? "open" : "closed") : undefined}
       >
-        {asChild && isValidElement(children) ? (
-          (cloneElement as (elem: ReactElement, props: Record<string, unknown>) => ReactElement)(
-            children as ReactElement<HTMLAttributes<HTMLDivElement>>,
-            {
-              ...sharedProps,
-              className: [
-                (children as ReactElement<{ className?: string }>).props.className,
-                sharedProps.className,
-              ]
-                .filter(Boolean)
-                .join(" "),
-            },
-          )
-        ) : (
-          <div {...rest} {...sharedProps}>
-            {children}
-          </div>
-        )}
-      </CollapsibleContext.Provider>
+        {children}
+      </RACDisclosure>
     );
   },
 );
 
 export interface CollapsibleTriggerProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Change the default rendered element for the one passed as a child, merging their props and behavior. */
-  asChild?: boolean;
+  extends Omit<RACButtonProps, "className" | "children"> {
+  /** Optional Nise Button variant if styled as an action button (e.g. "ghost", "secondary"). */
+  variant?: ButtonVariant;
+  /** Optional Nise Button size ("sm", "md", "lg"). */
+  size?: ButtonSize;
+  className?: string;
   children?: ReactNode;
 }
 
 export const CollapsibleTrigger = forwardRef<HTMLButtonElement, CollapsibleTriggerProps>(
   function CollapsibleTrigger(
-    { asChild = false, children, className, onClick, ...rest },
+    { variant, size, className, children, ...rest },
     ref,
   ) {
-    const { open, disabled, contentId, triggerId, toggle } = useCollapsible();
-
-    const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-      if (!disabled) {
-        toggle();
-      }
-      onClick?.(e);
-    };
-
-    if (asChild && isValidElement(children)) {
-      const child = children as ReactElement<ButtonHTMLAttributes<HTMLButtonElement>>;
-      return (cloneElement as (elem: ReactElement, props: Record<string, unknown>) => ReactElement)(
-        child,
-        {
-          ref,
-          id: triggerId,
-          type: child.props.type ?? "button",
-          "aria-expanded": open,
-          "aria-controls": contentId,
-          "data-state": open ? "open" : "closed",
-          "data-disabled": disabled ? "" : undefined,
-          disabled: disabled || child.props.disabled,
-          onClick: (e: MouseEvent<HTMLButtonElement>) => {
-            child.props.onClick?.(e);
-            if (!e.defaultPrevented) {
-              handleClick(e);
-            }
-          },
-        },
-      );
-    }
+    const classNames = [
+      variant ? "nise-button" : "nise-collapsible__trigger",
+      variant ? `nise-button--${variant}` : null,
+      size ? `nise-button--${size}` : null,
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     return (
-      <button
+      <RACButton
         {...rest}
         ref={ref}
-        type="button"
-        id={triggerId}
-        aria-expanded={open}
-        aria-controls={contentId}
-        data-state={open ? "open" : "closed"}
-        data-disabled={disabled ? "" : undefined}
-        disabled={disabled}
-        onClick={handleClick}
-        className={["nise-collapsible__trigger", className]
-          .filter(Boolean)
-          .join(" ")}
+        slot="trigger"
+        className={classNames}
       >
         {children}
-      </button>
+      </RACButton>
     );
   },
 );
 
 export interface CollapsibleContentProps
-  extends HTMLAttributes<HTMLDivElement> {
-  /** Change the default rendered element for the one passed as a child, merging their props and behavior. */
-  asChild?: boolean;
+  extends Omit<RACDisclosurePanelProps, "className" | "children"> {
+  className?: string;
   children?: ReactNode;
 }
 
 export const CollapsibleContent = forwardRef<HTMLDivElement, CollapsibleContentProps>(
-  function CollapsibleContent({ asChild = false, className, children, ...rest }, ref) {
-    const { open, disabled, contentId, triggerId } = useCollapsible();
-
-    const sharedProps = {
-      ref,
-      id: contentId,
-      role: "region",
-      "aria-labelledby": triggerId,
-      "aria-hidden": !open,
-      hidden: !open,
-      "data-state": open ? "open" : "closed",
-      "data-disabled": disabled ? "" : undefined,
-      className: ["nise-collapsible__content", className].filter(Boolean).join(" "),
-    };
-
-    if (asChild && isValidElement(children)) {
-      const child = children as ReactElement<HTMLAttributes<HTMLDivElement>>;
-      return (cloneElement as (elem: ReactElement, props: Record<string, unknown>) => ReactElement)(
-        child,
-        {
-          ...sharedProps,
-          className: [child.props.className, sharedProps.className].filter(Boolean).join(" "),
-        },
-      );
-    }
-
+  function CollapsibleContent({ role = "region", className, children, ...rest }, ref) {
     return (
-      <div {...rest} {...sharedProps}>
+      <RACDisclosurePanel
+        {...rest}
+        ref={ref}
+        role={role}
+        className={["nise-collapsible__content", className].filter(Boolean).join(" ")}
+      >
         {children}
-      </div>
+      </RACDisclosurePanel>
     );
   },
 );
+
+export function useCollapsible() {
+  const state = useContext(DisclosureStateContext);
+  if (!state) {
+    throw new Error("Collapsible compound components must be used within a Collapsible");
+  }
+  return {
+    open: state.isExpanded,
+    isExpanded: state.isExpanded,
+    toggle: state.toggle,
+  };
+}

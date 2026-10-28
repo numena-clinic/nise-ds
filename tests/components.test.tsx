@@ -563,6 +563,45 @@ describe("ToggleGroup", () => {
     await userEvent.click(boldBtn);
     expect(boldBtn).toHaveAttribute("aria-pressed", "true");
   });
+
+  it("does not toggle disabled items", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <ToggleGroup label="Filters" onValueChange={onValueChange}>
+        <ToggleGroupItem value="active">Active</ToggleGroupItem>
+        <ToggleGroupItem value="locked" disabled>Locked</ToggleGroupItem>
+      </ToggleGroup>,
+    );
+    const lockedBtn = screen.getByRole("button", { name: "Locked" });
+    expect(lockedBtn).toBeDisabled();
+    await userEvent.click(lockedBtn);
+    expect(lockedBtn).toHaveAttribute("aria-pressed", "false");
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("honours controlled value in single mode", async () => {
+    const onValueChange = vi.fn();
+    const { rerender } = render(
+      <ToggleGroup label="View" value="summary" onValueChange={onValueChange}>
+        <ToggleGroupItem value="summary">Summary</ToggleGroupItem>
+        <ToggleGroupItem value="details">Details</ToggleGroupItem>
+      </ToggleGroup>,
+    );
+    expect(screen.getByRole("button", { name: "Summary" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Details" })).toHaveAttribute("aria-pressed", "false");
+
+    await userEvent.click(screen.getByRole("button", { name: "Details" }));
+    expect(onValueChange).toHaveBeenCalledWith("details");
+
+    rerender(
+      <ToggleGroup label="View" value="details" onValueChange={onValueChange}>
+        <ToggleGroupItem value="summary">Summary</ToggleGroupItem>
+        <ToggleGroupItem value="details">Details</ToggleGroupItem>
+      </ToggleGroup>,
+    );
+    expect(screen.getByRole("button", { name: "Details" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Summary" })).toHaveAttribute("aria-pressed", "false");
+  });
 });
 
 describe("Textarea", () => {
@@ -663,7 +702,7 @@ describe("Timeline", () => {
 });
 
 describe("Collapsible", () => {
-  it("opens and closes via its trigger and reveals the content", async () => {
+  it("opens and closes via mouse click and keyboard Space/Enter", async () => {
     render(
       <Collapsible>
         <CollapsibleTrigger>Advanced export options</CollapsibleTrigger>
@@ -676,13 +715,21 @@ describe("Collapsible", () => {
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(content).not.toBeVisible();
 
+    // Mouse click opens
     await userEvent.click(trigger);
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(content).toBeVisible();
 
-    await userEvent.click(trigger);
+    // Space key closes
+    trigger.focus();
+    await userEvent.keyboard(" ");
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(content).not.toBeVisible();
+
+    // Enter key opens
+    await userEvent.keyboard("{Enter}");
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(content).toBeVisible();
   });
 
   it("supports controlled state via open and onOpenChange", async () => {
@@ -707,20 +754,122 @@ describe("Collapsible", () => {
       </Collapsible>,
     );
     expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Controlled content")).toBeVisible();
   });
 
-  it("supports asChild delegation on CollapsibleTrigger", async () => {
+  it("supports uncontrolled state via defaultOpen", async () => {
     render(
       <Collapsible defaultOpen>
-        <CollapsibleTrigger asChild>
-          <button type="button" className="custom-btn">Custom Trigger</button>
+        <CollapsibleTrigger>Uncontrolled trigger</CollapsibleTrigger>
+        <CollapsibleContent>Uncontrolled content</CollapsibleContent>
+      </Collapsible>,
+    );
+
+    const trigger = screen.getByRole("button", { name: /Uncontrolled trigger/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Uncontrolled content")).toBeVisible();
+  });
+
+  it("does not toggle when disabled", async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <Collapsible disabled onOpenChange={onOpenChange}>
+        <CollapsibleTrigger>Disabled trigger</CollapsibleTrigger>
+        <CollapsibleContent>Disabled content</CollapsibleContent>
+      </Collapsible>,
+    );
+
+    const trigger = screen.getByRole("button", { name: /Disabled trigger/i });
+    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+    await userEvent.click(trigger);
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(screen.getByText("Disabled content")).not.toBeVisible();
+  });
+
+  it("supports custom styling and variant/size props on CollapsibleTrigger", () => {
+    render(
+      <Collapsible defaultOpen>
+        <CollapsibleTrigger variant="ghost" size="sm" className="custom-tree-item">
+          Styled Trigger
         </CollapsibleTrigger>
         <CollapsibleContent>Panel Body</CollapsibleContent>
       </Collapsible>,
     );
-    const customButton = screen.getByRole("button", { name: "Custom Trigger" });
-    expect(customButton).toHaveClass("custom-btn");
-    expect(customButton).toHaveAttribute("aria-expanded", "true");
+    const trigger = screen.getByRole("button", { name: "Styled Trigger" });
+    expect(trigger).toHaveClass("nise-button");
+    expect(trigger).toHaveClass("nise-button--ghost");
+    expect(trigger).toHaveClass("nise-button--sm");
+    expect(trigger).toHaveClass("custom-tree-item");
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("keeps closed content strictly hidden even with inline display styles", () => {
+    render(
+      <Collapsible>
+        <CollapsibleTrigger>Display flex trigger</CollapsibleTrigger>
+        <CollapsibleContent style={{ display: "flex", flexDirection: "column" }}>
+          <span>Flex item 1</span>
+          <span>Flex item 2</span>
+        </CollapsibleContent>
+      </Collapsible>,
+    );
+
+    const content = screen.getByText("Flex item 1");
+    expect(content).not.toBeVisible();
+  });
+
+  it("supports nested collapsibles without cross-contamination", async () => {
+    render(
+      <Collapsible defaultOpen>
+        <CollapsibleTrigger>Parent</CollapsibleTrigger>
+        <CollapsibleContent>
+          <div>Parent Content</div>
+          <Collapsible defaultOpen={false}>
+            <CollapsibleTrigger>Child</CollapsibleTrigger>
+            <CollapsibleContent>Child Content</CollapsibleContent>
+          </Collapsible>
+        </CollapsibleContent>
+      </Collapsible>,
+    );
+
+    const parentTrigger = screen.getByRole("button", { name: "Parent" });
+    const childTrigger = screen.getByRole("button", { name: "Child" });
+    const parentContent = screen.getByText("Parent Content");
+    const childContent = screen.getByText("Child Content");
+
+    expect(parentTrigger).toHaveAttribute("aria-expanded", "true");
+    expect(parentContent).toBeVisible();
+    expect(childTrigger).toHaveAttribute("aria-expanded", "false");
+    expect(childContent).not.toBeVisible();
+
+    await userEvent.click(childTrigger);
+    expect(childTrigger).toHaveAttribute("aria-expanded", "true");
+    expect(childContent).toBeVisible();
+    expect(parentTrigger).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("establishes accessible names and aria-controls / aria-labelledby relationships", () => {
+    render(
+      <Collapsible defaultOpen>
+        <CollapsibleTrigger>Section header</CollapsibleTrigger>
+        <CollapsibleContent>Section body</CollapsibleContent>
+      </Collapsible>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Section header" });
+    const region = screen.getByRole("region");
+
+    const controlsId = trigger.getAttribute("aria-controls");
+    const labelledById = region.getAttribute("aria-labelledby");
+    const triggerId = trigger.getAttribute("id");
+    const regionId = region.getAttribute("id");
+
+    expect(controlsId).toBeTruthy();
+    expect(controlsId).toBe(regionId);
+    expect(labelledById).toBeTruthy();
+    expect(labelledById).toBe(triggerId);
   });
 });
 
@@ -804,5 +953,93 @@ describe("Accordion", () => {
     await userEvent.keyboard("{ArrowUp}");
     expect(document.activeElement).toBe(first);
   });
+
+  it("does not toggle a disabled accordion item", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <Accordion type="single" onValueChange={onValueChange}>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Active</AccordionTrigger>
+          <AccordionContent>Active Content</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2" disabled>
+          <AccordionTrigger>Locked</AccordionTrigger>
+          <AccordionContent>Locked Content</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+
+    const lockedTrigger = screen.getByRole("button", { name: "Locked" });
+    expect(lockedTrigger).toBeDisabled();
+    await userEvent.click(lockedTrigger);
+    expect(lockedTrigger).toHaveAttribute("aria-expanded", "false");
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("supports controlled expanded state via value and onValueChange", async () => {
+    const onValueChange = vi.fn();
+    const { rerender } = render(
+      <Accordion type="single" value="item-1" onValueChange={onValueChange}>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Section 1</AccordionTrigger>
+          <AccordionContent>Content 1</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Section 2</AccordionTrigger>
+          <AccordionContent>Content 2</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+
+    const trigger1 = screen.getByRole("button", { name: "Section 1" });
+    const trigger2 = screen.getByRole("button", { name: "Section 2" });
+
+    expect(trigger1).toHaveAttribute("aria-expanded", "true");
+    expect(trigger2).toHaveAttribute("aria-expanded", "false");
+
+    await userEvent.click(trigger2);
+    expect(onValueChange).toHaveBeenCalledWith("item-2");
+
+    rerender(
+      <Accordion type="single" value="item-2" onValueChange={onValueChange}>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Section 1</AccordionTrigger>
+          <AccordionContent>Content 1</AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="item-2">
+          <AccordionTrigger>Section 2</AccordionTrigger>
+          <AccordionContent>Content 2</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+
+    expect(trigger1).toHaveAttribute("aria-expanded", "false");
+    expect(trigger2).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("establishes accessible aria-controls and aria-labelledby relationships", () => {
+    render(
+      <Accordion defaultValue="item-1">
+        <AccordionItem value="item-1">
+          <AccordionTrigger>Accessible Header</AccordionTrigger>
+          <AccordionContent>Accessible Body</AccordionContent>
+        </AccordionItem>
+      </Accordion>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Accessible Header" });
+    const region = screen.getByRole("region");
+
+    const controlsId = trigger.getAttribute("aria-controls");
+    const labelledById = region.getAttribute("aria-labelledby");
+    const triggerId = trigger.getAttribute("id");
+    const regionId = region.getAttribute("id");
+
+    expect(controlsId).toBeTruthy();
+    expect(controlsId).toBe(regionId);
+    expect(labelledById).toBeTruthy();
+    expect(labelledById).toBe(triggerId);
+  });
 });
+
 

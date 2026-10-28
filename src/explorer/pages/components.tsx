@@ -91,19 +91,17 @@ function ExplorerFileTree() {
         <TabsContent value="explorer">
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
             <Collapsible defaultOpen>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="nise-collapsible__tree-item"
-                >
-                  <ChevronRightIcon
-                    size={16}
-                    className="nise-collapsible__chevron"
-                  />
-                  <FolderIcon size={16} />
-                  <span>components</span>
-                </Button>
+              <CollapsibleTrigger
+                variant="ghost"
+                size="sm"
+                className="nise-collapsible__tree-item"
+              >
+                <ChevronRightIcon
+                  size={16}
+                  className="nise-collapsible__chevron"
+                />
+                <FolderIcon size={16} />
+                <span>components</span>
               </CollapsibleTrigger>
               <CollapsibleContent
                 style={{
@@ -142,19 +140,17 @@ function ExplorerFileTree() {
             </Collapsible>
 
             <Collapsible>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="nise-collapsible__tree-item"
-                >
-                  <ChevronRightIcon
-                    size={16}
-                    className="nise-collapsible__chevron"
-                  />
-                  <FolderIcon size={16} />
-                  <span>lib</span>
-                </Button>
+              <CollapsibleTrigger
+                variant="ghost"
+                size="sm"
+                className="nise-collapsible__tree-item"
+              >
+                <ChevronRightIcon
+                  size={16}
+                  className="nise-collapsible__chevron"
+                />
+                <FolderIcon size={16} />
+                <span>lib</span>
               </CollapsibleTrigger>
               <CollapsibleContent
                 style={{
@@ -177,19 +173,17 @@ function ExplorerFileTree() {
             </Collapsible>
 
             <Collapsible>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="nise-collapsible__tree-item"
-                >
-                  <ChevronRightIcon
-                    size={16}
-                    className="nise-collapsible__chevron"
-                  />
-                  <FolderIcon size={16} />
-                  <span>hooks</span>
-                </Button>
+              <CollapsibleTrigger
+                variant="ghost"
+                size="sm"
+                className="nise-collapsible__tree-item"
+              >
+                <ChevronRightIcon
+                  size={16}
+                  className="nise-collapsible__chevron"
+                />
+                <FolderIcon size={16} />
+                <span>hooks</span>
               </CollapsibleTrigger>
               <CollapsibleContent
                 style={{
@@ -279,22 +273,20 @@ function ExplorerCollapsibleSpecimen() {
               >
                 @peduarte starred 3 repositories
               </h4>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  aria-label="Toggle repository list"
-                  style={{
-                    width: 32,
-                    height: 32,
-                    padding: 0,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <ChevronsUpDownIcon size={16} />
-                </Button>
+              <CollapsibleTrigger
+                variant="ghost"
+                size="sm"
+                aria-label="Toggle repository list"
+                style={{
+                  width: 32,
+                  height: 32,
+                  padding: 0,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <ChevronsUpDownIcon size={16} />
               </CollapsibleTrigger>
             </div>
 
@@ -357,27 +349,25 @@ function ExplorerCollapsibleSpecimen() {
         <div style={{ width: 320 }}>
           <Card>
             <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
+              <CollapsibleTrigger
+                variant="ghost"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingInline: "var(--space-3)",
+                }}
+              >
+                <span>Product details</span>
+                <ChevronDownIcon
+                  size={16}
                   style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingInline: "var(--space-3)",
+                    transition: "transform var(--duration-fast) var(--ease-standard)",
+                    transform: detailsOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    color: "var(--color-text-muted)",
                   }}
-                >
-                  <span>Product details</span>
-                  <ChevronDownIcon
-                    size={16}
-                    style={{
-                      transition: "transform var(--duration-fast) var(--ease-standard)",
-                      transform: detailsOpen ? "rotate(180deg)" : "rotate(0deg)",
-                      color: "var(--color-text-muted)",
-                    }}
-                  />
-                </Button>
+                />
               </CollapsibleTrigger>
               <CollapsibleContent
                 style={{

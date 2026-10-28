@@ -3,23 +3,17 @@
    -----------------------------------------------------------------------------
    A set of Toggle-style pressed buttons sharing one state: `single` keeps a
    session view on exactly one layer (the pressed item mirrors `value`), `multi`
-   keeps a set (array membership). It is a selection group for toolbars and
-   filters — not a radio group over a form field, and not a Tabs row: the items
-   do not reveal panels and every item toggles on its own face, so each is a
-   real button with `aria-pressed`.
+   keeps a set (array membership). Backed by React Aria Components
+   (ToggleButtonGroup, ToggleButton) as the headless foundation.
 
-   The container renders `role="group"` named by the required `label` prop. The
-   item's pressed state is a SELECTION (the validated selected pair — see
-   Toggle); pressed and unpressed differ by tile AND tile-text, never color
-   alone.
+   It is a selection group for toolbars and filters — not a radio group over a
+   form field, and not a Tabs row: the items do not reveal panels and every item
+   toggles on its own face, so each is a real button with `aria-pressed`.
 
-   Value semantics mirror the controlled/uncontrolled split the group needs:
-   pass `value` to own the state (clicks call `onValueChange` only and
-   `aria-pressed` reflects `value`), or pass `defaultValue` to let it manage
-   itself (clicks update internally and also call `onValueChange`). In `single`
-   mode one value is always pressed once chosen; in `multi` mode a pressed item
-   leaves the set when clicked again. Items are disabled per item; for this
-   pass they keep their natural tab order.
+   The container renders `role="toolbar"` (or `role="group"`) named by the required
+   `label` prop. The item's pressed state is a SELECTION (the validated selected
+   pair — see Toggle); pressed and unpressed differ by tile AND tile-text, never
+   color alone.
 
    Tokens consumed (component layer → semantic → primitive): the same slots as
    Toggle — --toggle-group-gap → --space-1 for the container, and on each item
@@ -34,20 +28,26 @@ import {
   createContext,
   forwardRef,
   isValidElement,
+  useCallback,
   useContext,
+  useMemo,
   useState,
-  type ButtonHTMLAttributes,
   type HTMLAttributes,
-  type MouseEvent,
   type ReactNode,
 } from "react";
+import {
+  ToggleButtonGroup as RACToggleButtonGroup,
+  ToggleButton as RACToggleButton,
+  type ToggleButtonProps as RACToggleButtonProps,
+  type Key,
+} from "react-aria-components";
 import type { ToggleSize, ToggleVariant } from "../Toggle/Toggle";
 import "./ToggleGroup.css";
 
 export type ToggleGroupType = "single" | "multi" | "multiple";
 
 export interface ToggleGroupProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "className" | "onChange"> {
+  extends Omit<HTMLAttributes<HTMLDivElement>, "className" | "onChange" | "defaultValue"> {
   /** "single" keeps one layer pressed (the default); "multi" (or "multiple") keeps a set. */
   type?: ToggleGroupType;
   /** Visual variant. "default" is a ghost-like tile; "outline" adds a border. */
@@ -60,6 +60,9 @@ export interface ToggleGroupProps
   size?: ToggleSize;
   /** Accessible name for the group, announced as the group's label. */
   label: string;
+  /** Disables the entire toggle group. */
+  disabled?: boolean;
+  isDisabled?: boolean;
   /** The ToggleGroupItem children. */
   children?: ReactNode;
   className?: string;
@@ -68,11 +71,12 @@ export interface ToggleGroupProps
 interface ToggleGroupContextValue {
   size: ToggleSize;
   variant: ToggleVariant;
-  isPressed: (value: string) => boolean;
-  onPress: (value: string) => void;
 }
 
-const ToggleGroupContext = createContext<ToggleGroupContextValue | null>(null);
+const ToggleGroupContext = createContext<ToggleGroupContextValue>({
+  size: "md",
+  variant: "default",
+});
 
 export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
   function ToggleGroup(
@@ -84,6 +88,8 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
       onValueChange,
       size = "md",
       label,
+      disabled,
+      isDisabled,
       className,
       children,
       ...rest
@@ -91,27 +97,52 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
     ref,
   ) {
     const isMultiMode = type === "multi" || type === "multiple";
-    const [internal, setInternal] = useState<string | string[]>(
-      defaultValue ?? (isMultiMode ? [] : ""),
-    );
+    const effectivelyDisabled = disabled ?? isDisabled;
+
+    const toKeySet = (v: string | string[] | undefined): Set<Key> => {
+      if (v === undefined || v === "") return new Set();
+      if (Array.isArray(v)) return new Set(v);
+      return new Set([v]);
+    };
 
     const controlled = value !== undefined;
-    const current = controlled ? value : internal;
-    const currentValues = Array.isArray(current) ? current : current !== "" ? [current] : [];
+    const [internalKeys, setInternalKeys] = useState<Set<Key>>(() => toKeySet(defaultValue));
 
-    const isPressed = (itemValue: string) =>
-      !isMultiMode ? currentValues[0] === itemValue : currentValues.includes(itemValue);
+    const activeKeys = controlled ? toKeySet(value) : internalKeys;
 
-    const onPress = (itemValue: string) => {
-      const values = Array.isArray(current) ? current : [];
-      const next: string | string[] = isMultiMode
-        ? values.includes(itemValue)
-          ? values.filter((v) => v !== itemValue)
-          : [...values, itemValue]
-        : itemValue;
-      if (!controlled) setInternal(next);
-      onValueChange?.(next);
-    };
+    const handleSelectionChange = useCallback(
+      (keys: Set<Key>) => {
+        let nextKeys: Set<Key>;
+
+        if (!isMultiMode) {
+          // Single mode: find newly added key
+          const keyArray = Array.from(keys);
+          const added = keyArray.find((k) => !activeKeys.has(k));
+          if (added) {
+            nextKeys = new Set([added]);
+          } else if (keyArray.length === 0) {
+            // Clicking the active item again in single mode: keep it pressed
+            nextKeys = activeKeys.size > 0 ? activeKeys : new Set();
+          } else {
+            nextKeys = keyArray[0] !== undefined ? new Set([keyArray[0]]) : new Set();
+          }
+        } else {
+          nextKeys = new Set(keys);
+        }
+
+        if (!controlled) {
+          setInternalKeys(nextKeys);
+        }
+
+        const stringKeys = Array.from(nextKeys).map(String);
+        if (isMultiMode) {
+          onValueChange?.(stringKeys);
+        } else {
+          onValueChange?.(stringKeys[0] ?? "");
+        }
+      },
+      [isMultiMode, activeKeys, controlled, onValueChange],
+    );
 
     const classes = [
       "nise-toggle-group",
@@ -121,24 +152,42 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
       .filter(Boolean)
       .join(" ");
 
+    const contextValue = useMemo(() => ({ size, variant }), [size, variant]);
+
     return (
-      <ToggleGroupContext.Provider value={{ size, variant, isPressed, onPress }}>
-        <div ref={ref} role="group" aria-label={label} className={classes} {...rest}>
+      <ToggleGroupContext.Provider value={contextValue}>
+        <RACToggleButtonGroup
+          ref={ref}
+          aria-label={label}
+          selectionMode="multiple"
+          selectedKeys={activeKeys}
+          onSelectionChange={handleSelectionChange}
+          isDisabled={effectivelyDisabled}
+          className={classes}
+          {...rest}
+        >
           {children}
-        </div>
+        </RACToggleButtonGroup>
       </ToggleGroupContext.Provider>
     );
   },
 );
 
+/* -----------------------------------------------------------------------------
+   ToggleGroupItem
+   ----------------------------------------------------------------------------- */
+
 export interface ToggleGroupItemProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value" | "className" | "aria-pressed"> {
+  extends Omit<RACToggleButtonProps, "className" | "children" | "id"> {
   value: string;
   /** Visual variant. Defaults to the group's variant. */
   variant?: ToggleVariant;
   size?: ToggleSize;
   /** Visible content used when no children are given. */
   label?: string;
+  /** Disables this item. */
+  disabled?: boolean;
+  isDisabled?: boolean;
   children?: ReactNode;
   className?: string;
 }
@@ -151,51 +200,45 @@ export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProp
       size: itemSizeProp,
       label,
       disabled,
-      type = "button",
+      isDisabled,
       className,
       children,
-      onClick,
       ...rest
     },
     ref,
   ) {
     const group = useContext(ToggleGroupContext);
-    const isPressed = group ? group.isPressed(value) : false;
     const variant = itemVariantProp ?? group?.variant ?? "default";
     const size = itemSizeProp ?? group?.size ?? "md";
+    const effectivelyDisabled = disabled ?? isDisabled;
+
     const content = children ?? label;
     const isIconOnly =
       size === "icon" ||
       (isValidElement(content) && !Array.isArray(content));
 
-    const classes = [
-      "nise-toggle-group__item",
-      `nise-toggle-group__item--${variant}`,
-      `nise-toggle-group__item--${size === "icon" ? "md" : size}`,
-      isIconOnly ? "nise-toggle-group__item--icon" : null,
-      isPressed ? "nise-toggle-group__item--pressed" : null,
-      className,
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-      group?.onPress(value);
-      onClick?.(event);
-    };
-
     return (
-      <button
+      <RACToggleButton
         ref={ref}
-        type={type}
-        className={classes}
-        aria-pressed={isPressed}
-        disabled={disabled}
-        onClick={handleClick}
+        id={value}
+        isDisabled={effectivelyDisabled}
+        className={({ isSelected, isDisabled: buttonDisabled }) =>
+          [
+            "nise-toggle-group__item",
+            `nise-toggle-group__item--${variant}`,
+            `nise-toggle-group__item--${size === "icon" ? "md" : size}`,
+            isIconOnly ? "nise-toggle-group__item--icon" : null,
+            isSelected ? "nise-toggle-group__item--pressed" : null,
+            buttonDisabled ? "nise-toggle-group__item--disabled" : null,
+            className,
+          ]
+            .filter(Boolean)
+            .join(" ")
+        }
         {...rest}
       >
-        {children ?? label}
-      </button>
+        {content}
+      </RACToggleButton>
     );
   },
 );

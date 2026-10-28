@@ -96,15 +96,16 @@ npm run verify           # the gate — run before saying you are done
 - Props are typed and exported; forward refs where a ref is meaningful; spread
   the rest of the native attributes.
 - Accessibility: a visible label always; never color alone; `aria-describedby`
-  only points at rendered ids; decorative icons `aria-hidden`. Prefer a primitive
-  (Radix) for ARIA-heavy patterns and native HTML otherwise.
-- Thirty components now. Radix backs `Select`, `Slider`, `Tabs`, `Dialog` and
-  `Tooltip`; the rest are native HTML (`Accordion`, `Alert`, `AspectRatio`, `Avatar`,
-  `Badge`, `Breadcrumb`, `Button`, `Card`, `Checkbox`, `Collapsible`, `Empty`, `Kbd`,
-  `Label`, `Pagination`, `Progress`, `Radio`, `Separator`, `Skeleton`, `Switch`,
-  `Table`, `TextField`, `Textarea`, `Timeline`, `Toggle`, `ToggleGroup`). Add a
-  Radix package only when it earns its place (D6); record the reason in
-  `docs/decisions.md`.
+  only points at rendered ids; decorative icons `aria-hidden`. Prefer a headless
+  primitive (React Aria Components / Radix) for complex interactive patterns and
+  native HTML otherwise (D6).
+- Thirty components now. React Aria Components backs `Collapsible` (`Disclosure`),
+  `Accordion` (`DisclosureGroup`), `Toggle` (`ToggleButton`), and `ToggleGroup`
+  (`ToggleButtonGroup`); Radix backs `Select`, `Slider`, `Tabs`, `Dialog` and `Tooltip`;
+  the rest are native HTML (`Alert`, `AspectRatio`, `Avatar`, `Badge`, `Breadcrumb`, `Button`,
+  `Card`, `Checkbox`, `Empty`, `Kbd`, `Label`, `Pagination`, `Progress`, `Radio`,
+  `Separator`, `Skeleton`, `Switch`, `Table`, `TextField`, `Textarea`, `Timeline`).
+  New headless foundations must earn their place (D6); record the reason in `docs/decisions.md`.
 
 ## Tests
 

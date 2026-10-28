@@ -1,5 +1,6 @@
 /* Nise Design System — Accordion.
-   Vertically stacked disclosure items with bottom dividers and rotating chevron. */
+   Vertically stacked disclosure items with bottom dividers and rotating chevron.
+   Backed by React Aria Components DisclosureGroup and Disclosure. */
 
 .nise-accordion {
   width: 100%;
@@ -33,17 +34,19 @@
   transition: color var(--duration-fast) var(--ease-standard);
 }
 
-.nise-accordion__trigger:hover:not(:disabled) {
+.nise-accordion__trigger:hover:not(:disabled):not([data-disabled]) {
   text-decoration: underline;
 }
 
-.nise-accordion__trigger:focus-visible {
+.nise-accordion__trigger:focus-visible,
+.nise-accordion__trigger[data-focus-visible] {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
   border-radius: var(--radius-sm);
 }
 
-.nise-accordion__trigger:disabled {
+.nise-accordion__trigger:disabled,
+.nise-accordion__trigger[data-disabled] {
   cursor: not-allowed;
   opacity: var(--opacity-disabled);
 }
@@ -58,7 +61,9 @@
   transition: transform var(--duration-fast) var(--ease-standard);
 }
 
-.nise-accordion__trigger--open .nise-accordion__chevron {
+.nise-accordion__trigger--open .nise-accordion__chevron,
+.nise-accordion__trigger[aria-expanded="true"] .nise-accordion__chevron,
+.nise-accordion__trigger[data-expanded] .nise-accordion__chevron {
   transform: rotate(180deg);
 }
 
@@ -68,6 +73,10 @@
   font-size: var(--font-size-sm);
   color: var(--color-base-content);
   line-height: var(--line-height-normal);
+}
+
+.nise-accordion__content[hidden] {
+  display: none !important;
 }
 
 .nise-accordion__inner {

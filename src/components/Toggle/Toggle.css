@@ -2,7 +2,8 @@
    A two-state pressed button. The pressed state is a selection drawn from the
    validated pair (--color-selected-surface / --color-selected-text), not a
    status; pressed and unpressed differ by tile AND tile-text. Sizes and radius
-   reuse the button slots so a toggle can sit beside a Button in a toolbar. */
+   reuse the button slots so a toggle can sit beside a Button in a toolbar.
+   Backed by React Aria Components ToggleButton. */
 
 .nise-toggle {
   display: inline-flex;
@@ -25,12 +26,14 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
-.nise-toggle:disabled {
+.nise-toggle:disabled,
+.nise-toggle[data-disabled] {
   cursor: not-allowed;
   opacity: var(--opacity-disabled);
 }
 
-.nise-toggle:focus-visible {
+.nise-toggle:focus-visible,
+.nise-toggle[data-focus-visible] {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
 }
@@ -79,7 +82,7 @@
   border-color: var(--color-border);
 }
 
-.nise-toggle--outline:hover:not(:disabled) {
+.nise-toggle--outline:hover:not(:disabled):not([data-disabled]) {
   background-color: var(--color-base-hover);
   border-color: var(--color-border-hover);
 }
@@ -87,11 +90,11 @@
 /* states */
 /* Rest is a ghost-like tile: the transparent fill keeps the surface visible and
    the label carries the primary voice. */
-.nise-toggle:hover:not(:disabled) {
+.nise-toggle:hover:not(:disabled):not([data-disabled]) {
   background-color: var(--color-base-hover);
 }
 
-.nise-toggle:active:not(:disabled) {
+.nise-toggle:active:not(:disabled):not([data-disabled]) {
   background-color: var(--color-base-active);
 }
 
@@ -99,17 +102,24 @@
    together, with no further marks. The hover and active rules below override
    the generic hover above on later order, so a pressed tile never takes a
    hover shade. */
-.nise-toggle--pressed {
+.nise-toggle--pressed,
+.nise-toggle[data-selected],
+.nise-toggle[aria-pressed="true"] {
   background-color: var(--color-selected-surface);
   color: var(--color-selected-text);
 }
 
-.nise-toggle--outline.nise-toggle--pressed {
+.nise-toggle--outline.nise-toggle--pressed,
+.nise-toggle--outline[data-selected],
+.nise-toggle--outline[aria-pressed="true"] {
   border-color: var(--color-selected-surface);
 }
 
-.nise-toggle--pressed:hover:not(:disabled),
-.nise-toggle--pressed:active:not(:disabled) {
+.nise-toggle--pressed:hover:not(:disabled):not([data-disabled]),
+.nise-toggle--pressed:active:not(:disabled):not([data-disabled]),
+.nise-toggle[data-selected]:hover:not(:disabled):not([data-disabled]),
+.nise-toggle[data-selected]:active:not(:disabled):not([data-disabled]),
+.nise-toggle[aria-pressed="true"]:hover:not(:disabled):not([data-disabled]),
+.nise-toggle[aria-pressed="true"]:active:not(:disabled):not([data-disabled]) {
   background-color: var(--color-selected-surface);
 }
-

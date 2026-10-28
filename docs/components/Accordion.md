@@ -1,6 +1,6 @@
 # Accordion
 
-A vertically stacked set of interactive headings that each reveal a section of content. Adheres to the W3C WAI-ARIA Accordion design pattern with full keyboard roving navigation.
+A vertically stacked set of interactive headings that each reveal a section of content. Backed by [React Aria Components (`DisclosureGroup`, `Disclosure`)](https://react-aria.adobe.com/Disclosure.html) as the headless foundation. Adheres to the W3C WAI-ARIA Accordion design pattern with full keyboard roving navigation.
 
 ## When to use
 

@@ -2,9 +2,11 @@
    Toggle
    -----------------------------------------------------------------------------
    A two-state pressed button: a toolbar mode, a filter, a transcript layer that
-   can be switched on and off. It is an `aria-pressed` button, not a checkbox
-   and not a switch — the state it owns belongs to the surface it acts on, not
-   to a form submission.
+   can be switched on and off. Backed by React Aria Components (ToggleButton)
+   as the headless foundation.
+
+   It is an `aria-pressed` button, not a checkbox and not a switch — the state
+   it owns belongs to the surface it acts on, not to a form submission.
 
    The pressed state is a SELECTION, not a status: it draws the validated
    selected pair (`--color-selected-surface` under `--color-selected-text`) and
@@ -34,18 +36,19 @@
 import {
   forwardRef,
   isValidElement,
-  useState,
-  type ButtonHTMLAttributes,
-  type MouseEvent,
   type ReactNode,
 } from "react";
+import {
+  ToggleButton as RACToggleButton,
+  type ToggleButtonProps as RACToggleButtonProps,
+} from "react-aria-components";
 import "./Toggle.css";
 
 export type ToggleVariant = "default" | "outline";
 export type ToggleSize = "sm" | "md" | "lg" | "icon";
 
 export interface ToggleProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "aria-pressed"> {
+  extends Omit<RACToggleButtonProps, "className" | "children"> {
   /** Visual variant. "default" is a ghost-like tile; "outline" adds a border. */
   variant?: ToggleVariant;
   /** Controlled press state. Omit it to manage the state internally. */
@@ -57,61 +60,63 @@ export interface ToggleProps
   /** Label text, or an icon followed by the text. */
   children?: ReactNode;
   className?: string;
+  disabled?: boolean;
 }
 
 export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
   {
     variant = "default",
     pressed,
+    isSelected,
     defaultPressed = false,
+    defaultSelected,
     onPressedChange,
+    onChange,
     size = "md",
     disabled,
-    type = "button",
+    isDisabled,
     className,
     children,
-    onClick,
     ...rest
   },
   ref,
 ) {
-  const [internalPressed, setInternalPressed] = useState(defaultPressed);
-  const controlled = pressed !== undefined;
-  const isPressed = controlled ? pressed : internalPressed;
+  const effectivelyDisabled = disabled ?? isDisabled;
+  const controlledSelected = pressed !== undefined ? pressed : isSelected;
+  const initialSelected = defaultSelected !== undefined ? defaultSelected : defaultPressed;
+
+  const handleChange = (selected: boolean) => {
+    onPressedChange?.(selected);
+    onChange?.(selected);
+  };
 
   const isIconOnly =
     size === "icon" ||
     (isValidElement(children) && !Array.isArray(children));
 
-  const classes = [
-    "nise-toggle",
-    `nise-toggle--${variant}`,
-    `nise-toggle--${size === "icon" ? "md" : size}`,
-    isIconOnly ? "nise-toggle--icon" : null,
-    isPressed ? "nise-toggle--pressed" : null,
-    className,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    const next = !isPressed;
-    if (!controlled) setInternalPressed(next);
-    onPressedChange?.(next);
-    onClick?.(event);
-  };
-
   return (
-    <button
+    <RACToggleButton
       ref={ref}
-      type={type}
-      className={classes}
-      aria-pressed={isPressed}
-      disabled={disabled}
-      onClick={handleClick}
+      isSelected={controlledSelected}
+      defaultSelected={initialSelected}
+      onChange={handleChange}
+      isDisabled={effectivelyDisabled}
+      className={({ isSelected: activeSelected, isDisabled: buttonDisabled }) =>
+        [
+          "nise-toggle",
+          `nise-toggle--${variant}`,
+          `nise-toggle--${size === "icon" ? "md" : size}`,
+          isIconOnly ? "nise-toggle--icon" : null,
+          activeSelected ? "nise-toggle--pressed" : null,
+          buttonDisabled ? "nise-toggle--disabled" : null,
+          className,
+        ]
+          .filter(Boolean)
+          .join(" ")
+      }
       {...rest}
     >
       {children}
-    </button>
+    </RACToggleButton>
   );
 });

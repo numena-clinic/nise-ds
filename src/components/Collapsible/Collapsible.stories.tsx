@@ -29,9 +29,9 @@ const meta = {
     docs: {
       description: {
         component:
-          "An interactive component which expands/collapses a panel. Matches the " +
-          "shadcn/ui and Radix Collapsible API, supporting both controlled and " +
-          "uncontrolled states, disabled state, and trigger composition with `asChild`.",
+          "An interactive component that expands/collapses a panel. Backed by " +
+          "React Aria Components (`Disclosure`), supporting both controlled and " +
+          "uncontrolled states, disabled state, and clean trigger composition.",
       },
     },
   },
@@ -41,8 +41,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Demonstrates the canonical shadcn/ui collapsible pattern:
- * A header row with title and a compact trigger button using `asChild`,
+ * Demonstrates the canonical repository starred list pattern:
+ * A header row with title and a compact trigger button,
  * an always-visible primary item, and hidden secondary items in `CollapsibleContent`.
  */
 function ShadcnCardDemoExample() {
@@ -73,22 +73,20 @@ function ShadcnCardDemoExample() {
           >
             @peduarte starred 3 repositories
           </h4>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label="Toggle repository list"
-              style={{
-                width: 32,
-                height: 32,
-                padding: 0,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <ChevronsUpDownIcon size={16} />
-            </Button>
+          <CollapsibleTrigger
+            variant="ghost"
+            size="sm"
+            aria-label="Toggle repository list"
+            style={{
+              width: 32,
+              height: 32,
+              padding: 0,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ChevronsUpDownIcon size={16} />
           </CollapsibleTrigger>
         </div>
 
@@ -155,27 +153,25 @@ function ProductDetailsExample() {
     <div style={{ maxWidth: 350 }}>
       <Card>
         <Collapsible open={open} onOpenChange={setOpen}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
+          <CollapsibleTrigger
+            variant="ghost"
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingInline: "var(--space-3)",
+            }}
+          >
+            <span>Product details</span>
+            <ChevronDownIcon
+              size={16}
               style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingInline: "var(--space-3)",
+                transition: "transform var(--duration-fast) var(--ease-standard)",
+                transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                color: "var(--color-text-muted)",
               }}
-            >
-              <span>Product details</span>
-              <ChevronDownIcon
-                size={16}
-                style={{
-                  transition: "transform var(--duration-fast) var(--ease-standard)",
-                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
-                  color: "var(--color-text-muted)",
-                }}
-              />
-            </Button>
+            />
           </CollapsibleTrigger>
           <CollapsibleContent
             style={{
@@ -211,19 +207,17 @@ function FileTreeExample() {
           <TabsContent value="explorer">
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
               <Collapsible defaultOpen>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="nise-collapsible__tree-item"
-                  >
-                    <ChevronRightIcon
-                      size={16}
-                      className="nise-collapsible__chevron"
-                    />
-                    <FolderIcon size={16} />
-                    <span>components</span>
-                  </Button>
+                <CollapsibleTrigger
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <ChevronRightIcon
+                    size={16}
+                    className="nise-collapsible__chevron"
+                  />
+                  <FolderIcon size={16} />
+                  <span>components</span>
                 </CollapsibleTrigger>
                 <CollapsibleContent
                   style={{
@@ -262,19 +256,17 @@ function FileTreeExample() {
               </Collapsible>
 
               <Collapsible>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="nise-collapsible__tree-item"
-                  >
-                    <ChevronRightIcon
-                      size={16}
-                      className="nise-collapsible__chevron"
-                    />
-                    <FolderIcon size={16} />
-                    <span>lib</span>
-                  </Button>
+                <CollapsibleTrigger
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <ChevronRightIcon
+                    size={16}
+                    className="nise-collapsible__chevron"
+                  />
+                  <FolderIcon size={16} />
+                  <span>lib</span>
                 </CollapsibleTrigger>
                 <CollapsibleContent
                   style={{
@@ -297,19 +289,17 @@ function FileTreeExample() {
               </Collapsible>
 
               <Collapsible>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="nise-collapsible__tree-item"
-                  >
-                    <ChevronRightIcon
-                      size={16}
-                      className="nise-collapsible__chevron"
-                    />
-                    <FolderIcon size={16} />
-                    <span>hooks</span>
-                  </Button>
+                <CollapsibleTrigger
+                  variant="ghost"
+                  size="sm"
+                  className="nise-collapsible__tree-item"
+                >
+                  <ChevronRightIcon
+                    size={16}
+                    className="nise-collapsible__chevron"
+                  />
+                  <FolderIcon size={16} />
+                  <span>hooks</span>
                 </CollapsibleTrigger>
                 <CollapsibleContent
                   style={{

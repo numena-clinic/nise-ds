@@ -20,13 +20,15 @@
   transition: color var(--duration-fast) var(--ease-standard);
 }
 
-.nise-collapsible__trigger:focus-visible {
+.nise-collapsible__trigger:focus-visible,
+.nise-collapsible__trigger[data-focus-visible] {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
   border-radius: var(--radius-sm);
 }
 
 .nise-collapsible__trigger:disabled,
+.nise-collapsible__trigger[data-disabled],
 .nise-collapsible[data-disabled] .nise-collapsible__trigger {
   cursor: not-allowed;
   opacity: var(--opacity-disabled);
@@ -38,7 +40,11 @@
 }
 
 [data-state="open"] > .nise-collapsible__chevron,
-[data-state="open"] .nise-collapsible__chevron {
+[data-state="open"] .nise-collapsible__chevron,
+[data-expanded] > .nise-collapsible__chevron,
+[data-expanded] .nise-collapsible__chevron,
+[aria-expanded="true"] > .nise-collapsible__chevron,
+[aria-expanded="true"] .nise-collapsible__chevron {
   transform: rotate(90deg);
 }
 
@@ -50,7 +56,7 @@
 
 .nise-collapsible__content[hidden],
 .nise-collapsible__content[data-state="closed"] {
-  display: none;
+  display: none !important;
 }
 
 .nise-collapsible__tree-item {

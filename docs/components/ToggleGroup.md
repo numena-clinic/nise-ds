@@ -1,6 +1,6 @@
 # ToggleGroup
 
-A set of Toggle-style pressed buttons sharing one selection space: `single` keeps exactly one item pressed, `multi` keeps a set. A selection group for toolbars and filters — not a radio group over a form field, not a Tabs row.
+A set of Toggle-style pressed buttons sharing one selection space: `single` keeps exactly one item pressed, `multi` keeps a set. Backed by [React Aria Components (`ToggleButtonGroup`, `ToggleButton`)](https://react-aria.adobe.com/ToggleButtonGroup.html) as the headless foundation. A selection group for toolbars and filters — not a radio group over a form field, not a Tabs row.
 
 ## When to use
 

@@ -2,12 +2,11 @@
    Accordion
    -----------------------------------------------------------------------------
    A vertically stacked set of interactive headings that each reveal a section
-   of content. Built on the W3C WAI-ARIA Accordion pattern with keyboard roving
-   navigation (ArrowUp, ArrowDown, Home, End).
+   of content. Backed by React Aria Components (DisclosureGroup, Disclosure,
+   Button slot="trigger", DisclosurePanel) as the headless foundation.
 
    Supports both `single` (one panel open at a time, optionally collapsible) and
-   `multiple` (any number of panels open simultaneously) modes, matching the
-   shadcn/ui and Radix Accordion API.
+   `multiple` (any number of panels open simultaneously) modes.
 
    Tokens consumed (component layer → semantic → primitive):
      --color-base-content, --color-text-muted, --color-border,
@@ -17,7 +16,7 @@
      --duration-fast, --ease-standard
 
    Accessibility:
-     - Each trigger is a real <button> contained within a heading role.
+     - Each trigger is an audited <button> contained within a heading role.
      - `aria-expanded` and `aria-controls` explicitly connect the trigger to the content panel.
      - The panel has `role="region"` and `aria-labelledby` referencing the trigger.
      - Chevron icon is decorative (`aria-hidden`).
@@ -28,21 +27,28 @@
 import {
   createContext,
   forwardRef,
+  useCallback,
   useContext,
-  useId,
   useState,
-  type ButtonHTMLAttributes,
   type HTMLAttributes,
-  type KeyboardEvent,
   type ReactNode,
 } from "react";
+import {
+  DisclosureGroup as RACDisclosureGroup,
+  Disclosure as RACDisclosure,
+  DisclosurePanel as RACDisclosurePanel,
+  Button as RACButton,
+  DisclosureStateContext,
+  type ButtonProps as RACButtonProps,
+  type Key,
+} from "react-aria-components";
 import { ChevronDownIcon } from "../../icons";
 import "./Accordion.css";
 
 export type AccordionType = "single" | "multiple";
 
 export interface AccordionProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange"> {
+  extends Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange" | "className"> {
   /** "single" allows one section open; "multiple" allows multiple sections open. */
   type?: AccordionType;
   /** When type is "single", allows closing the open item by clicking it again. Defaults to true. */
@@ -53,18 +59,22 @@ export interface AccordionProps
   defaultValue?: string | string[];
   /** Callback fired when the selection changes. */
   onValueChange?: (value: string | string[]) => void;
+  /** Disables interaction for the entire accordion. */
+  disabled?: boolean;
+  isDisabled?: boolean;
   children?: ReactNode;
   className?: string;
 }
 
-interface AccordionContextValue {
+interface AccordionMetaContextValue {
   type: AccordionType;
   collapsible: boolean;
-  isOpen: (value: string) => boolean;
-  toggleItem: (value: string) => void;
 }
 
-const AccordionContext = createContext<AccordionContextValue | null>(null);
+const AccordionMetaContext = createContext<AccordionMetaContextValue>({
+  type: "single",
+  collapsible: true,
+});
 
 export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Accordion(
   {
@@ -73,6 +83,8 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
     value,
     defaultValue,
     onValueChange,
+    disabled,
+    isDisabled,
     className,
     children,
     ...rest
@@ -80,46 +92,59 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
   ref,
 ) {
   const isMultiple = type === "multiple";
-  const [internalValue, setInternalValue] = useState<string | string[]>(
-    defaultValue ?? (isMultiple ? [] : ""),
-  );
+  const effectivelyDisabled = disabled ?? isDisabled;
+
+  const toKeySet = (v: string | string[] | undefined): Set<Key> | undefined => {
+    if (v === undefined) return undefined;
+    if (Array.isArray(v)) return new Set(v);
+    return v ? new Set([v]) : new Set();
+  };
 
   const controlled = value !== undefined;
-  const current = controlled ? value : internalValue;
-  const activeItems = Array.isArray(current) ? current : current ? [current] : [];
+  const [internalKeys, setInternalKeys] = useState<Set<Key>>(() => {
+    return toKeySet(defaultValue) ?? (isMultiple ? new Set() : new Set());
+  });
 
-  const isOpen = (itemValue: string) => activeItems.includes(itemValue);
+  const activeKeys = controlled ? toKeySet(value) : internalKeys;
 
-  const toggleItem = (itemValue: string) => {
-    let next: string | string[];
-    if (isMultiple) {
-      const items = Array.isArray(current) ? current : [];
-      next = items.includes(itemValue)
-        ? items.filter((v) => v !== itemValue)
-        : [...items, itemValue];
-    } else {
-      const isCurrentlyOpen = activeItems[0] === itemValue;
-      if (isCurrentlyOpen) {
-        next = collapsible ? "" : itemValue;
-      } else {
-        next = itemValue;
+  const handleExpandedChange = useCallback(
+    (keys: Set<Key>) => {
+      let nextKeys = keys;
+      if (!isMultiple && !collapsible && keys.size === 0) {
+        // In single non-collapsible mode, prevent uncollapsing the active item
+        nextKeys = activeKeys ?? new Set();
       }
-    }
 
-    if (!controlled) {
-      setInternalValue(next);
-    }
-    onValueChange?.(next);
-  };
+      if (!controlled) {
+        setInternalKeys(nextKeys);
+      }
+
+      const keyArray = Array.from(nextKeys).map(String);
+      if (isMultiple) {
+        onValueChange?.(keyArray);
+      } else {
+        onValueChange?.(keyArray[0] ?? "");
+      }
+    },
+    [isMultiple, collapsible, controlled, activeKeys, onValueChange],
+  );
 
   const classes = ["nise-accordion", className].filter(Boolean).join(" ");
 
   return (
-    <AccordionContext.Provider value={{ type, collapsible, isOpen, toggleItem }}>
-      <div ref={ref} className={classes} {...rest}>
+    <AccordionMetaContext.Provider value={{ type, collapsible }}>
+      <RACDisclosureGroup
+        ref={ref}
+        allowsMultipleExpanded={isMultiple}
+        expandedKeys={activeKeys}
+        onExpandedChange={handleExpandedChange}
+        isDisabled={effectivelyDisabled}
+        className={classes}
+        {...rest}
+      >
         {children}
-      </div>
-    </AccordionContext.Provider>
+      </RACDisclosureGroup>
+    </AccordionMetaContext.Provider>
   );
 });
 
@@ -127,49 +152,43 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
    AccordionItem
    ----------------------------------------------------------------------------- */
 
-interface AccordionItemContextValue {
-  value: string;
-  triggerId: string;
-  contentId: string;
-  isOpen: boolean;
-}
-
-const AccordionItemContext = createContext<AccordionItemContextValue | null>(null);
-
-export interface AccordionItemProps extends HTMLAttributes<HTMLDivElement> {
+export interface AccordionItemProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "className"> {
   /** Unique value identifying this item within the accordion. */
   value: string;
   /** Disables interaction with this item. */
   disabled?: boolean;
+  isDisabled?: boolean;
   children?: ReactNode;
   className?: string;
 }
 
 export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
-  function AccordionItem({ value, disabled, className, children, ...rest }, ref) {
-    const root = useContext(AccordionContext);
-    const idPrefix = useId();
-    const triggerId = `${idPrefix}-trigger`;
-    const contentId = `${idPrefix}-content`;
-    const itemOpen = root ? root.isOpen(value) : false;
-
-    const classes = [
-      "nise-accordion__item",
-      itemOpen ? "nise-accordion__item--open" : null,
-      disabled ? "nise-accordion__item--disabled" : null,
-      className,
-    ]
-      .filter(Boolean)
-      .join(" ");
+  function AccordionItem(
+    { value, disabled, isDisabled, className, children, ...rest },
+    ref,
+  ) {
+    const effectivelyDisabled = disabled ?? isDisabled;
 
     return (
-      <AccordionItemContext.Provider
-        value={{ value, triggerId, contentId, isOpen: itemOpen }}
+      <RACDisclosure
+        ref={ref}
+        id={value}
+        isDisabled={effectivelyDisabled}
+        className={({ isExpanded, isDisabled: itemDisabled }) =>
+          [
+            "nise-accordion__item",
+            isExpanded ? "nise-accordion__item--open" : null,
+            itemDisabled ? "nise-accordion__item--disabled" : null,
+            className,
+          ]
+            .filter(Boolean)
+            .join(" ")
+        }
+        {...rest}
       >
-        <div ref={ref} className={classes} data-state={itemOpen ? "open" : "closed"} {...rest}>
-          {children}
-        </div>
-      </AccordionItemContext.Provider>
+        {children}
+      </RACDisclosure>
     );
   },
 );
@@ -179,27 +198,23 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
    ----------------------------------------------------------------------------- */
 
 export interface AccordionTriggerProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "aria-expanded"> {
+  extends Omit<RACButtonProps, "className" | "children"> {
+  disabled?: boolean;
   children?: ReactNode;
   className?: string;
 }
 
 export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerProps>(
-  function AccordionTrigger({ children, className, onClick, onKeyDown, ...rest }, ref) {
-    const root = useContext(AccordionContext);
-    const item = useContext(AccordionItemContext);
+  function AccordionTrigger(
+    { children, className, disabled, isDisabled, onKeyDown, ...rest },
+    ref,
+  ) {
+    const disclosureState = useContext(DisclosureStateContext);
+    const isExpanded = disclosureState?.isExpanded ?? false;
+    const effectivelyDisabled = disabled ?? isDisabled;
 
-    const isOpen = item?.isOpen ?? false;
-
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (item && root) {
-        root.toggleItem(item.value);
-      }
-      onClick?.(e);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-      const target = e.currentTarget;
+    const handleKeyDown: RACButtonProps["onKeyDown"] = (e) => {
+      const target = e.currentTarget as HTMLElement;
       const accordion = target.closest(".nise-accordion");
       if (accordion) {
         const triggers = Array.from(
@@ -207,7 +222,7 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
             ".nise-accordion__trigger:not(:disabled)",
           ),
         );
-        const index = triggers.indexOf(target);
+        const index = triggers.indexOf(target as HTMLButtonElement);
 
         if (e.key === "ArrowDown") {
           e.preventDefault();
@@ -230,7 +245,7 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
 
     const classes = [
       "nise-accordion__trigger",
-      isOpen ? "nise-accordion__trigger--open" : null,
+      isExpanded ? "nise-accordion__trigger--open" : null,
       className,
     ]
       .filter(Boolean)
@@ -238,21 +253,18 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
 
     return (
       <h3 className="nise-accordion__header">
-        <button
+        <RACButton
           ref={ref}
-          type="button"
-          id={item?.triggerId}
-          aria-expanded={isOpen}
-          aria-controls={item?.contentId}
+          slot="trigger"
+          isDisabled={effectivelyDisabled}
           className={classes}
-          data-state={isOpen ? "open" : "closed"}
-          onClick={handleClick}
+          data-state={isExpanded ? "open" : "closed"}
           onKeyDown={handleKeyDown}
           {...rest}
         >
           <span className="nise-accordion__title">{children}</span>
           <ChevronDownIcon size={16} className="nise-accordion__chevron" />
-        </button>
+        </RACButton>
       </h3>
     );
   },
@@ -262,37 +274,36 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
    AccordionContent
    ----------------------------------------------------------------------------- */
 
-export interface AccordionContentProps extends HTMLAttributes<HTMLDivElement> {
+export interface AccordionContentProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "className"> {
+  role?: "region" | "group";
   children?: ReactNode;
   className?: string;
 }
 
 export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(
-  function AccordionContent({ children, className, ...rest }, ref) {
-    const item = useContext(AccordionItemContext);
-    const isOpen = item?.isOpen ?? false;
+  function AccordionContent({ children, className, role = "region", ...rest }, ref) {
+    const disclosureState = useContext(DisclosureStateContext);
+    const isExpanded = disclosureState?.isExpanded ?? false;
 
     const classes = [
       "nise-accordion__content",
-      isOpen ? "nise-accordion__content--open" : null,
+      isExpanded ? "nise-accordion__content--open" : null,
       className,
     ]
       .filter(Boolean)
       .join(" ");
 
     return (
-      <div
+      <RACDisclosurePanel
         ref={ref}
-        id={item?.contentId}
-        role="region"
-        aria-labelledby={item?.triggerId}
-        hidden={!isOpen}
-        data-state={isOpen ? "open" : "closed"}
+        role={role}
         className={classes}
+        data-state={isExpanded ? "open" : "closed"}
         {...rest}
       >
         <div className="nise-accordion__inner">{children}</div>
-      </div>
+      </RACDisclosurePanel>
     );
   },
 );

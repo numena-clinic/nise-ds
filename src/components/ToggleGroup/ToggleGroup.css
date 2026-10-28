@@ -3,7 +3,8 @@
    Toggle's two states: a ghost-like rest tile carrying --color-primary, and the
    pressed selection on the validated pair (--color-selected-surface /
    --color-selected-text) — pressed and unpressed differ by tile AND tile-text,
-   never color alone. Sizes and radius reuse the button slots. */
+   never color alone. Sizes and radius reuse the button slots.
+   Backed by React Aria Components ToggleButtonGroup and ToggleButton. */
 
 .nise-toggle-group {
   display: inline-flex;
@@ -33,12 +34,14 @@
     color var(--duration-fast) var(--ease-standard);
 }
 
-.nise-toggle-group__item:disabled {
+.nise-toggle-group__item:disabled,
+.nise-toggle-group__item[data-disabled] {
   cursor: not-allowed;
   opacity: var(--opacity-disabled);
 }
 
-.nise-toggle-group__item:focus-visible {
+.nise-toggle-group__item:focus-visible,
+.nise-toggle-group__item[data-focus-visible] {
   outline: var(--focus-ring-width) solid var(--color-focus-ring);
   outline-offset: var(--focus-ring-offset);
 }
@@ -87,33 +90,40 @@
   border-color: var(--color-border);
 }
 
-.nise-toggle-group__item--outline:hover:not(:disabled) {
+.nise-toggle-group__item--outline:hover:not(:disabled):not([data-disabled]) {
   background-color: var(--color-base-hover);
   border-color: var(--color-border-hover);
 }
 
 /* states */
-.nise-toggle-group__item:hover:not(:disabled) {
+.nise-toggle-group__item:hover:not(:disabled):not([data-disabled]) {
   background-color: var(--color-base-hover);
 }
 
-.nise-toggle-group__item:active:not(:disabled) {
+.nise-toggle-group__item:active:not(:disabled):not([data-disabled]) {
   background-color: var(--color-base-active);
 }
 
 /* Pressed stays the selection on hover and active: the rules below override
    the generic hover above by later order. */
-.nise-toggle-group__item--pressed {
+.nise-toggle-group__item--pressed,
+.nise-toggle-group__item[data-selected],
+.nise-toggle-group__item[aria-pressed="true"] {
   background-color: var(--color-selected-surface);
   color: var(--color-selected-text);
 }
 
-.nise-toggle-group__item--outline.nise-toggle-group__item--pressed {
+.nise-toggle-group__item--outline.nise-toggle-group__item--pressed,
+.nise-toggle-group__item--outline[data-selected],
+.nise-toggle-group__item--outline[aria-pressed="true"] {
   border-color: var(--color-selected-surface);
 }
 
-.nise-toggle-group__item--pressed:hover:not(:disabled),
-.nise-toggle-group__item--pressed:active:not(:disabled) {
+.nise-toggle-group__item--pressed:hover:not(:disabled):not([data-disabled]),
+.nise-toggle-group__item--pressed:active:not(:disabled):not([data-disabled]),
+.nise-toggle-group__item[data-selected]:hover:not(:disabled):not([data-disabled]),
+.nise-toggle-group__item[data-selected]:active:not(:disabled):not([data-disabled]),
+.nise-toggle-group__item[aria-pressed="true"]:hover:not(:disabled):not([data-disabled]),
+.nise-toggle-group__item[aria-pressed="true"]:active:not(:disabled):not([data-disabled]) {
   background-color: var(--color-selected-surface);
 }
-

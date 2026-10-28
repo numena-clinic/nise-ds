@@ -38,11 +38,25 @@ first-class system roles. In line with brand rules (`color.md §4`), color is ne
 indicator of state: an interface error or warning is text + an icon + a heavier boundary first,
 color last. Accents remain categorical emphasis, never verdicts.
 
-**D6 — Radix primitives for complex ARIA; native HTML everywhere else.**  
-Radix is adopted only when it solves genuinely difficult accessibility patterns: `Select`
-(listbox semantics, typeahead, focus management, portals), `Slider` (range semantics, keyboard stepping),
-`Tabs` (tablist/tabpanel roving tabindex), and `Dialog`/`Tooltip` (focus traps, dismissal, portals).
-All other components use native HTML (`<button>`, `<input>`, `<table>`, etc.) to keep dependencies minimal.
+**D6 — React Aria Components as the primary headless foundation; native HTML for simple elements.**  
+React Aria Components (`react-aria-components`) is the preferred headless foundation for complex
+interactive components (`Collapsible` via `Disclosure`, `Accordion` via `DisclosureGroup`, and
+`Toggle` / `ToggleGroup` via `ToggleButton` / `ToggleButtonGroup`).
+- **Why React Aria was selected**: Solves genuinely difficult interaction behavior—keyboard handling
+  (Enter/Space/arrows), focus visibility, pointer/touch normalization, ARIA relationships (`aria-controls`,
+  `aria-labelledby`, `aria-expanded`), and disclosure visibility semantics (`hidden="until-found"`)—without
+  reinventing state machines from scratch. It is consumed as a versioned npm dependency (no unversioned
+  copy-pasting) and introduces zero runtime CSS or Tailwind dependencies.
+- **What Nise continues to own**: Numena Brand defines identity and visual principles; Nise owns 100% of
+  the design tokens, plain CSS, component APIs, product UI, and patterns.
+- **When native HTML is appropriate**: Simple, structural, or largely static elements (`Button`, `Card`,
+  `Badge`, `Alert`, `Kbd`, `Separator`, `Avatar`, `Table`, `Progress`, `Skeleton`) use native HTML to keep
+  dependencies lean.
+- **Policy for existing Radix components**: Pre-existing Radix components (`Select`, `Slider`, `Tabs`,
+  `Dialog`, `Tooltip`) remain active and unchanged during the `Collapsible` pilot. Future component updates
+  will evaluate migration to React Aria on an intentional, component-by-component basis.
+- **Evaluation criteria**: New headless dependencies must earn their place by replacing error-prone custom
+  state machines with audited accessibility, without bringing CSS-in-JS or Tailwind into the bundle.
 
 **D7 — Storybook is the component documentation surface.**  
 Component documentation and props are generated directly from TypeScript types
