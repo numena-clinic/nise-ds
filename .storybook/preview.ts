@@ -51,27 +51,14 @@ const preview: Preview = {
     },
   },
   initialGlobals: {
-    theme: "system",
+    theme: "light",
   },
   parameters: {
     controls: { expanded: true },
+    options: { storySort: { order: ["Portfolio", "Foundations", "Components", "Compositions"] } },
     a11y: {
-      // 'error' turns every found violation into a failing check in the a11y
-      // panel. The audit runs axe over the whole document, so it sees the
-      // aria-hidden behaviour Radix applies while a popup is open.
+      // 'error' turns every found violation into a failing check in the a11y panel.
       test: "error",
-      config: {
-        rules: [
-          {
-            // Radix non-modal overlays hide the rest of the document via
-            // @radix-ui/react-dismissable-layer and manage focus themselves.
-            // axe cannot know that, so it flags a false positive whenever a
-            // Select popup is open. Genuine violations are still caught.
-            id: "aria-hidden-focus",
-            enabled: false,
-          },
-        ],
-      },
     },
   },
 };

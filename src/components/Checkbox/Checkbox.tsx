@@ -62,6 +62,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
     else if (forwardedRef) forwardedRef.current = node;
   };
 
+  const describedBy = [rest["aria-describedby"], hint != null ? hintId : null]
+    .filter(Boolean)
+    .join(" ") || undefined;
+
   const classes = ["nise-checkbox", disabled ? "nise-checkbox--disabled" : null, className]
     .filter(Boolean)
     .join(" ");
@@ -75,7 +79,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           id={fieldId}
           type="checkbox"
           disabled={disabled}
-          aria-describedby={hint != null ? hintId : undefined}
+          aria-describedby={describedBy}
           className="nise-checkbox__input"
         />
         <span className="nise-checkbox__box" aria-hidden="true" />

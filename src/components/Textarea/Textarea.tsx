@@ -55,16 +55,19 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const hintId = `${fieldId}-hint`;
     const errorId = `${fieldId}-error`;
 
+    const isInvalid = error != null ? true : rest["aria-invalid"];
+    const hasErrorClass = error != null || isInvalid === true || isInvalid === "true";
+
     const showHint = hint != null && error == null;
     const describedBy =
-      [showHint ? hintId : null, error != null ? errorId : null]
+      [rest["aria-describedby"], showHint ? hintId : null, error != null ? errorId : null]
         .filter(Boolean)
         .join(" ") || undefined;
 
     const classes = [
       "nise-field",
       "nise-textarea",
-      error != null ? "nise-field--error" : null,
+      hasErrorClass ? "nise-field--error" : null,
       disabled ? "nise-field--disabled" : null,
       className,
     ]
@@ -90,7 +93,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className="nise-textarea__control"
           disabled={disabled}
           required={required}
-          aria-invalid={error != null ? true : undefined}
+          aria-invalid={isInvalid}
           aria-describedby={describedBy}
         />
 

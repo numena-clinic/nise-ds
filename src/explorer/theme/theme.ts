@@ -122,24 +122,30 @@ export function withFontFamily(value: string, family: string): string {
 
 // ── experimental resolution ──────────────────────────────────────────────────
 
-/** The token graph with overrides applied — the "experimental" state. Under
- * "dark" the graph starts from the dark mapping, so resolved values, the token
- * reference and the contrast re-check all read the same theme as the preview. */
+/** The token graph with overrides applied — the "experimental" state.
+ * Under the light-authoring/dark-view model:
+ * 1. User overrides edit the light base.
+ * 2. In dark mode, authored DARK_RAW mappings take precedence over light base. */
 export function experimentalTokens(overrides: Overrides, mode: ThemeMode = "light"): Record<string, string> {
-  const map: Record<string, string> = mode === "dark" ? { ...ALL_TOKENS, ...DARK_RAW } : { ...ALL_TOKENS };
+  const map: Record<string, string> = { ...ALL_TOKENS };
   for (const [name, o] of Object.entries(overrides)) {
     if (!(name in EDITABLE_BY_NAME)) continue;
     map[name] = o.kind === "alias" ? `var(${o.ref})` : o.value;
+  }
+  if (mode === "dark") {
+    for (const [name, raw] of Object.entries(DARK_RAW)) {
+      map[name] = raw;
+    }
   }
   return map;
 }
 
 /** Inline custom properties for a scoped preview wrapper (no :root mutation).
  *
- * Beyond the user's overrides, every theme-varying token is pinned to its value
- * under `mode`. That makes the preview's theme explicit on the wrapper itself —
- * it follows the switcher even when the OS prefers the other scheme, and it
- * never depends on [data-theme] cascading from an ancestor. */
+ * 1. Theme-varying tokens are pinned to the active mode.
+ * 2. User overrides are applied (in dark mode, authored DARK_RAW overrides light edits).
+ * 3. Transitive dependents of altered tokens are redeclared at preview scope so
+ *    dependent aliases resolve against the scoped variables instead of :root. */
 export function previewStyle(overrides: Overrides, mode: ThemeMode = "light"): Record<string, string> {
   const style: Record<string, string> = {};
   const themeSource = mode === "dark" ? DARK_RAW : ALL_TOKENS;
@@ -149,8 +155,41 @@ export function previewStyle(overrides: Overrides, mode: ThemeMode = "light"): R
   }
   for (const [name, o] of Object.entries(overrides)) {
     if (!(name in EDITABLE_BY_NAME)) continue;
+    if (mode === "dark" && name in DARK_RAW) {
+      continue;
+    }
     style[name] = o.kind === "alias" ? `var(${o.ref})` : o.value;
   }
+
+  // Redeclare necessary dependency graph at the preview scope
+  const changedTokens = new Set<string>();
+  for (const name of Object.keys(overrides)) {
+    if (name in EDITABLE_BY_NAME) changedTokens.add(name);
+  }
+  if (mode === "dark") {
+    for (const name of THEME_VARYING) {
+      changedTokens.add(name);
+    }
+  }
+
+  const dependentsToRedeclare = new Set<string>();
+  for (const token of changedTokens) {
+    for (const dep of transitiveDependents(token)) {
+      dependentsToRedeclare.add(dep);
+    }
+  }
+
+  for (const dep of dependentsToRedeclare) {
+    if (dep in style) continue;
+    const darkVal = mode === "dark" ? DARK_RAW[dep] : undefined;
+    const baseVal = ALL_TOKENS[dep];
+    if (darkVal !== undefined) {
+      style[dep] = darkVal;
+    } else if (baseVal !== undefined) {
+      style[dep] = baseVal;
+    }
+  }
+
   return style;
 }
 
@@ -242,10 +281,13 @@ export function diffRows(overrides: Overrides): DiffRow[] {
   return rows;
 }
 
-// ── the portable candidate ───────────────────────────────────────────────────
+import {
+  parseCandidateText,
+  CANDIDATE_SCHEMA,
+  CANDIDATE_VERSION,
+} from "../../../tokens/candidate-schema.mjs";
 
-export const CANDIDATE_SCHEMA = "nise.theme-candidate";
-export const CANDIDATE_VERSION = 1;
+export { CANDIDATE_SCHEMA, CANDIDATE_VERSION };
 
 export interface CandidateToken {
   name: string;
@@ -287,69 +329,15 @@ export type ParseResult =
   | { ok: true; candidate: Candidate; errors: string[] }
   | { ok: false; candidate: null; errors: string[] };
 
-/** Parse and validate a candidate file's text. Never throws on user input. */
+/** Parse and validate a candidate file's text using shared environment-neutral schema.
+ * Enforces atomic imports: returns ok: false and candidate: null on any error.
+ * Preserves incoming `from` field to enable accurate drift detection. */
 export function parseCandidate(text: string): ParseResult {
-  const errors: string[] = [];
-  let data: unknown;
-  try {
-    data = JSON.parse(text);
-  } catch (e) {
-    return { ok: false, candidate: null, errors: [`Not valid JSON: ${(e as Error).message}`] };
+  const res = parseCandidateText(text);
+  if (!res.ok) {
+    return { ok: false, candidate: null, errors: res.errors };
   }
-  if (typeof data !== "object" || data === null) {
-    return { ok: false, candidate: null, errors: ["Expected a JSON object"] };
-  }
-  const obj = data as Record<string, unknown>;
-  if (obj.schema !== CANDIDATE_SCHEMA) {
-    return { ok: false, candidate: null, errors: [`Expected schema "${CANDIDATE_SCHEMA}"`] };
-  }
-  if (obj.version !== CANDIDATE_VERSION) {
-    return { ok: false, candidate: null, errors: [`Unsupported version: ${String(obj.version)}`] };
-  }
-  if (!Array.isArray(obj.tokens)) {
-    return { ok: false, candidate: null, errors: ["`tokens` must be an array"] };
-  }
-  const tokens: CandidateToken[] = [];
-  for (const [i, raw] of obj.tokens.entries()) {
-    const at = `tokens[${i}]`;
-    if (typeof raw !== "object" || raw === null) {
-      errors.push(`${at}: not an object`);
-      continue;
-    }
-    const t = raw as Record<string, unknown>;
-    const name = t.name;
-    if (typeof name !== "string" || !(name in EDITABLE_BY_NAME)) {
-      errors.push(`${at}: unknown or uneditable token "${String(name)}"`);
-      continue;
-    }
-    const e = EDITABLE_BY_NAME[name];
-    if (!e) {
-      errors.push(`${at}: unknown or uneditable token "${name}"`);
-      continue;
-    }
-    const layer = e.layer;
-    if (t.kind === "alias") {
-      if (typeof t.ref !== "string" || !(e.options ?? []).includes(t.ref)) {
-        errors.push(`${at} ${name}: ref "${String(t.ref)}" is not a color primitive`);
-        continue;
-      }
-      tokens.push({ name, layer, kind: "alias", ref: t.ref, from: `var(${e.canonicalRef})` });
-    } else if (t.kind === "value") {
-      if (typeof t.value !== "string") {
-        errors.push(`${at} ${name}: value must be a string`);
-        continue;
-      }
-      const problem = validateValue(e, t.value);
-      if (problem) {
-        errors.push(`${at} ${name}: ${problem}`);
-        continue;
-      }
-      tokens.push({ name, layer, kind: "value", value: t.value, from: e.canonical });
-    } else {
-      errors.push(`${at} ${name}: kind must be "value" or "alias"`);
-    }
-  }
-  return { ok: true, candidate: { schema: CANDIDATE_SCHEMA, version: CANDIDATE_VERSION, tokens }, errors };
+  return { ok: true, candidate: res.candidate as Candidate, errors: [] };
 }
 
 /** Turn a candidate back into overrides (used by import). */

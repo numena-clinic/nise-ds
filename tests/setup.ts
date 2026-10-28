@@ -1,7 +1,7 @@
 // Runs before every test file (see vitest.config.ts).
 import "@testing-library/jest-dom/vitest";
 
-// jsdom omits a few browser APIs that Radix's primitives (Select, Slider,
+// jsdom omits a few browser APIs that the headless primitives (Select, Slider,
 // Tooltip, Dialog) call on pointer interaction. Provide the minimum so
 // keyboard/pointer tests run.
 if (!("ResizeObserver" in globalThis)) {
@@ -13,8 +13,19 @@ if (!("ResizeObserver" in globalThis)) {
 }
 
 if (!("PointerEvent" in globalThis)) {
-  // @ts-expect-error minimal stand-in, enough for Radix's event wiring
-  globalThis.PointerEvent = MouseEvent;
+  class TestPointerEvent extends MouseEvent {
+    readonly pointerId: number;
+    readonly pointerType: string;
+    readonly isPrimary: boolean;
+    constructor(type: string, init: PointerEventInit = {}) {
+      super(type, init);
+      this.pointerId = init.pointerId ?? 1;
+      this.pointerType = init.pointerType ?? "mouse";
+      this.isPrimary = init.isPrimary ?? true;
+    }
+  }
+  // jsdom omits the rest of the pointer geometry; interactions use these fields.
+  globalThis.PointerEvent = TestPointerEvent as typeof PointerEvent;
 }
 
 // jsdom exposes the key but not a usable implementation; some components read

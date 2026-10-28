@@ -6,7 +6,7 @@ const meta = {
   title: "Components/Dialog",
   component: Dialog,
   tags: ["autodocs"],
-  args: {},
+  args: { children: null },
 } satisfies Meta<typeof Dialog>;
 
 export default meta;

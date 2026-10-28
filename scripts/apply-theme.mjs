@@ -27,9 +27,6 @@ import { planPromotion, TOKEN_FILES } from "./lib/promote.mjs";
 const SCHEMA = "nise.theme-candidate";
 const VERSION = 1;
 
-/** The generated artifact a rebuild rewrites; restored alongside the source. */
-const GENERATED_CSS = "src/tokens/tokens.css";
-
 function usage() {
   console.log(`usage: npm run theme:apply -- <candidate.json> [--write]
 
@@ -99,13 +96,34 @@ if (!write) {
   process.exit(0);
 }
 
+import { existsSync, unlinkSync } from "node:fs";
+
+const GENERATED_ARTIFACTS = [
+  "src/tokens/tokens.css",
+  "tokens/dist/tokens.json",
+  "tokens/dist/nise.tokens.json",
+];
+
 // ── apply, with rollback on a failed rebuild or validation ───────────────────
 const backups = new Map();
-for (const rel of [...Object.values(TOKEN_FILES), GENERATED_CSS]) {
-  backups.set(rel, readFileSync(resolve(root, rel), "utf8"));
+for (const rel of [...Object.values(TOKEN_FILES), ...GENERATED_ARTIFACTS]) {
+  const abs = resolve(root, rel);
+  if (existsSync(abs)) {
+    backups.set(rel, readFileSync(abs, "utf8"));
+  } else {
+    backups.set(rel, null);
+  }
 }
+
 const restore = () => {
-  for (const [rel, text] of backups) writeFileSync(resolve(root, rel), text);
+  for (const [rel, text] of backups) {
+    const abs = resolve(root, rel);
+    if (text === null) {
+      if (existsSync(abs)) unlinkSync(abs);
+    } else {
+      writeFileSync(abs, text);
+    }
+  }
 };
 
 for (const [rel, text] of Object.entries(plan.files)) {
@@ -118,7 +136,7 @@ try {
   npm("tokens:validate");
 } catch (e) {
   restore();
-  console.error(`\ntheme:apply — rebuild or validation failed, source restored.\n${e.message}`);
+  console.error(`\ntheme:apply — rebuild or validation failed, source and artifacts restored.\n${e.message}`);
   process.exit(1);
 }
 

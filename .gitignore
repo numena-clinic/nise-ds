@@ -16,3 +16,7 @@ tokens/dist/
 *.woff2
 *.ttf
 *.otf
+
+dist-explorer/
+playwright-report/
+test-results/

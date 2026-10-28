@@ -1,20 +1,10 @@
 # Slider
 
-Radix-backed single-value slider. Pass `label` and `hint` for a visible name;
-otherwise forward `aria-label`.
+A single-thumb React Aria slider. Nise retains array-shaped `value`,
+`defaultValue` and `onValueChange`, with `min`, `max` and `step`. Only one value
+is supported. Use `label` or an accessible name and provide a `hint` when helpful.
 
-## Usage
-```tsx
-<Slider label="Tone" defaultValue={[40]} min={0} max={100} />
-```
-
-## Tokens
-`--slider-track-height`, `--slider-thumb-size`, `--slider-gap`.
-
-## Geometry
-Radix positions a zero-size wrapper at the value point, and the thumb is
-centred on that origin with `translate(-50%, -50%)` — the wrapper's static
-position is on the root's centre line because the root is
-`align-items: center`. The thumb is larger than the rail, so it overhangs it
-symmetrically by `(thumb − rail) / 2`; at the ends Radix nudges the thumb by
-half its size so it stays inside the track.
+React Aria renders a native range input inside its positioned thumb. The input
+carries its value and description; Arrow keys and Home/End use the primitive's
+behavior. Browser tests measure thumb centering and keyboard value changes.
+The visual track and thumb read `--slider-*` and semantic roles.

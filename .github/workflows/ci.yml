@@ -1,10 +1,10 @@
 name: verify
-
 on:
   push:
-    branches: [master]
+    branches: [master, hardening, portfolio-release]
   pull_request:
-
+permissions:
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -15,12 +15,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # Reproducible tokens first: a stale src/tokens/tokens.css fails here.
-      - run: npm run tokens:validate
-      - run: npm run check:usage
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run test
+      - run: npm run verify
       - run: npm run build-storybook
-      # The Theme Explorer is a real build; prove it compiles in CI too.
-      - run: npm run build:explorer
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-results
+          path: test-results/

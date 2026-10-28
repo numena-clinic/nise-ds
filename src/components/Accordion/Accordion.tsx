@@ -221,23 +221,32 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
           accordion.querySelectorAll<HTMLButtonElement>(
             ".nise-accordion__trigger:not(:disabled)",
           ),
-        );
+        ).filter((btn) => {
+          // Must be directly owned by this accordion, not an inner nested accordion
+          if (btn.closest(".nise-accordion") !== accordion) return false;
+          // Must not be disabled or inside a hidden container
+          if (btn.disabled || btn.getAttribute("aria-disabled") === "true") return false;
+          if (btn.closest("[hidden]")) return false;
+          return true;
+        });
         const index = triggers.indexOf(target as HTMLButtonElement);
 
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          const nextIndex = (index + 1) % triggers.length;
-          triggers[nextIndex]?.focus();
-        } else if (e.key === "ArrowUp") {
-          e.preventDefault();
-          const prevIndex = (index - 1 + triggers.length) % triggers.length;
-          triggers[prevIndex]?.focus();
-        } else if (e.key === "Home") {
-          e.preventDefault();
-          triggers[0]?.focus();
-        } else if (e.key === "End") {
-          e.preventDefault();
-          triggers[triggers.length - 1]?.focus();
+        if (triggers.length > 0 && index !== -1) {
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            const nextIndex = (index + 1) % triggers.length;
+            triggers[nextIndex]?.focus();
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            const prevIndex = (index - 1 + triggers.length) % triggers.length;
+            triggers[prevIndex]?.focus();
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            triggers[0]?.focus();
+          } else if (e.key === "End") {
+            e.preventDefault();
+            triggers[triggers.length - 1]?.focus();
+          }
         }
       }
       onKeyDown?.(e);

@@ -57,10 +57,26 @@ export interface ToggleProps
   defaultPressed?: boolean;
   onPressedChange?: (pressed: boolean) => void;
   size?: ToggleSize;
+  /** Explicitly mark button as icon-only (renders square geometry). */
+  iconOnly?: boolean;
   /** Label text, or an icon followed by the text. */
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
+}
+
+/** Check if a node is an SVG or icon element rather than textual content */
+function isIconChild(node: ReactNode): boolean {
+  if (!isValidElement(node)) return false;
+  if (typeof node.type === "string") return node.type === "svg";
+  const comp = node.type as { displayName?: string; name?: string };
+  const name = comp.displayName || comp.name || "";
+  if (name.endsWith("Icon") || name === "Icon") return true;
+  const props = node.props as Record<string, unknown> | undefined;
+  if (props?.["aria-hidden"] === true || props?.["aria-hidden"] === "true" || props?.role === "img") {
+    return true;
+  }
+  return false;
 }
 
 export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
@@ -73,6 +89,7 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
     onPressedChange,
     onChange,
     size = "md",
+    iconOnly,
     disabled,
     isDisabled,
     className,
@@ -91,8 +108,10 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
   };
 
   const isIconOnly =
-    size === "icon" ||
-    (isValidElement(children) && !Array.isArray(children));
+    iconOnly !== undefined
+      ? iconOnly
+      : size === "icon" ||
+        (isValidElement(children) && !Array.isArray(children) && isIconChild(children));
 
   return (
     <RACToggleButton

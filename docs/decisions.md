@@ -52,9 +52,7 @@ interactive components (`Collapsible` via `Disclosure`, `Accordion` via `Disclos
 - **When native HTML is appropriate**: Simple, structural, or largely static elements (`Button`, `Card`,
   `Badge`, `Alert`, `Kbd`, `Separator`, `Avatar`, `Table`, `Progress`, `Skeleton`) use native HTML to keep
   dependencies lean.
-- **Policy for existing Radix components**: Pre-existing Radix components (`Select`, `Slider`, `Tabs`,
-  `Dialog`, `Tooltip`) remain active and unchanged during the `Collapsible` pilot. Future component updates
-  will evaluate migration to React Aria on an intentional, component-by-component basis.
+- **Portfolio release**: Select, Slider, Tabs, Dialog and Tooltip now use React Aria Components as well. Nise preserves its existing composition API where practical; native HTML remains appropriate for simple controls.
 - **Evaluation criteria**: New headless dependencies must earn their place by replacing error-prone custom
   state machines with audited accessibility, without bringing CSS-in-JS or Tailwind into the bundle.
 
@@ -177,16 +175,25 @@ To achieve a sharp, clinical-grade appearance and mathematical concentricity, co
 - `--radius-xl`: `12px` (modals: dialogs, drawers, hero surfaces)
 - `--radius-full`: `9999px` (pills, badges, circular avatars)
 
-This guarantees:
-1. Exact $1:1$ alignment between the primary control corner radius (`4px`) and the fundamental grid unit (`--space-1 = 4px`).
-2. Concentric nested curvature ($R_{\text{inner}} \approx R_{\text{outer}} - \text{padding}$), where 4px buttons sit inside 8px cards and 12px dialogs with zero optical distortion.
+This convention establishes:
+1. Consistent $1:1$ alignment between the primary control corner radius (`4px`) and the fundamental grid unit (`--space-1 = 4px`).
+2. Concentric nested curvature ($R_{\text{inner}} \approx R_{\text{outer}} - \text{padding}$), promoting optical hierarchy where 4px controls sit inside 8px cards and 12px dialogs without distortion.
+
+**D26 — Hardened candidate serialization, atomic validation schema, and drift provenance.**  
+Candidate promotion uses strict JSON string serialization (`JSON.stringify()`) to eliminate code injection vectors into token source modules. Candidate validation is unified in an environment-neutral schema (`tokens/candidate-schema.mjs`) shared between browser import and CLI promotion, enforcing atomic rejection on any schema, unit, range, or editability violation (including rejecting non-length values like "nonsense" on spacing tokens). Stored provenance (`from`) is preserved on import to enable genuine drift detection (`candidateDrift()`). Promotion rollback in `scripts/apply-theme.mjs` backs up and restores all touched source files and generated distribution artifacts (`src/tokens/tokens.css`, `tokens/dist/tokens.json`, `tokens/dist/nise.tokens.json`).
+
+**D27 — Scoped theme preview alignment with light-authoring and dark-view precedence.**  
+The Theme Explorer follows the repository's light-authoring/dark-view model: user overrides target the light base tokens, while dark mode view applies authored dark mappings (`tokens/themes.mjs`) over the light base. To eliminate CSS custom property inheritance bugs where dependent component tokens retain `:root` values, `previewStyle()` redeclares the transitive dependency graph of all changed and theme-varying tokens directly on the scoped `.nise-explorer__preview` wrapper.
+
+**D28 — Local package consumption contract and browser verification.**  
+Nise defines an explicit package consumer contract in `package.json` with standard entry points (`main`, `module`, `types`, `exports`), stylesheet access (`./styles.css`, `./tokens.css`), React peer dependencies (`^18.0.0 || ^19.0.0`), and a production library build (`npm run build:lib`). Browser verification is integrated via Playwright (`npm run test:browser` / `scripts/test-browser.mjs`), validating real browser dark-mode rendering, scoped alias computation, focus trapping, keyboard navigation, and portaled overlay containers (Select, Dialog, Tooltip).
 
 ---
 
 ## Provisional
 
 **P1 — Type scale, weights, and line heights.**  
-Typography follows a standard `xs` to `4xl` ramp based on Inter. Brand guidelines leave sizing open for
+Typography follows a standard `xs` to `4xl` ramp based on Albert Sans. Brand guidelines leave sizing open for
 real layout testing.
 
 **P2 — Spacing and Radii scale.**  
@@ -199,6 +206,34 @@ A 24px grid with 1.5px stroke weight. Icons are added on demand as needed by cli
 
 ## Deferred
 
-- **Visual regression testing (Playwright / Chromatic)**: Deferred until multi-application consumption begins.
+- **Cloud visual regression service (Chromatic)**: Local real browser verification runs via Playwright in the verification pipeline; hosted cloud snapshot services remain deferred.
 - **Package registry publishing**: Deferred while Nise is consumed within the primary monorepo/workspace.
 - **Multi-brand theming**: Architecture supports third-party themes, but active implementation remains focused on Numena Light and Dark.
+
+## Portfolio release decisions
+
+**D29 — One headless dependency for complex controls.**
+Select, Slider, Tabs, Dialog and Tooltip move from Radix to React Aria Components.
+Radix dependencies are removed. Wrapper tests verify the Nise API and integration;
+the native range input and button/listbox semantics are intentionally preserved.
+
+**D30 — Storybook is the portfolio release surface.**
+The session workspace and 30-family gallery ship as light/dark stories. The
+experimental theme editor, promotion and OpenPencil exporter are retained but
+excluded from the release path. No component catalog expansion blocks the demo.
+
+**D31 — Official integrations over custom infrastructure.**
+`@storybook/addon-mcp` supplies MCP and the component manifest. `@playwright/test`
+replaces the handwritten browser runner with standard assertions, traces and CI
+execution. The Chromatic CLI publishes the built Storybook using a repository
+secret; visual changes require review. Albert Sans is bundled via
+`@fontsource/albert-sans` (OFL), avoiding external font requests during visual
+tests. These dependencies each replace custom infrastructure or a concrete
+source of rendering variability. React 19 is the release target.
+
+**D32 — Match claims to evidence.**
+The public API composition test imports source rather than requiring unbuilt
+artifacts during typechecking. Library build remains experimental; registry
+publishing and React 18 compatibility are not release claims. A copied rollback
+simulation was removed because it did not execute the real promotion command;
+end-to-end promotion failure testing remains deferred experimental-tool work.

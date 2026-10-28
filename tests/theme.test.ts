@@ -157,10 +157,19 @@ describe("overrides and preview resolution", () => {
     expect(THEME_VARYING.every((n) => n in light)).toBe(true);
     // and under the dark mapping the dark values are pinned instead
     expect(previewStyle(only, "dark")["--color-base-100"]).toBe("var(--dark-ground)");
-    // a user override wins over the pin
+    // a user override wins over the pin in light mode
     expect(previewStyle({ "--color-base-100": { kind: "alias", ref: "--soft-purple" } })["--color-base-100"]).toBe(
       "var(--soft-purple)",
     );
+    // under dark mode, authored dark mapping takes precedence over light-base edits
+    const darkStyle = previewStyle({ "--color-primary": { kind: "alias", ref: "--vibrant-purple" } }, "dark");
+    expect(darkStyle["--color-primary"]).toBe("var(--purple-400)");
+
+    // redeclares transitive dependents at preview scope
+    const scopedStyle = previewStyle({ "--space-3": { kind: "value", value: "24px" } }, "light");
+    expect(scopedStyle["--space-3"]).toBe("24px");
+    expect(scopedStyle["--control-padding-x"]).toBeDefined();
+    expect(scopedStyle["--button-padding-x-sm"]).toBeDefined();
   });
 
   it("flows a primitive change through the semantic and derived tokens", () => {
@@ -250,7 +259,7 @@ describe("candidate round-trip and validation", () => {
     ).toBe(false);
   });
 
-  it("rejects unknown tokens, non-primitive refs and invalid values", () => {
+  it("rejects unknown tokens, non-primitive refs, invalid values, and nonsense", () => {
     const bad = parseCandidate(
       JSON.stringify({
         schema: "nise.theme-candidate",
@@ -258,20 +267,29 @@ describe("candidate round-trip and validation", () => {
         tokens: [
           { name: "--nope", layer: "primitive", kind: "value", value: "#000000", from: "" },
           { name: "--color-primary", layer: "semantic", kind: "alias", ref: "--space-3", from: "x" },
-          { name: "--space-3", layer: "primitive", kind: "value", value: "12rem", from: "12px" },
+          { name: "--space-3", layer: "primitive", kind: "value", value: "nonsense", from: "12px" },
         ],
       }),
     );
-    expect(bad.ok).toBe(true); // shape is valid; individual tokens are filtered into errors
-    expect(bad.candidate!.tokens).toHaveLength(0);
+    expect(bad.ok).toBe(false); // Atomic import policy: fails as a whole
+    expect(bad.candidate).toBeNull();
     expect(bad.errors).toHaveLength(3);
+    expect(bad.errors[2]).toMatch(/invalid length format/);
   });
 
-  it("flags drift when the source no longer matches the candidate", () => {
-    const candidate = serializeCandidate({ "--purple-600": { kind: "value", value: "#000000" } });
-    expect(candidateDrift(candidate)).toEqual([]);
-    candidate.tokens[0]!.from = "#111111";
-    expect(candidateDrift(candidate)[0]).toMatch(/source is now/);
+  it("preserves provenance and flags drift when the source no longer matches the candidate", () => {
+    const parsed = parseCandidate(
+      JSON.stringify({
+        schema: "nise.theme-candidate",
+        version: 1,
+        tokens: [
+          { name: "--purple-600", layer: "primitive", kind: "value", value: "#000000", from: "#stale" },
+        ],
+      }),
+    );
+    expect(parsed.ok).toBe(true);
+    expect(parsed.candidate!.tokens[0]!.from).toBe("#stale");
+    expect(candidateDrift(parsed.candidate!)[0]).toMatch(/source is now.*candidate was authored against #stale/);
   });
 
   it("rejects a candidate that tries to change a brand anchor", () => {
@@ -284,8 +302,24 @@ describe("candidate round-trip and validation", () => {
         ],
       }),
     );
-    expect(res.ok).toBe(true);
-    expect(res.candidate!.tokens).toHaveLength(0);
-    expect(res.errors[0]).toMatch(/uneditable token "--deep-purple"/);
+    expect(res.ok).toBe(false);
+    expect(res.candidate).toBeNull();
+    expect(res.errors[0]).toMatch(/brand anchors are immutable/);
+  });
+
+  it("rejects duplicate token entries", () => {
+    const res = parseCandidate(
+      JSON.stringify({
+        schema: "nise.theme-candidate",
+        version: 1,
+        tokens: [
+          { name: "--space-3", layer: "primitive", kind: "value", value: "14px", from: "12px" },
+          { name: "--space-3", layer: "primitive", kind: "value", value: "16px", from: "12px" },
+        ],
+      }),
+    );
+    expect(res.ok).toBe(false);
+    expect(res.candidate).toBeNull();
+    expect(res.errors[0]).toMatch(/duplicate token/);
   });
 });

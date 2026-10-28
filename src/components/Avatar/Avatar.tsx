@@ -43,6 +43,13 @@ export function Avatar({
   ...rest
 }: AvatarProps) {
   const [errored, setErrored] = useState(false);
+  const [prevSource, setPrevSource] = useState({ src, srcSet });
+
+  if (prevSource.src !== src || prevSource.srcSet !== srcSet) {
+    setPrevSource({ src, srcSet });
+    setErrored(false);
+  }
+
   const showImage = src != null && !errored;
 
   const classes = ["nise-avatar", `nise-avatar--${size}`, className]

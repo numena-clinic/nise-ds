@@ -10,12 +10,12 @@ starting point, not a settled decision.
 | Token | Family | Source | Role |
 | --- | --- | --- | --- |
 | `--font-serif` | Tiempos Text | Commercial (Klim) | Reading and headlines (typography.md §4) |
-| `--font-sans` | Albert Sans | Google Fonts, SIL OFL 1.1 | Interface, labels, data |
+| `--font-sans` | Albert Sans | Bundled npm package, SIL OFL 1.1 | Interface, labels, data |
 
 Tiempos Text is licensed and is **not committed** — the same rule the brand
 follows (typography.md §11). Until a consuming application supplies the files,
-the serif falls back to Georgia via the token stack. Albert Sans loads from
-Google Fonts (`src/styles/fonts.css`), matching the brand's web setup.
+the serif falls back to Georgia via the token stack. Albert Sans is bundled via `@fontsource/albert-sans` in `src/styles/fonts.css`,
+so visual tests do not depend on an external font request.
 
 **The division of labour is a rule, not a preference:** the serif does the
 reading (headings, long-form note text), the sans does the interface (labels,

@@ -6,16 +6,19 @@ Accessibility is checked mechanically, not asserted in prose.
 
 | Check | Where | Proves |
 | --- | --- | --- |
-| Token contrast | `npm run tokens:validate` | Every relied-on color pair meets its WCAG 2.2 ratio |
+| Token contrast | `npm run tokens:validate` | Every declared color pair meets its WCAG 2.2 ratio analytically |
 | axe (component) | `npm run test` (`tests/a11y.test.tsx`) | No axe violations on rendered components, closed and open |
-| axe (Storybook) | `.storybook/preview.ts`, `a11y.test: "error"` | Every story is audited in the addon panel |
+| axe (Storybook) | `.storybook/preview.ts`, `a11y.test: "error"` | Every story is audited in the addon panel during local authoring |
 | Behaviour | `npm run test` (`tests/components.test.tsx`) | Names, descriptions, states behave as documented |
+| Browser verification | `npm run test:browser` (`tests/browser/portfolio.spec.ts`) | Chromium verifies portfolio interactions, light/dark rendering, full-story axe checks, phone reflow, dialog focus restoration and slider geometry |
 
-Color contrast is proven analytically rather than in axe, because jsdom has no
+Color contrast is proven analytically for declared pairs because jsdom has no
 layout. `tokens/semantic.mjs` lists every foreground/background pair the system
 depends on with its minimum ratio; the validator resolves the tokens (through
-`color-mix`) to sRGB and computes the real ratio, under **both** themes. The
-palette is generated in OKLCH (`docs/tokens.md`), so the ratios are the system's
+`color-mix`) to sRGB and computes the real ratio, under **both** themes. Note that
+analytical token-contrast checks validate declared pairs rather than establishing
+complete rendered accessibility across arbitrary compositions or runtime layouts.
+The palette is generated in OKLCH (`docs/tokens.md`), so the ratios are the system's
 own, not a reproduction of the brand's published figures.
 
 ## Principles the components hold to
@@ -31,7 +34,7 @@ own, not a reproduction of the brand's published figures.
   when an error is present, so the description never points at a missing node.
 - **Decorative icons are hidden.** Icons that repeat their label are
   `aria-hidden`; an icon carrying meaning takes a `title` (iconography.md §6).
-- **The primitive owns the ARIA.** `Select` is built on Radix, so listbox
+- **The primitive owns the ARIA.** `Select` is built on React Aria, so listbox
   semantics, typeahead, keyboard navigation and focus management are the
   primitive's job; we supply appearance and tokens.
 - **Motion is optional.** `prefers-reduced-motion` reduces all animation to

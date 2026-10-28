@@ -123,7 +123,7 @@ describe("Select", () => {
 
   it("associates its label and opens the listbox", async () => {
     render(<Select label="Confidence" options={options} />);
-    const trigger = screen.getByRole("combobox", { name: /Confidence/ });
+    const trigger = screen.getByRole("button", { name: /Confidence/ });
     await userEvent.click(trigger);
     expect(await screen.findByRole("listbox")).toBeInTheDocument();
     expect(screen.getAllByRole("option")).toHaveLength(3);
@@ -132,14 +132,14 @@ describe("Select", () => {
   it("reports the chosen value", async () => {
     const onValueChange = vi.fn();
     render(<Select label="Confidence" options={options} onValueChange={onValueChange} />);
-    await userEvent.click(screen.getByRole("combobox", { name: /Confidence/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Confidence/ }));
     await userEvent.click(await screen.findByRole("option", { name: "Moderate" }));
     expect(onValueChange).toHaveBeenCalledWith("moderate");
   });
 
   it("surfaces an error through aria-describedby", async () => {
     render(<Select label="Confidence" options={options} error="Choose a level" />);
-    const trigger = screen.getByRole("combobox", { name: /Confidence/ });
+    const trigger = screen.getByRole("button", { name: /Confidence/ });
     await waitFor(() => {
       expect(trigger).toHaveAccessibleDescription("Choose a level");
     });
@@ -250,10 +250,10 @@ describe("Slider", () => {
   it("is a labelled slider that steps with the arrow keys", async () => {
     render(<Slider label="Intensity" defaultValue={[50]} min={0} max={100} step={1} />);
     const thumb = screen.getByRole("slider", { name: "Intensity" });
-    expect(thumb).toHaveAttribute("aria-valuenow", "50");
+    expect(thumb).toHaveValue("50");
     thumb.focus();
     await userEvent.keyboard("{ArrowRight}");
-    await waitFor(() => expect(thumb).toHaveAttribute("aria-valuenow", "51"));
+    await waitFor(() => expect(thumb).toHaveValue("51"));
   });
 });
 
@@ -297,7 +297,7 @@ describe("Dialog", () => {
 });
 
 describe("Tooltip", () => {
-  it("reveals supplemental text on hover", async () => {
+  it("reveals supplemental text on keyboard focus", async () => {
     render(
       <TooltipProvider delayDuration={0}>
         <TooltipRoot>
@@ -306,7 +306,8 @@ describe("Tooltip", () => {
         </TooltipRoot>
       </TooltipProvider>,
     );
-    await userEvent.hover(screen.getByRole("button", { name: "More info" }));
+    await userEvent.tab();
+    expect(screen.getByRole("button", { name: "More info" })).toHaveFocus();
     expect(await screen.findByRole("tooltip")).toHaveTextContent("Shown on the summary");
   });
 });
@@ -1039,6 +1040,186 @@ describe("Accordion", () => {
     expect(controlsId).toBe(regionId);
     expect(labelledById).toBeTruthy();
     expect(labelledById).toBe(triggerId);
+  });
+});
+
+describe("Hardening & Accessibility Regressions", () => {
+  describe("Description merging and invalid state precedence", () => {
+    it("TextField merges caller-provided aria-describedby and respects error precedence", () => {
+      const { rerender } = render(
+        <TextField
+          label="Email"
+          hint="Helper hint"
+          aria-describedby="external-help-id"
+          aria-invalid="grammar"
+        />,
+      );
+      const input = screen.getByRole("textbox", { name: "Email" });
+      const describedBy = input.getAttribute("aria-describedby") || "";
+      expect(describedBy).toContain("external-help-id");
+      expect(describedBy).toMatch(/-hint/);
+      expect(input.getAttribute("aria-invalid")).toBe("grammar");
+
+      rerender(
+        <TextField
+          label="Email"
+          error="Invalid email"
+          aria-describedby="external-help-id"
+          aria-invalid="grammar"
+        />,
+      );
+      const updatedInput = screen.getByRole("textbox", { name: "Email" });
+      const updatedDescribedBy = updatedInput.getAttribute("aria-describedby") || "";
+      expect(updatedDescribedBy).toContain("external-help-id");
+      expect(updatedDescribedBy).toMatch(/-error/);
+      expect(updatedInput.getAttribute("aria-invalid")).toBe("true");
+    });
+
+    it("Textarea merges caller-provided aria-describedby and preserves caller aria-invalid", () => {
+      render(
+        <Textarea
+          label="Notes"
+          hint="Formatting tips"
+          aria-describedby="external-docs"
+          aria-invalid={true}
+        />,
+      );
+      const textarea = screen.getByRole("textbox", { name: "Notes" });
+      const desc = textarea.getAttribute("aria-describedby") || "";
+      expect(desc).toContain("external-docs");
+      expect(desc).toMatch(/-hint/);
+      expect(textarea.getAttribute("aria-invalid")).toBe("true");
+    });
+
+    it("Checkbox merges caller-provided aria-describedby with hint", () => {
+      const { container } = render(
+        <Checkbox
+          label="Agree"
+          hint="Terms of service"
+          aria-describedby="legal-footer"
+        />,
+      );
+      const checkbox = container.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+      const desc = checkbox.getAttribute("aria-describedby") || "";
+      expect(desc).toContain("legal-footer");
+      expect(desc).toMatch(/-hint/);
+    });
+
+    it("Radio merges caller-provided aria-describedby with hint", () => {
+      const { container } = render(
+        <Radio
+          label="Option A"
+          hint="Default option"
+          aria-describedby="field-summary"
+        />,
+      );
+      const radio = container.querySelector<HTMLInputElement>('input[type="radio"]')!;
+      const desc = radio.getAttribute("aria-describedby") || "";
+      expect(desc).toContain("field-summary");
+      expect(desc).toMatch(/-hint/);
+    });
+
+    it("Switch merges caller-provided aria-describedby with hint", () => {
+      const { container } = render(
+        <Switch
+          label="Telemetry"
+          hint="Send anonymous reports"
+          aria-describedby="privacy-link"
+        />,
+      );
+      const sw = container.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+      const desc = sw.getAttribute("aria-describedby") || "";
+      expect(desc).toContain("privacy-link");
+      expect(desc).toMatch(/-hint/);
+    });
+
+    it("Slider attaches aria-describedby to the focusable thumb element", () => {
+      render(
+        <Slider
+          label="Volume"
+          hint="Adjust output level"
+          aria-describedby="external-audio-info"
+          defaultValue={[50]}
+        />,
+      );
+      const thumb = screen.getByRole("slider");
+      const desc = thumb.getAttribute("aria-describedby") || "";
+      expect(desc).toContain("external-audio-info");
+      expect(desc).toMatch(/-hint/);
+    });
+  });
+
+  describe("Accordion keyboard navigation scoping", () => {
+    it("restricts arrow key navigation to triggers owned by the current accordion", async () => {
+      render(
+        <Accordion type="single" defaultValue="outer-1">
+          <AccordionItem value="outer-1">
+            <AccordionTrigger>Outer Header 1</AccordionTrigger>
+            <AccordionContent>
+              <Accordion type="single" defaultValue="inner-1">
+                <AccordionItem value="inner-1">
+                  <AccordionTrigger>Inner Header 1</AccordionTrigger>
+                  <AccordionContent>Inner Content</AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="outer-2">
+            <AccordionTrigger>Outer Header 2</AccordionTrigger>
+            <AccordionContent>Outer Content 2</AccordionContent>
+          </AccordionItem>
+        </Accordion>,
+      );
+
+      const outerTrigger1 = screen.getByRole("button", { name: "Outer Header 1" });
+      const outerTrigger2 = screen.getByRole("button", { name: "Outer Header 2" });
+
+      outerTrigger1.focus();
+      expect(document.activeElement).toBe(outerTrigger1);
+
+      fireEvent.keyDown(outerTrigger1, { key: "ArrowDown" });
+      // Should move directly to outerTrigger2, skipping the nested accordion's trigger
+      expect(document.activeElement).toBe(outerTrigger2);
+    });
+  });
+
+  describe("Small component defects", () => {
+    it("Avatar resets error state when src prop changes", () => {
+      const { rerender, container } = render(<Avatar alt="Photo" src="broken.png" fallback="FB" />);
+      const img = container.querySelector("img")!;
+      fireEvent.error(img);
+
+      // Now fallback is displayed
+      expect(screen.getByText("FB")).toBeInTheDocument();
+
+      // Parent changes src to a valid image
+      rerender(<Avatar alt="Photo" src="valid.png" fallback="FB" />);
+      const newImg = container.querySelector("img");
+      expect(newImg).not.toBeNull();
+      expect(newImg).toHaveAttribute("src", "valid.png");
+    });
+
+    it("Toggle with non-icon React element child preserves text-button geometry", () => {
+      const { container } = render(
+        <Toggle>
+          <span>Detailed view</span>
+        </Toggle>,
+      );
+      const button = container.querySelector("button");
+      expect(button).not.toHaveClass("nise-toggle--icon");
+    });
+
+    it("ToggleGroupItem with non-icon React element child preserves text-button geometry", () => {
+      const { container } = render(
+        <ToggleGroup label="View options">
+          <ToggleGroupItem value="detail">
+            <span>Detailed view</span>
+          </ToggleGroupItem>
+        </ToggleGroup>,
+      );
+      const button = container.querySelector("button");
+      expect(button).not.toHaveClass("nise-toggle-group__item--icon");
+    });
   });
 });
 

@@ -1,54 +1,83 @@
-/* =============================================================================
-   Tabs
-   -----------------------------------------------------------------------------
-   A Radix-backed tabs control (horizontal). ARIA semantics, roving tabindex and
-   keyboard navigation come from Radix (D6). The tablist and panels are
-   straightforward, with tokens for gap and padding.
-
-   Tokens consumed: --tabs-gap, --tab-padding-x, --tab-height, plus focus ring,
-   surface/border/text/action tokens.
-   ============================================================================= */
-
-import * as React from "react";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
+/** Nise tabs over React Aria. Tokens: --tabs-gap, --tab-height,
+ * --tab-padding-x and semantic surface/focus roles. React Aria owns selection,
+ * roving focus and panel relationships; Nise retains its value-based API. */
+import { forwardRef } from "react";
+import {
+  Tabs as AriaTabs,
+  TabList,
+  Tab,
+  TabPanel,
+  type TabsProps,
+  type TabListProps,
+  type TabProps,
+  type TabPanelProps,
+} from "react-aria-components";
 import "./Tabs.css";
-
-const Tabs = TabsPrimitive.Root;
-
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentProps<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={["nise-tabs__list", className].filter(Boolean).join(" ")}
-    {...props}
-  />
-));
-TabsList.displayName = TabsPrimitive.List.displayName;
-
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentProps<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={["nise-tabs__trigger", className].filter(Boolean).join(" ")}
-    {...props}
-  />
-));
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
-
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentProps<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={["nise-tabs__content", className].filter(Boolean).join(" ")}
-    {...props}
-  />
-));
-TabsContent.displayName = TabsPrimitive.Content.displayName;
-
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export function Tabs({
+  value,
+  defaultValue,
+  onValueChange,
+  ...props
+}: Omit<
+  TabsProps,
+  "selectedKey" | "defaultSelectedKey" | "onSelectionChange"
+> & {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+}) {
+  return (
+    <AriaTabs
+      {...props}
+      selectedKey={value}
+      defaultSelectedKey={defaultValue}
+      onSelectionChange={(key) => onValueChange?.(String(key))}
+    />
+  );
+}
+export const TabsList = forwardRef<
+  HTMLDivElement,
+  Omit<TabListProps<object>, "className"> & { className?: string }
+>(function TabsList({ className, ...props }, ref) {
+  return (
+    <TabList
+      {...props}
+      ref={ref}
+      className={["nise-tabs__list", className].filter(Boolean).join(" ")}
+    />
+  );
+});
+export const TabsTrigger = forwardRef<
+  HTMLDivElement,
+  Omit<TabProps, "id" | "className"> & {
+    value: string;
+    disabled?: boolean;
+    className?: string;
+  }
+>(function TabsTrigger({ value, disabled, className, ...props }, ref) {
+  return (
+    <Tab
+      {...props}
+      id={value}
+      isDisabled={disabled}
+      ref={ref}
+      className={["nise-tabs__trigger", className].filter(Boolean).join(" ")}
+    />
+  );
+});
+export const TabsContent = forwardRef<
+  HTMLDivElement,
+  Omit<TabPanelProps, "id" | "className"> & {
+    value: string;
+    className?: string;
+  }
+>(function TabsContent({ value, className, ...props }, ref) {
+  return (
+    <TabPanel
+      {...props}
+      id={value}
+      ref={ref}
+      className={["nise-tabs__content", className].filter(Boolean).join(" ")}
+    />
+  );
+});

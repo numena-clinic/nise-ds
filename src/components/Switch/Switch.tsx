@@ -29,6 +29,9 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
   const reactId = useId();
   const fieldId = id ?? `nise-switch-${reactId}`;
   const hintId = `${fieldId}-hint`;
+  const describedBy = [rest["aria-describedby"], hint != null ? hintId : null]
+    .filter(Boolean)
+    .join(" ") || undefined;
 
   const classes = ["nise-switch", disabled ? "nise-switch--disabled" : null, className]
     .filter(Boolean)
@@ -43,7 +46,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
           id={fieldId}
           type="checkbox"
           disabled={disabled}
-          aria-describedby={hint != null ? hintId : undefined}
+          aria-describedby={describedBy}
           className="nise-switch__input"
         />
         <span className="nise-switch__track" aria-hidden="true">

@@ -12,11 +12,31 @@ import {
 } from "../scripts/lib/promote.mjs";
 
 describe("quote", () => {
-  it("wraps a plain value in double quotes", () => {
+  it("wraps a plain value in valid JSON string syntax", () => {
     expect(quote("#4C207F")).toBe('"#4C207F"');
   });
-  it("switches to single quotes when the value contains a double quote", () => {
-    expect(quote('"Albert Sans", sans-serif')).toBe("'\"Albert Sans\", sans-serif'");
+
+  it("escapes double quotes and backslashes safely", () => {
+    expect(quote('"Albert Sans", sans-serif')).toBe('"\\"Albert Sans\\", sans-serif"');
+    expect(quote("path\\to\\something")).toBe('"path\\\\to\\\\something"');
+  });
+
+  it("escapes newlines and control characters", () => {
+    const raw = "line1\nline2\r\t\b\f\0";
+    const quoted = quote(raw);
+    expect(quoted).not.toContain("\n");
+    expect(quoted).not.toContain("\r");
+    // Verify evaluation evaluates strictly to original data string
+    const evaluated = new Function(`return ${quoted};`)();
+    expect(evaluated).toBe(raw);
+  });
+
+  it("safely neutralizes crafted JavaScript syntax injection", () => {
+    const crafted = '"; process.exit(1); const injected = "';
+    const quoted = quote(crafted);
+    // Evaluating this as JS expression produces the literal string, never executing code
+    const evaluated = new Function(`return ${quoted};`)();
+    expect(evaluated).toBe(crafted);
   });
 });
 
@@ -110,5 +130,54 @@ describe("planPromotion (against the real token source)", () => {
     });
     expect(plan.errors).toHaveLength(3);
     expect(plan.edits).toHaveLength(0);
+  });
+
+  it("rejects candidate assigning nonsense to --space-3", () => {
+    const plan = planPromotion(root, {
+      schema: "nise.theme-candidate",
+      version: 1,
+      tokens: [{ name: "--space-3", layer: "primitive", kind: "value", value: "nonsense" }],
+    });
+    expect(plan.errors.length).toBeGreaterThan(0);
+    expect(plan.errors[0]).toMatch(/invalid length format/);
+    expect(plan.edits).toHaveLength(0);
+  });
+
+  it("rejects duplicate token entries", () => {
+    const plan = planPromotion(root, {
+      schema: "nise.theme-candidate",
+      version: 1,
+      tokens: [
+        { name: "--space-3", layer: "primitive", kind: "value", value: "12px" },
+        { name: "--space-3", layer: "primitive", kind: "value", value: "16px" },
+      ],
+    });
+    expect(plan.errors.length).toBeGreaterThan(0);
+    expect(plan.errors[0]).toMatch(/duplicate token/);
+    expect(plan.edits).toHaveLength(0);
+  });
+
+  it("rejects editing immutable brand anchors", () => {
+    const plan = planPromotion(root, {
+      schema: "nise.theme-candidate",
+      version: 1,
+      tokens: [{ name: "--deep-purple", layer: "primitive", kind: "value", value: "#123456" }],
+    });
+    expect(plan.errors.length).toBeGreaterThan(0);
+    expect(plan.errors[0]).toMatch(/brand anchors are immutable/);
+    expect(plan.edits).toHaveLength(0);
+  });
+});
+
+
+describe("candidate source drift", () => {
+  it("refuses to overwrite a token changed since candidate export", () => {
+    const plan = planPromotion(process.cwd(), {
+      schema: "nise.theme-candidate", version: 1,
+      tokens: [{ name: "--space-3", kind: "value", value: "16px", from: "8px" }],
+    });
+    expect(plan.errors).toEqual([expect.stringContaining("source changed")]);
+    expect(plan.files).toEqual({});
+    expect(plan.edits).toEqual([]);
   });
 });

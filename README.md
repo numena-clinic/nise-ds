@@ -1,112 +1,101 @@
 # Nise Design System
 
-The design system for **Numena** — a code-first library of interface tokens,
-components and patterns for the clinical reasoning workspace Numena builds for
-psychologists.
+Nise is the code-first interface system for **Numena**, a clinical reasoning
+workspace concept. The brand owns identity; Nise turns it into tokens,
+components, usage guidance and compositions.
 
-Nise *consumes* the Numena brand; it does not define it. Brand decisions — the
-palette, the typefaces, the icon grid, the rules about what color may and may
-not mean — live in [`numena-clinic/numena-brand`](https://github.com/numena-clinic/numena-brand)
-and are treated here as input. Everything in this repository turns those
-decisions into things an engineer can import.
+## Start here
 
-## Quickstart
-
-```bash
-npm install
-npm run tokens:build     # regenerate src/tokens/tokens.css from tokens/*.mjs
-npm run storybook        # browse the components at http://localhost:6006
-npm run dev              # Theme Explorer: bend the tokens, preview live, export
-npm run export:openpencil # export tokens and visual specimens to OpenPencil (.pen)
-npm run verify           # the full gate: tokens, usage, lint, types, tests
+```sh
+npm ci
+npm run storybook
 ```
 
-## What's here
+Open **Portfolio → Session workspace** for the interactive product composition,
+or **Component collection** for all 30 shipped component families. Both have
+light and dark stories. The workspace uses fictional records and local browser
+memory: it has no backend, authentication or clinical decision logic.
 
+The demo supports editing, saving/discarding a draft, switching sessions, tabs,
+source selection and a review dialog. Unsaved changes are discarded when switching
+sessions. A reload resets all demo data.
+
+## What is implemented
+
+- **221 tokens** in primitive, semantic and component layers, with authored dark
+  mappings. Generated CSS is checked against its source.
+- **30 component families**: React Aria supplies the complex behavior for Select,
+  Slider, Tabs, Dialog, Tooltip, Accordion, Collapsible, Toggle and ToggleGroup.
+  Simple and presentational components use native HTML.
+- **Storybook** stories, controls, generated prop documentation and an axe panel.
+- **Chromatic workflow** for publishing Storybook and reviewing visual changes.
+  Activation requires a project token; a configured workflow is not proof of a
+  published build.
+- **Agent integration** through the official Storybook MCP addon and component
+  manifest, plus repository instructions and enforced token boundaries.
+
+This is a React 19 portfolio release. It does not implement the entire React
+Aria catalog. Date inputs, comboboxes, menus, advanced tables and drag-and-drop
+are future additions, rather than implied capabilities of this release.
+
+## Verification
+
+```sh
+npm run verify             # tokens, token usage, lint, TypeScript, unit/axe tests
+npm run build-storybook    # builds the actual published surface
+npx playwright install chromium  # once per local machine
+npm run test:browser       # interactions, themes, mobile reflow, slider geometry
 ```
-tokens/            canonical token source (the .mjs files) + build & validation
-  primitives.mjs   raw values: color, type, space, radius, motion
-  semantic.mjs     interface roles, and the contrast promises kept
-  component.mjs    per-component values (control heights, paddings)
-  build.mjs        source → tokens.css (+ tokens/dist/*.json: proprietary & DTCG)
-  dtcg.mjs         renders the DTCG 2025.10 export (tokens/dist/nise.tokens.json)
-  validate.mjs     references, layer direction, acyclicity, contrast, reproducibility
-src/
-  tokens/tokens.css  GENERATED — the artifact the app loads. Do not edit.
-  styles/            global baseline, fonts, shared field layout
-  icons/             the seed of the icon set (Iconoir grid)
-  components/        Button, TextField, Select, Checkbox, Radio, Switch,
-                     Badge, Card, Slider, Tabs, Tooltip, Dialog, Table
-  compositions/      InformationReview — the reference composition
-  explorer/          Theme Explorer — the standalone token design tool
-  index.ts           the public surface
-tests/             behaviour + axe accessibility tests
-docs/              tokens, typography, accessibility, theme, decisions, components
-```
 
-## Tokens
+CI repeats those commands on a clean checkout. Browser tests serve the built
+Storybook and exercise real stories. Chromatic captures visual baselines and
+requires review of changes; it does not replace interaction or accessibility
+checks. Automated checks do not establish complete WCAG conformance.
 
-Four layers, each referencing only the layers below it:
+## Publish through Chromatic
 
-| Layer | Answers | Example |
-| --- | --- | --- |
-| **primitive** | *what value?* | `--deep-purple: #4C207F` |
-| **semantic** | *what role?* | `--color-primary: var(--deep-purple)` |
-| **themes** | *the same roles, on another ground* | `[data-theme="dark"] { --color-primary: var(--purple-500) }` |
-| **component** | *where used?* | `--button-height-md: var(--control-height-md)` |
+1. Create a Chromatic project connected to this GitHub repository.
+2. Add its project token as the repository Actions secret
+   `CHROMATIC_PROJECT_TOKEN`.
+3. Run the **Chromatic** workflow. Review and accept the initial baseline in
+   Chromatic, then use its public Storybook URL in your portfolio.
 
-The source of truth is the `.mjs` files, not the CSS. `npm run tokens:build`
-renders them to `src/tokens/tokens.css`, which is **committed** so the system is
-usable without a build step; `npm run tokens:validate` proves the committed CSS
-is exactly what the source produces, that every reference resolves, and that
-every promised color pair meets its WCAG ratio. Read [`docs/tokens.md`](docs/tokens.md).
+The workflow never automatically accepts visual changes. If the token is
+missing it reports that no publication occurred. Do not commit tokens.
 
-## Scripts
+## Build with an agent
 
-| Script | Does |
+Start Storybook and configure your MCP-capable client with an HTTP server at
+`http://localhost:6006/mcp`. The official addon exposes documentation and story
+tools; its API is currently a Storybook preview feature.
+
+Ask the agent to list the documented components, inspect their props and examples,
+then compose a screen using the public API. Run verification and review the
+resulting story. MCP provides context; TypeScript and CI provide checks. Neither
+can guarantee that every generated interface is correct.
+
+See [agent usage](docs/agent-usage.md), [architecture and interview notes](docs/portfolio-release.md),
+and [decisions](docs/decisions.md).
+
+## Repository map
+
+| Path | Responsibility |
 | --- | --- |
-| `npm run tokens:build` | Regenerate `tokens.css` and `tokens/dist/*.json` (proprietary + DTCG) |
-| `npm run tokens:validate` | References, layer direction, acyclicity, contrast, reproducibility |
-| `npm run check:usage` | Fail on raw colors / off-token px / unknown tokens in `src` |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run lint` | ESLint (flat config) |
-| `npm run test` | Vitest: behaviour + axe |
-| `npm run storybook` | Storybook dev server (docs + a11y panel) |
-| `npm run build-storybook` | Static Storybook build |
-| `npm run dev` | Theme Explorer dev server (Vite) |
-| `npm run build:explorer` | Static Theme Explorer build → `dist/` |
-| `npm run theme:apply -- <file> [--write]` | Promote a theme candidate into the token source |
-| `npm run verify` | All of the above gates in order |
+| `tokens/*.mjs` | Canonical token data, generation and validation |
+| `src/components/` | Components, plain CSS and individual stories |
+| `src/showcase/` | Portfolio workspace and full component gallery |
+| `src/index.ts` | Public source API |
+| `tests/` | Behavior, accessibility and token checks |
+| `tests/browser/` | Playwright checks against built Storybook |
+| `.storybook/` | Documentation, theme toolbar and official MCP integration |
 
-## Theming
+## Experimental tools
 
-The **Theme Explorer** (`npm run dev`) lets a designer change the tokens and see
-real components re-theme live — a sidebar of Foundations, Components and Patterns
-pages, a visual token editor over the active foundation, and a live preview with
-a Phone / Tablet / Desktop toggle — then export a versioned *candidate*. Promotion
-is a local, explicit, reviewable command — `npm run theme:apply` — that edits the
-token source, rebuilds and validates, and rolls back if the contrast promises
-break. It never writes from the browser and never commits. See
-[`docs/theme.md`](docs/theme.md).
+The existing Theme Explorer (`npm run dev`), candidate promotion, OpenPencil
+export and local library build remain available for exploration. They are
+outside the portfolio release path. Publishing a registry package and supporting
+multiple React versions are deferred.
 
-The component and pattern pages preview the **Nise components themselves** — the
-same ones an application ships — so what you see is what the token change will
-actually produce. Every component is plain CSS over tokens (decision D2); there
-is no second library or CSS toolchain behind the preview (D13).
-
-## Definition of done
-
-A change is done when `npm run verify` is green and:
-
-- the token source changed (if visuals did), not just the generated CSS;
-- any new token references a lower layer and is validated;
-- new behaviour has a test, and new UI passes axe;
-- component docs (`docs/components/*.md`) and the component's header comment
-  still describe what the code does.
-
-## Status
-
-Foundation, plus the Theme Explorer previewing the full Nise component set. See
-[`docs/decisions.md`](docs/decisions.md) for what is settled, what is
-provisional, and what is deliberately deferred (visual-regression tooling,
-package publishing, a full icon catalogue, dark mode, multi-theme authoring).
+Brand reference: [numena-clinic/numena-brand](https://github.com/numena-clinic/numena-brand).
+Albert Sans is bundled from its OFL-licensed package. Tiempos Text is not
+redistributed; the serif falls back to Georgia until a licensed consumer supplies it.
