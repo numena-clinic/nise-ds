@@ -63,40 +63,45 @@ const SESSIONS = [
   },
 ];
 
+interface Draft {
+  note: string;
+  nextStep: string;
+  source: string;
+  followUp: boolean;
+}
+const INITIAL_DRAFTS: Draft[] = SESSIONS.map((session) => ({
+  note: session.note,
+  nextStep: "Return to the evening routine",
+  source: "session",
+  followUp: false,
+}));
+
 export function SessionWorkspace() {
   const [sessionIndex, setSessionIndex] = useState(0);
   const session = SESSIONS[sessionIndex]!;
-  const [note, setNote] = useState(INITIAL_NOTE);
-  const [savedNote, setSavedNote] = useState(INITIAL_NOTE);
-  const [nextStep, setNextStep] = useState("Return to the evening routine");
-  const [savedNextStep, setSavedNextStep] = useState(nextStep);
-  const [source, setSource] = useState("session");
-  const [savedSource, setSavedSource] = useState("session");
-  const [followUp, setFollowUp] = useState(false);
-  const [savedFollowUp, setSavedFollowUp] = useState(false);
+  const [savedDrafts, setSavedDrafts] = useState(INITIAL_DRAFTS);
+  const [draft, setDraft] = useState(INITIAL_DRAFTS[0]!);
   const [announcement, setAnnouncement] = useState("");
+  const { note, nextStep, source, followUp } = draft;
+  const savedDraft = savedDrafts[sessionIndex]!;
   const dirty =
-    note !== savedNote ||
-    nextStep !== savedNextStep ||
-    source !== savedSource ||
-    followUp !== savedFollowUp;
+    note !== savedDraft.note ||
+    nextStep !== savedDraft.nextStep ||
+    source !== savedDraft.source ||
+    followUp !== savedDraft.followUp;
+  function updateDraft(change: Partial<Draft>) {
+    setDraft((previous) => ({ ...previous, ...change }));
+    setAnnouncement("");
+  }
   function selectSession(index: number) {
     setSessionIndex(index);
-    setNote(SESSIONS[index]!.note);
-    setSavedNote(SESSIONS[index]!.note);
-    setNextStep("Return to the evening routine");
-    setSavedNextStep("Return to the evening routine");
-    setSource("session");
-    setSavedSource("session");
-    setFollowUp(false);
-    setSavedFollowUp(false);
+    setDraft(savedDrafts[index]!);
     setAnnouncement("");
   }
   function save() {
-    setSavedNote(note);
-    setSavedNextStep(nextStep);
-    setSavedSource(source);
-    setSavedFollowUp(followUp);
+    setSavedDrafts((previous) =>
+      previous.map((saved, index) => (index === sessionIndex ? draft : saved)),
+    );
     setAnnouncement("Draft saved for this preview.");
   }
   return (
@@ -236,7 +241,7 @@ export function SessionWorkspace() {
                       label="Session summary"
                       value={note}
                       onChange={(event) => {
-                        setNote(event.target.value);
+                        updateDraft({ note: event.target.value });
                         setAnnouncement("");
                       }}
                       rows={7}
@@ -245,7 +250,7 @@ export function SessionWorkspace() {
                       <Select
                         label="Information source"
                         value={source}
-                        onValueChange={setSource}
+                        onValueChange={(source) => updateDraft({ source })}
                         options={[
                           { value: "session", label: "Client report" },
                           {
@@ -261,13 +266,17 @@ export function SessionWorkspace() {
                       <TextField
                         label="Next session focus"
                         value={nextStep}
-                        onChange={(event) => setNextStep(event.target.value)}
+                        onChange={(event) =>
+                          updateDraft({ nextStep: event.target.value })
+                        }
                       />
                     </div>
                     <Checkbox
                       label="Bring this focus into the next session"
                       checked={followUp}
-                      onChange={(event) => setFollowUp(event.target.checked)}
+                      onChange={(event) =>
+                        updateDraft({ followUp: event.target.checked })
+                      }
                     />
                     <footer className="nise-workspace__save-bar">
                       <div className="nise-workspace__save-state" role="status">
@@ -279,10 +288,7 @@ export function SessionWorkspace() {
                           variant="ghost"
                           disabled={!dirty}
                           onClick={() => {
-                            setNote(savedNote);
-                            setNextStep(savedNextStep);
-                            setSource(savedSource);
-                            setFollowUp(savedFollowUp);
+                            setDraft(savedDraft);
                             setAnnouncement("Changes discarded.");
                           }}
                         >

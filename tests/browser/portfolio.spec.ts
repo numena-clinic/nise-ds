@@ -36,6 +36,19 @@ test("a draft can be edited, discarded, saved and reviewed", async ({
   await expect(page.getByRole("status")).toHaveText(
     "Draft saved for this preview.",
   );
+  const source = page.getByRole("button", { name: /Information source/ });
+  await source.click();
+  await page
+    .getByRole("option", { name: "Session observation", exact: true })
+    .click();
+  await expect(page.getByRole("status")).toHaveText("Unsaved changes");
+  await page.getByRole("button", { name: "Discard changes" }).click();
+  await expect(source).toContainText("Client report");
+  const sessions = page.getByRole("navigation", { name: "Sessions" });
+  await sessions.getByRole("button", { name: /14 October/ }).click();
+  await expect(summary).not.toHaveValue("Saved from the review dialog.");
+  await sessions.getByRole("button", { name: /28 October/ }).click();
+  await expect(summary).toHaveValue("Saved from the review dialog.");
 });
 
 test("the gallery contains all 30 families and working selection controls", async ({
