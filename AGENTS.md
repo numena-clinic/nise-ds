@@ -87,6 +87,11 @@ npm run verify           # the gate — run before saying you are done
 
 ## Components
 
+- `src/aria/` integrates the upstream React Aria catalog. `Aria` preserves its
+  exports; `AriaScope` and `aria.css` apply Nise tokens. Its 57 recipes are not
+  independently maintained wrappers. Read `docs/react-aria-catalog.md` before
+  changing its styles, portal behavior, or coverage claims.
+
 - One directory per component: `Component.tsx`, `Component.css`, `Component.stories.tsx`,
   `index.ts`. Class names are `nise-<component>__<element>` / `--<modifier>`
   (BEM-ish), matching the house system.

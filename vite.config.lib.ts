@@ -19,6 +19,7 @@ export default defineConfig({
         "react-dom",
         "react/jsx-runtime",
         "react-aria-components",
+        "react-aria/PortalProvider",
       ],
       output: {
         preserveModules: false,

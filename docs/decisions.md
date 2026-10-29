@@ -237,3 +237,26 @@ artifacts during typechecking. Library build remains experimental; registry
 publishing and React 18 compatibility are not release claims. A copied rollback
 simulation was removed because it did not execute the real promotion command;
 end-to-end promotion failure testing remains deferred experimental-tool work.
+
+## D33 — Full React Aria catalog through composition
+
+The broader catalog is an opt-in upstream namespace (`Aria`), not dozens of
+shallow adapter wrappers. This preserves Adobe's types, refs, generics and
+composition model while one scoped stylesheet applies existing Nise roles.
+The original 30-family product API stays unchanged. A separate Storybook
+catalog demonstrates 57 recipes, including upstream's explicitly unstable Toast.
+This is catalog integration; it does not imply equal maturity or exhaustive
+coverage of every upstream feature. See `react-aria-catalog.md` for limits.
+
+`@internationalized/date` is now a direct dependency because date recipes import
+its parsers directly. It was already part of React Aria's dependency graph;
+using it directly should not rely on transitive hoisting. It handles calendar
+values without JavaScript Date timezone conversion errors. No new headless or
+styling framework is introduced.
+
+`react-aria` is also a direct dependency for the documented
+`react-aria/PortalProvider` export. AriaScope uses UNSAFE_PortalProvider rather
+than component prop contexts, which trigger components can replace. This is
+the same Adobe foundation already installed transitively, not another headless
+library. Its upstream UNSAFE status and portal layout restrictions are explicit
+in the catalog guide; scoped overlay inheritance has a browser regression test.

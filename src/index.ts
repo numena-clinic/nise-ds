@@ -2,6 +2,8 @@
    Import components from the package root so a future move to separate entry
    points does not change call sites. */
 
+export { Aria, AriaScope } from "./aria";
+
 export {
   Accordion,
   AccordionItem,

@@ -13,6 +13,11 @@ API. Read its story to see concrete composition. When MCP is unavailable, inspec
 
 ## Rules
 
+For the full upstream composition API, use `Aria` inside `AriaScope`. Discover
+React Aria/Catalog through MCP, then read `docs/react-aria-catalog.md` and the
+matching recipe in `src/aria/examples.tsx`. Preserve upstream props and subparts;
+the compact Nise controls and the Aria namespace have distinct APIs.
+
 1. Import existing controls through `src/index.ts` in this repository.
 2. Use documented props. Do not assume APIs from shadcn, Radix or another system.
 3. Use semantic color roles and existing spacing/type/radius tokens.
