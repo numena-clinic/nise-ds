@@ -47,6 +47,12 @@ The separate `Aria` namespace exposes the upstream catalog, with 57 runnable
 recipes. This is framework integration, not 57 independently authored Nise
 components. See the catalog guide for tested behavior and limitations.
 
+## Motion
+
+Tabs, disclosures, dialogs and save confirmation use restrained motion over the
+existing React Aria foundation. No animation dependency is added. Timing comes
+from Nise tokens and reduced motion is respected. See [motion](docs/motion.md).
+
 ## Verification
 
 ```sh

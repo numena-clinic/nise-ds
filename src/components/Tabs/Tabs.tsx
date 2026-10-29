@@ -7,6 +7,8 @@ import {
   TabList,
   Tab,
   TabPanel,
+  SelectionIndicator,
+  composeRenderProps,
   type TabsProps,
   type TabListProps,
   type TabProps,
@@ -54,7 +56,10 @@ export const TabsTrigger = forwardRef<
     disabled?: boolean;
     className?: string;
   }
->(function TabsTrigger({ value, disabled, className, ...props }, ref) {
+>(function TabsTrigger(
+  { value, disabled, className, children, ...props },
+  ref,
+) {
   return (
     <Tab
       {...props}
@@ -62,7 +67,17 @@ export const TabsTrigger = forwardRef<
       isDisabled={disabled}
       ref={ref}
       className={["nise-tabs__trigger", className].filter(Boolean).join(" ")}
-    />
+    >
+      {composeRenderProps(children, (content) => (
+        <>
+          <SelectionIndicator
+            className="nise-tabs__indicator"
+            aria-hidden="true"
+          />
+          {content}
+        </>
+      ))}
+    </Tab>
   );
 });
 export const TabsContent = forwardRef<

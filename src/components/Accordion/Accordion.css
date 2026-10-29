@@ -68,6 +68,8 @@
 }
 
 .nise-accordion__content {
+  height: var(--disclosure-panel-height, auto);
+  transition: height var(--duration-medium) var(--ease-standard);
   overflow: hidden;
   font-family: var(--font-sans);
   font-size: var(--font-size-sm);
@@ -89,4 +91,10 @@
 
 .nise-accordion__inner > :last-child {
   margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nise-accordion__content {
+    transition: none;
+  }
 }

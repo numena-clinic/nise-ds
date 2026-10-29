@@ -59,3 +59,7 @@ Use Accordion to organize related content into progressive disclosure sections w
 --duration-fast           chevron transition duration
 --ease-standard           chevron transition easing
 ```
+
+Panel height follows React Aria’s measured `--disclosure-panel-height` with
+Nise’s medium duration. The hidden state is applied after collapse completes;
+reduced motion skips the transition. See `../motion.md`.

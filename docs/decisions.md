@@ -270,3 +270,12 @@ or rewrite service. Storybook retains component documentation, Chromatic and
 MCP. The former Portfolio stories are removed; their browser regressions now
 run against the built webpage. `npm run dev` opens the site, and Theme Explorer
 moves to the explicit `dev:explorer` command. No dependency is added.
+
+## D35 — Native motion over the existing React Aria foundation
+
+Use CSS and React Aria's SelectionIndicator, measured disclosure height and
+overlay presence states for the requested micro-interactions. Existing tokens
+define all timing/easing. This adds no animation dependency, no custom layout
+measurement hook and no timers to product state. Motion/Animate UI are deferred
+until a concrete interaction needs them. Reduced-motion behavior is an explicit
+browser-tested contract. See `motion.md` for behavior and verification scope.

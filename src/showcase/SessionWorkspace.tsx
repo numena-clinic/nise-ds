@@ -110,11 +110,7 @@ export function SessionWorkspace() {
       <div className="nise-workspace">
         <header className="nise-workspace__top">
           <a className="nise-workspace__brand" href="#workspace-main">
-            <img
-              className="nise-workspace__symbol"
-              src={numenaSymbol}
-              alt=""
-            />
+            <img className="nise-workspace__symbol" src={numenaSymbol} alt="" />
             numena <span className="nise-workspace__edition">workspace</span>
           </a>
           <span className="nise-workspace__sample">
@@ -276,7 +272,20 @@ export function SessionWorkspace() {
                       }
                     />
                     <footer className="nise-workspace__save-bar">
-                      <div className="nise-workspace__save-state" role="status">
+                      <div
+                        className="nise-workspace__save-state"
+                        role="status"
+                        data-saved={
+                          announcement === "Draft saved for this preview." ||
+                          undefined
+                        }
+                      >
+                        {announcement === "Draft saved for this preview." && (
+                          <CheckIcon
+                            className="nise-workspace__saved-check"
+                            size={16}
+                          />
+                        )}
                         {announcement ||
                           (dirty ? "Unsaved changes" : "Draft up to date")}
                       </div>

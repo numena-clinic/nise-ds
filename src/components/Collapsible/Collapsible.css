@@ -49,13 +49,15 @@
 }
 
 .nise-collapsible__content {
+  overflow: hidden;
+  height: var(--disclosure-panel-height, auto);
+  transition: height var(--duration-medium) var(--ease-standard);
   color: var(--color-base-content);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
 }
 
-.nise-collapsible__content[hidden],
-.nise-collapsible__content[data-state="closed"] {
+.nise-collapsible__content[hidden] {
   display: none !important;
 }
 
@@ -71,5 +73,8 @@
   padding-left: calc(var(--space-2) + var(--space-5));
 }
 
-
-
+@media (prefers-reduced-motion: reduce) {
+  .nise-collapsible__content {
+    transition: none;
+  }
+}

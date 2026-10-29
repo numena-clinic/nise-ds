@@ -8,6 +8,8 @@
 }
 
 .nise-tabs__trigger {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -23,7 +25,8 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-standard),
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
     color var(--duration-fast) var(--ease-standard);
 }
 
@@ -37,9 +40,22 @@
 }
 
 .nise-tabs__trigger[data-selected] {
-  background-color: var(--color-base-100);
   color: var(--color-base-content);
+}
+
+/* React Aria owns the old/new geometry, including unequal tab widths. */
+.nise-tabs__indicator {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--color-base-100);
   box-shadow: var(--shadow-sm);
+  pointer-events: none;
+  transition:
+    translate var(--duration-medium) var(--ease-standard),
+    width var(--duration-medium) var(--ease-standard),
+    height var(--duration-medium) var(--ease-standard);
 }
 
 .nise-tabs__trigger:focus-visible {
@@ -51,4 +67,10 @@
   margin-top: var(--space-4);
   font-family: var(--font-sans);
   color: var(--color-base-content);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nise-tabs__indicator {
+    transition: none;
+  }
 }
