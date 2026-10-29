@@ -36,6 +36,7 @@ import {
 } from "../index";
 import { CheckIcon, InfoIcon, ChevronRightIcon } from "../icons";
 import "./showcase.css";
+import { numenaSymbol } from "./assets";
 
 const INITIAL_NOTE =
   "Alex described a more settled evening routine this week. We explored which parts felt useful and which were difficult to sustain.";
@@ -111,7 +112,7 @@ export function SessionWorkspace() {
           <a className="nise-workspace__brand" href="#workspace-main">
             <img
               className="nise-workspace__symbol"
-              src="./numena-symbol.svg"
+              src={numenaSymbol}
               alt=""
             />
             numena <span className="nise-workspace__edition">workspace</span>

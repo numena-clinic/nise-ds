@@ -16,7 +16,8 @@ the tradeoff in `docs/decisions.md` and mark it provisional.
 ```bash
 npm install
 npm run storybook        # browse components at :6006
-npm run dev              # Theme Explorer at :5173 (bend tokens, preview live)
+npm run dev              # standalone showcase at :5173
+npm run dev:explorer     # experimental Theme Explorer at :5176
 npm run export:openpencil # export tokens and visual specimens to OpenPencil (.pen)
 npm run verify           # the gate — run before saying you are done
 ```
@@ -128,7 +129,7 @@ npm run verify           # the gate — run before saying you are done
 
 ## Theme Explorer
 
-- `src/explorer/` is a standalone Vite app (`npm run dev`), **not** a Storybook
+- `src/explorer/` is a standalone Vite app (`npm run dev:explorer`), **not** a Storybook
   story or addon. Its Vite config is `vite.config.explorer.ts`, named so
   `@storybook/builder-vite` does not auto-load it.
 - It reads `tokens/*.mjs` directly — no second token list. A new token shows up
@@ -193,15 +194,16 @@ When you change something a doc describes, update the doc: `docs/tokens.md`,
 
 ## Portfolio release and agent consumption
 
-- The portfolio entry is `src/showcase/Portfolio.stories.tsx`: a session workspace
-  and a live 30-family component gallery, with light/dark stories.
+- The portfolio entry is the standalone site in `src/site/` and `site/`. The
+  workspace, 30-family grid and Aria catalog have their own HTML routes. Keep
+  portfolio presentation out of Storybook; component documentation stays there.
 - Import shipped components from `src/index.ts`. Check props in component source
   and its story before use. Reuse components; do not invent props or duplicate
   controls in a composition.
 - With Storybook running, the official MCP addon is at `http://localhost:6006/mcp`.
   Use `docs-list` and `docs-show` when your agent client has this server configured.
   Without MCP, read the same source/stories directly; there is no custom MCP server.
-- Run `npm run verify`, then `npm run build-storybook`, then `npm run test:browser`.
+- Run `npm run verify`, then `npm run build:site` and `npm run build-storybook`, then `npm run test:browser`.
   The last command requires `npx playwright install chromium` once locally.
 - Chromatic publishes the built Storybook and reviews visual changes. The repo
   needs `CHROMATIC_PROJECT_TOKEN` in Actions secrets; do not claim publication

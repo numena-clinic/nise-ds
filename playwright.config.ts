@@ -21,9 +21,16 @@ export default defineConfig({
         }
       : {},
   },
-  webServer: {
-    command: "npm run preview:storybook",
-    url: "http://127.0.0.1:6006",
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: [
+    {
+      command: "npm run preview:storybook",
+      url: "http://127.0.0.1:6006",
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: "npm run preview:site",
+      url: "http://127.0.0.1:5175",
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
 });

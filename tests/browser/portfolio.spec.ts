@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
 import axe from "axe-core";
+test.use({ baseURL: "http://127.0.0.1:5175" });
 const story = (id: string) =>
-  `/iframe.html?id=portfolio-session-workspace--${id}&viewMode=story`;
+  `${id.includes("collection") ? "/components/" : "/"}?theme=${id.includes("dark") ? "dark" : "light"}`;
 
 test("a draft can be edited, discarded, saved and reviewed", async ({
   page,
