@@ -23,6 +23,12 @@ own, not a reproduction of the brand's published figures.
 
 ## Principles the components hold to
 
+The opt-in React Aria catalog is checked by `tests/browser/aria-catalog.spec.ts`:
+both complete light/dark grids are audited with WCAG-tagged axe rules, plus
+representative keyboard, overlay and form interactions. This supplements the
+original Nise component tests. Upstream behavior does not establish full WCAG
+conformance for every Nise composition; see `react-aria-catalog.md` for scope.
+
 - **A visible label always.** Every field has a real `<label>`; a placeholder is
   never a substitute (iconography.md §5, "label by default").
 - **Not by color alone.** The focus ring is a 2px outline with an offset, so it

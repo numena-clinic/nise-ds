@@ -6,6 +6,11 @@ components, usage guidance and compositions.
 
 ## Start here
 
+The full upstream React Aria composition API is available through `Aria` and
+`AriaScope`, with 57 token-styled recipes under **React Aria → Catalog**.
+See [catalog API, coverage and limits](docs/react-aria-catalog.md). This extends
+the original Nise components without changing their APIs. Toast is experimental.
+
 ```sh
 npm ci
 npm run storybook

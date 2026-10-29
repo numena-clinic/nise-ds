@@ -34,8 +34,11 @@ source, Storybook specimens, interactive workspace and executed checks.
 
 - This is a portfolio prototype, not a deployed clinical product.
 - The records are fictional. Save writes to React state, not a backend.
-- Nine complex component families use React Aria. The remaining components use
-  native HTML. This is not Adobe's full component catalog.
+- In the original 30-family Nise API, nine complex families use React Aria and
+  the others use native HTML. The separate `Aria` namespace exposes the full
+  upstream composition API with 57 Nise-styled recipes. This is integration,
+  not 57 independently authored components. Toast is experimental; see
+  `react-aria-catalog.md` for the tested surface and remaining limits.
 - Automated axe tests and analytical contrast checks do not prove WCAG
   conformance. Manual assistive-technology and device testing remains future work.
 - Tiempos requires a consumer license; the demo uses the documented Georgia fallback.
