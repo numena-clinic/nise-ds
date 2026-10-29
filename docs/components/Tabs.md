@@ -8,3 +8,7 @@ Label `TabsList` when its purpose is not otherwise clear. React Aria owns
 selection, focus navigation and panel relationships. Selected styling uses its
 `data-selected` attribute. A Tab is a focusable tab element; callers should use
 roles rather than assume a native button. See the session workspace composition.
+
+The selected surface uses React Aria's SelectionIndicator with token-based CSS
+transitions. Unequal widths and keyboard selection share the same indicator.
+Reduced motion disables its transitions. See `../motion.md`.

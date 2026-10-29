@@ -20,3 +20,5 @@ tokens/dist/
 dist-explorer/
 playwright-report/
 test-results/
+
+dist-site/

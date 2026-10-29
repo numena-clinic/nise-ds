@@ -55,7 +55,7 @@ const preview: Preview = {
   },
   parameters: {
     controls: { expanded: true },
-    options: { storySort: { order: ["Portfolio", "Foundations", "Components", "Compositions"] } },
+    options: { storySort: { order: ["Foundations", "Components", "React Aria", "Compositions"] } },
     a11y: {
       // 'error' turns every found violation into a failing check in the a11y panel.
       test: "error",

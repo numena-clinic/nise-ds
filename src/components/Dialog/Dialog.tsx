@@ -124,7 +124,7 @@ export const DialogContent = forwardRef<HTMLElement, DialogContentProps>(
           UNSTABLE_portalContainer={container ?? undefined}
           className="nise-dialog__overlay"
         >
-          <Modal>
+          <Modal className="nise-dialog__modal">
             <AriaDialog
               aria-describedby={descriptionId}
               {...props}

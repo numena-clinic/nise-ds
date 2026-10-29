@@ -1,6 +1,11 @@
 // Runs before every test file (see vitest.config.ts).
 import "@testing-library/jest-dom/vitest";
 
+// React Aria's selection indicator queries browser animations. jsdom has no
+// animation engine; motion behavior is verified in the real browser suite.
+if (!Element.prototype.getAnimations)
+  Element.prototype.getAnimations = () => [];
+
 // jsdom omits a few browser APIs that the headless primitives (Select, Slider,
 // Tooltip, Dialog) call on pointer interaction. Provide the minimum so
 // keyboard/pointer tests run.

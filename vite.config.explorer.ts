@@ -6,7 +6,7 @@
 // explorer's tooling entirely separate from Storybook, so neither can disturb
 // the other. Invoke it explicitly:
 //
-//   npm run dev            vite --config vite.config.explorer.ts
+//   npm run dev:explorer   vite --config vite.config.explorer.ts
 //   npm run build:explorer vite build --config vite.config.explorer.ts
 //
 // The explorer is a design tool, not a product page — the build is a static

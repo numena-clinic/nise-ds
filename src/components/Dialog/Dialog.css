@@ -5,6 +5,46 @@
   z-index: 40;
 }
 
+/* Use individual translate on the dialog, preserving its centering transform.
+   React Aria keeps the overlay mounted until exit animations finish. */
+.nise-dialog__overlay[data-entering] {
+  animation: nise-dialog-scrim var(--duration-medium) var(--ease-standard);
+}
+.nise-dialog__overlay[data-exiting] {
+  animation: nise-dialog-scrim var(--duration-fast) var(--ease-standard) reverse;
+}
+.nise-dialog__modal[data-entering] .nise-dialog__content {
+  animation: nise-dialog-reveal var(--duration-medium) var(--ease-entrance);
+}
+.nise-dialog__modal[data-exiting] .nise-dialog__content {
+  animation: nise-dialog-reveal var(--duration-fast) var(--ease-standard)
+    reverse;
+}
+@keyframes nise-dialog-scrim {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes nise-dialog-reveal {
+  from {
+    opacity: 0;
+    translate: 0 var(--space-2);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nise-dialog__overlay,
+  .nise-dialog__content {
+    animation: none !important;
+  }
+}
+
 .nise-dialog__content {
   position: fixed;
   left: 50%;

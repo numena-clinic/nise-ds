@@ -20,9 +20,10 @@ source, Storybook specimens, interactive workspace and executed checks.
   Generated tokens have one source and a reproducibility check. The source
   scanner catches a defined set of token-usage mistakes; it is not a full CSS
   parser or proof that every visual property is tokenized.
-- **Storybook as the release surface.** Individual stories document primitives;
-  the gallery demonstrates consistency; the workspace tests composition. The
-  experimental theme-authoring application is not required to ship these.
+- **A standalone webpage as the portfolio surface.** The workspace, component
+  collection and Aria catalog have real HTML routes and share source components.
+  Storybook documents and tests components; it is a supporting technical link.
+  The experimental theme-authoring application is separate from both.
 - **CI and Chromatic have separate roles.** CI checks types, token integrity,
   behavior and browser interactions. Chromatic publishes Storybook and compares
   rendered snapshots. Reviewers accept intentional visual changes.

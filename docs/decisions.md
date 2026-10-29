@@ -80,7 +80,7 @@ clinical surfaces. Content is explicitly marked as synthetic; no actual clinical
 ### Explorer & Tooling
 
 **D11 — Standalone Theme Explorer with local, safe promotion.**  
-The Theme Explorer is an isolated Vite app (`npm run dev`), separate from Storybook. It reads
+The Theme Explorer is an isolated Vite app (`npm run dev:explorer`), separate from Storybook. It reads
 `tokens/*.mjs` directly so there is no duplicate token list. Overrides are scoped to preview
 wrappers rather than `:root`. Browser exports produce versioned candidates, which are applied
 locally via `npm run theme:apply`. Promotion validates contrast promises and rolls back changes
@@ -217,7 +217,7 @@ Select, Slider, Tabs, Dialog and Tooltip move from Radix to React Aria Component
 Radix dependencies are removed. Wrapper tests verify the Nise API and integration;
 the native range input and button/listbox semantics are intentionally preserved.
 
-**D30 — Storybook is the portfolio release surface.**
+**D30 — Storybook is the portfolio release surface (superseded by D34).**
 The session workspace and 30-family gallery ship as light/dark stories. The
 experimental theme editor, promotion and OpenPencil exporter are retained but
 excluded from the release path. No component catalog expansion blocks the demo.
@@ -260,3 +260,22 @@ than component prop contexts, which trigger components can replace. This is
 the same Adobe foundation already installed transitively, not another headless
 library. Its upstream UNSAFE status and portal layout restrictions are explicit
 in the catalog guide; scoped overlay inheritance has a browser regression test.
+
+## D34 — Standalone portfolio webpage
+
+The showcase is a standalone Vite multi-page site, rather than a Storybook
+portfolio section. `/`, `/components/`, and `/aria/` reuse existing compositions.
+Each route builds a real HTML file for direct static hosting without a router
+or rewrite service. Storybook retains component documentation, Chromatic and
+MCP. The former Portfolio stories are removed; their browser regressions now
+run against the built webpage. `npm run dev` opens the site, and Theme Explorer
+moves to the explicit `dev:explorer` command. No dependency is added.
+
+## D35 — Native motion over the existing React Aria foundation
+
+Use CSS and React Aria's SelectionIndicator, measured disclosure height and
+overlay presence states for the requested micro-interactions. Existing tokens
+define all timing/easing. This adds no animation dependency, no custom layout
+measurement hook and no timers to product state. Motion/Animate UI are deferred
+until a concrete interaction needs them. Reduced-motion behavior is an explicit
+browser-tested contract. See `motion.md` for behavior and verification scope.

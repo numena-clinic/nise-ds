@@ -36,5 +36,5 @@ the compact Nise controls and the Aria namespace have distinct APIs.
 
 `src/showcase/SessionWorkspace.tsx` is a reference implementation of this kind
 of composition. `tests/browser/portfolio.spec.ts` verifies the observable
-behavior against the built stories. This is an example workflow, not evidence
+behavior against the built standalone webpage. This is an example workflow, not evidence
 that an autonomous agent always follows the system correctly.

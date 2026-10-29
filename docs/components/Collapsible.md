@@ -144,3 +144,7 @@ Use Collapsible for optional supplemental content that most users skip but some 
 --ease-standard         transition easing
 ```
 
+
+Panel height follows React Aria’s measured `--disclosure-panel-height` with
+Nise’s medium duration. The hidden state is applied after collapse completes;
+reduced motion skips the transition. See `../motion.md`.
