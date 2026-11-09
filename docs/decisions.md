@@ -279,3 +279,34 @@ define all timing/easing. This adds no animation dependency, no custom layout
 measurement hook and no timers to product state. Motion/Animate UI are deferred
 until a concrete interaction needs them. Reduced-motion behavior is an explicit
 browser-tested contract. See `motion.md` for behavior and verification scope.
+
+## D36 — Tailwind CSS v4 + Base UI (`@base-ui/react`) and two-tier component hierarchy
+
+Nise migrates its styling and headless component layer to **Tailwind CSS v4**
+(`@tailwindcss/vite`, `@theme inline` in `src/styles/globals.css`) paired with
+`class-variance-authority` (`cva`), `clsx`, and `tailwind-merge` (`src/lib/cn.ts`),
+and **Base UI** (`@base-ui/react`), modeled after the clean two-tier architecture
+of `pascochen/tabular-ui` (superseding D2, D6, D13, D31, D33, and D35 where they
+specified plain per-component CSS or React Aria).
+
+- **Token authority remains unchanged:** `tokens/*.mjs` → `src/tokens/tokens.css`
+  is still the sole source of truth for all colors, typography, spacing, radii,
+  shadows, and motion. Tailwind's `@theme inline` in `src/styles/globals.css`
+  binds utility classes (`bg-primary`, `text-base-content`, `border-border-strong`,
+  etc.) directly to Nise's semantic and component CSS custom properties.
+- **Two-tier component organization:** The 30 shipped component families are
+  organized into `src/components/foundational/` (20 core UI primitives:
+  `Accordion`, `Button`, `Checkbox`, `Collapsible`, `Dialog`, `Kbd`, `Label`,
+  `Progress`, `Radio`, `Select`, `Separator`, `Skeleton`, `Slider`, `Switch`,
+  `Tabs`, `TextField`, `Textarea`, `Toggle`, `ToggleGroup`, `Tooltip`) and
+  `src/components/product/` (10 domain and layout blocks: `Alert`, `AspectRatio`,
+  `Avatar`, `Badge`, `Breadcrumb`, `Card`, `Empty`, `Pagination`, `Table`,
+  `Timeline`), all re-exported from `src/index.ts`.
+- **Headless primitives:** `@base-ui/react` backs the 9 complex interactive
+  families (`Accordion`, `Collapsible`, `Dialog`, `Select`, `Slider`, `Tabs`,
+  `Toggle`, `ToggleGroup`, `Tooltip`); the remaining 21 families use native HTML.
+- **Experimental bloat removed:** The 57-recipe `src/aria/` catalog, the
+  standalone `src/explorer/` Theme Explorer, `theme:apply`, and OpenPencil export
+  are removed to keep the repository focused on the core design system, Storybook
+  documentation, and standalone showcase site.
+

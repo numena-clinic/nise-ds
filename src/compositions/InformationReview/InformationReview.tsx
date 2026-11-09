@@ -5,42 +5,30 @@
    this case the panel where a psychologist reviews the information behind a
    formulation. It exists to prove the system composes — it is UI only and holds
    no clinical logic.
-
-   Two constraints from the brand shape it:
-   · Color never carries a verdict (color.md §4). The source-type badges are
-     categorical; confidence is a neutral Select; nothing is tinted good or bad.
-   · The serif does the reading, the sans does the interface (typography.md
-     §3–§4): headings are serif, every control is sans.
-
-   The content is synthetic. It is not a real person and must not be reused as
-   sample clinical text.
    ============================================================================= */
 
-import { Badge } from "../../components/Badge";
-import { Button } from "../../components/Button";
-import { Card } from "../../components/Card";
-import { Select } from "../../components/Select";
-import { TextField } from "../../components/TextField";
-import "./InformationReview.css";
+import { Badge, Button, Card, Select, TextField } from "../../index";
 
 export function InformationReview() {
   return (
-    <div className="nise-info-review">
-      <header className="nise-info-review__header">
-        <h2 className="nise-info-review__title">Information review</h2>
-        <p className="nise-info-review__note">
+    <div className="nise-info-review flex flex-col gap-[var(--space-6)] max-w-[var(--measure-prose)] p-[var(--space-8)] font-sans text-base-content bg-base-100">
+      <header className="nise-info-review__header flex flex-col gap-[var(--field-label-gap)]">
+        <h2 className="nise-info-review__title m-0 font-serif text-[length:var(--font-size-3xl)] font-[var(--font-weight-semibold)] leading-[var(--line-height-tight)] tracking-[var(--letter-spacing-tight)]">
+          Information review
+        </h2>
+        <p className="nise-info-review__note m-0 text-[length:var(--font-size-sm)] leading-[var(--line-height-normal)] text-text-muted">
           Synthetic sample data for layout only — not a real client. No clinical
           logic runs on this surface.
         </p>
       </header>
 
-      <div className="nise-info-review__grid">
+      <div className="nise-info-review__grid grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-[var(--space-6)] items-start">
         <Card
           heading="Session 4 · 12 May"
           description="Fortnightly review. Client described improved sleep onset."
           actions={<Badge tone="cyan">Collateral</Badge>}
         >
-          <div className="nise-info-review__sources">
+          <div className="nise-info-review__sources flex flex-wrap gap-[var(--space-2)]">
             <Badge tone="purple">Client report</Badge>
             <Badge tone="cyan">Collateral</Badge>
             <Badge tone="neutral">Observation</Badge>
@@ -81,7 +69,7 @@ export function InformationReview() {
             </>
           }
         >
-          <p className="nise-info-review__body">
+          <p className="nise-info-review__body m-0 text-[length:var(--font-size-md)] leading-[var(--line-height-relaxed)]">
             Sleep onset difficulty appears linked to anticipatory worry about the
             following day, which the client reports as most acute on weeknights.
           </p>

@@ -17,9 +17,6 @@ const Components = lazy(() =>
     default: module.ComponentGallery,
   })),
 );
-const Catalog = lazy(() =>
-  import("../aria/Catalog").then((module) => ({ default: module.AriaCatalog })),
-);
 const page = document.documentElement.dataset.page;
 const base = import.meta.env.BASE_URL;
 
@@ -37,8 +34,7 @@ function Site() {
       /* Storage may be disabled; the visible toggle still works. */
     }
   }
-  const Content =
-    page === "components" ? Components : page === "aria" ? Catalog : Demo;
+  const Content = page === "components" ? Components : Demo;
   return (
     <>
       <a className="nise-site__skip" href="#showcase-content">
@@ -57,15 +53,6 @@ function Site() {
             aria-current={page === "components" ? "page" : undefined}
           >
             Components
-          </a>
-          <a
-            href={`${base}aria/`}
-            aria-current={page === "aria" ? "page" : undefined}
-          >
-            React Aria
-          </a>
-          <a href="https://github.com/numena-clinic/nise-ds#readme">
-            Documentation
           </a>
         </nav>
         <Button

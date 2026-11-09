@@ -401,7 +401,7 @@ export function SessionWorkspace() {
                     <DialogClose asChild>
                       <Button variant="secondary">Back to notes</Button>
                     </DialogClose>
-                    <DialogClose asChild onPress={save}>
+                    <DialogClose asChild onClick={save}>
                       <Button>Save draft</Button>
                     </DialogClose>
                   </DialogFooter>

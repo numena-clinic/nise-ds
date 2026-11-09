@@ -17,7 +17,7 @@ test("the selected tab indicator moves and settles on the keyboard-selected tab"
   const selected = page.getByRole("tab", { name: "Client context" });
   await expect(selected).toHaveAttribute("aria-selected", "true");
   await expect(selected).toBeFocused();
-  const indicator = selected.locator(".nise-tabs__indicator");
+  const indicator = page.locator(".nise-tabs__indicator");
   await expect
     .poll(() =>
       indicator.evaluate((element) =>

@@ -1,31 +1,14 @@
+import { createElement } from "react";
+import { render } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
 import { toggle } from "../tokens/component.mjs";
+import { Switch } from "../src/index";
 
 /** Switch proportions. Slider positioning is measured by the browser suite. */
-
-const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
-
-const switchCss = read("../src/components/Switch/Switch.css");
-
-/** The declarations of the first rule with this exact selector. */
-function rule(css: string, selector: string): string {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return css.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
-}
-
-/** One declaration's value, trimmed. */
-function decl(body: string, property: string): string {
-  return body.match(new RegExp(`(?:^|;)\\s*${property}\\s*:\\s*([^;]+)`))?.[1]?.trim() ?? "";
-}
 
 const px = (value: string) => Number.parseFloat(value);
 
 describe("the switch knob", () => {
-  const track = rule(switchCss, ".nise-switch__track");
-  const knob = rule(switchCss, ".nise-switch__knob");
-  const checked = rule(switchCss, ".nise-switch__input:checked + .nise-switch__track .nise-switch__knob");
-
   const width = px(toggle["--switch-width"]);
   const height = px(toggle["--switch-height"]);
   const knobSize = px(toggle["--switch-knob"]);
@@ -36,21 +19,21 @@ describe("the switch knob", () => {
     expect(height).toBe(knobSize + inset * 2);
   });
 
-  it("keeps the track free of a border, so the knob is measured from its outer edge", () => {
-    // The knob is positioned from the track's outer edge, but a border shrinks
-    // the padding box it is positioned against — the knob then hangs out of
-    // the track on the checked side and sits 1px off the bottom.
-    expect(decl(track, "border")).toBe("");
-  });
-
-  it("starts the knob at the inset and centres it in the track", () => {
-    expect(decl(knob, "left")).toBe("var(--switch-inset)");
-    expect(decl(knob, "top")).toBe("calc((var(--switch-height) - var(--switch-knob)) / 2)");
-  });
-
-  it("travels the knob to the far inset when checked", () => {
-    expect(decl(checked, "transform")).toBe(
-      "translateX(calc(var(--switch-width) - var(--switch-knob) - 2 * var(--switch-inset)))",
+  it("keeps the track free of a border and binds knob geometry to switch tokens", () => {
+    const { container } = render(createElement(Switch, { label: "Geometry check" }));
+    const track = container.querySelector(".nise-switch__track");
+    const knob = container.querySelector(".nise-switch__knob");
+    expect(track).not.toBeNull();
+    expect(knob).not.toBeNull();
+    expect(track?.className).toContain("w-[var(--switch-width)]");
+    expect(track?.className).toContain("h-[var(--switch-height)]");
+    expect(track?.className.split(/\s+/)).not.toContain("border");
+    expect(knob?.className).toContain("left-[var(--switch-inset)]");
+    expect(knob?.className).toContain(
+      "top-[calc((var(--switch-height)-var(--switch-knob))/2)]",
+    );
+    expect(track?.className).toContain(
+      "peer-checked:[&_.nise-switch__knob]:translate-x-[calc(var(--switch-width)-var(--switch-knob)-2*var(--switch-inset))]",
     );
   });
 
@@ -61,10 +44,10 @@ describe("the switch knob", () => {
       checked: { left: inset + travel, right: inset },
     };
     for (const state of Object.values(states)) {
-      // the knob is flush to the inset on the side it rests against …
       expect(Math.min(state.left, state.right)).toBe(inset);
-      // … and the travel never pushes it past the far edge
-      expect(Math.max(state.left, state.right)).toBeLessThanOrEqual(width - knobSize - inset);
+      expect(Math.max(state.left, state.right)).toBeLessThanOrEqual(
+        width - knobSize - inset,
+      );
     }
   });
 

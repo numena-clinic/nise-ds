@@ -17,8 +17,8 @@ the tradeoff in `docs/decisions.md` and mark it provisional.
 npm install
 npm run storybook        # browse components at :6006
 npm run dev              # standalone showcase at :5173
-npm run dev:explorer     # experimental Theme Explorer at :5176
-npm run export:openpencil # export tokens and visual specimens to OpenPencil (.pen)
+npm run build:lib        # build ES module library + declarations to dist/
+npm run build:site       # build standalone showcase site to dist-site/
 npm run verify           # the gate — run before saying you are done
 ```
 
@@ -86,90 +86,49 @@ npm run verify           # the gate — run before saying you are done
   the proprietary `tokens.json`. It precomputes `color-mix` colors and lists
   em/ch values under the `com.numena.nise` extension; nothing depends on it.
 
-## Components
+## Styling & Components (D36)
 
-- `src/aria/` integrates the upstream React Aria catalog. `Aria` preserves its
-  exports; `AriaScope` and `aria.css` apply Nise tokens. Its 57 recipes are not
-  independently maintained wrappers. Read `docs/react-aria-catalog.md` before
-  changing its styles, portal behavior, or coverage claims.
-
-- One directory per component: `Component.tsx`, `Component.css`, `Component.stories.tsx`,
-  `index.ts`. Class names are `nise-<component>__<element>` / `--<modifier>`
-  (BEM-ish), matching the house system.
+- **Tailwind CSS v4 + Token Bridge:** `src/styles/globals.css` imports Tailwind v4
+  (`@import "tailwindcss" source("../");`), web fonts, and `src/tokens/tokens.css`,
+  and binds Tailwind's `@theme inline` directly to Nise's semantic roles (`bg-base-100`,
+  `text-base-content`, `bg-primary`, `border-border-strong`, etc.). Components use
+  `class-variance-authority` (`cva`) and `cn` (`src/lib/cn.ts` wrapping `clsx` +
+  `tailwind-merge`) alongside `nise-<component>__<element>` / `--<modifier>`
+  structural class markers.
+- **Two-tier component hierarchy (modeled after `tabular-ui`):**
+  - `src/components/foundational/` — 20 core UI primitives (`Accordion`, `Button`,
+    `Checkbox`, `Collapsible`, `Dialog`, `Kbd`, `Label`, `Progress`, `Radio`,
+    `Select`, `Separator`, `Skeleton`, `Slider`, `Switch`, `Tabs`, `TextField`,
+    `Textarea`, `Toggle`, `ToggleGroup`, `Tooltip`).
+  - `src/components/product/` — 10 domain and layout blocks (`Alert`,
+    `AspectRatio`, `Avatar`, `Badge`, `Breadcrumb`, `Card`, `Empty`, `Pagination`,
+    `Table`, `Timeline`).
+  - Everything is re-exported cleanly from `src/index.ts`.
+- **One directory per component:** `Component.tsx`, `Component.stories.tsx`,
+  `index.ts`.
+- **Headless primitives:** `@base-ui/react` backs the 9 complex interactive
+  components (`Accordion`, `Collapsible`, `Dialog`, `Select`, `Slider`, `Tabs`,
+  `Toggle`, `ToggleGroup`, `Tooltip`); the remaining 21 components are native HTML.
+  New headless foundations must earn their place; record the reason in `docs/decisions.md`.
 - Every component starts with a header comment: what it is, the tokens it
   consumes, and its accessibility behaviour. Keep it accurate — it is part of the
   documentation.
 - Props are typed and exported; forward refs where a ref is meaningful; spread
   the rest of the native attributes.
 - Accessibility: a visible label always; never color alone; `aria-describedby`
-  only points at rendered ids; decorative icons `aria-hidden`. Prefer a headless
-  primitive (React Aria Components) for complex interactive patterns and
-  native HTML otherwise (D6).
-- Thirty components now. React Aria Components backs `Select`, `Slider`, `Tabs`, `Dialog`, `Tooltip`,
-  `Collapsible` (`Disclosure`),
-  `Accordion` (`DisclosureGroup`), `Toggle` (`ToggleButton`), and `ToggleGroup`
-  (`ToggleButtonGroup`);
-  the rest are native HTML (`Alert`, `AspectRatio`, `Avatar`, `Badge`, `Breadcrumb`, `Button`,
-  `Card`, `Checkbox`, `Empty`, `Kbd`, `Label`, `Pagination`, `Progress`, `Radio`,
-  `Separator`, `Skeleton`, `Switch`, `Table`, `TextField`, `Textarea`, `Timeline`).
-  New headless foundations must earn their place (D6); record the reason in `docs/decisions.md`.
+  only points at rendered ids; decorative icons `aria-hidden`.
 
 ## Tests
 
 - `tests/components.test.tsx` — behaviour (roles, names, states) for every component.
 - `tests/a11y.test.tsx` — axe over rendered components, closed and open.
 - `tests/geometry.test.ts` — switch knob and slider thumb proportional geometry.
-- `tests/theme.test.ts` / `tests/promote.test.ts` — the theme model, candidate
-  format, and the promotion planner (pure).
 - `tests/usage.test.ts` — the token-boundary scanner (`scripts/lib/token-usage.mjs`).
 - `tests/graph.test.ts` — the reference-graph acyclicity proof (`tokens/graph.mjs`).
-- `tests/explorer.test.tsx` — the Theme Explorer as a user drives it, plus axe.
+- `tests/compositions.test.tsx` / `tests/showcase.test.tsx` — product compositions and showcase.
+- `tests/browser/*.spec.ts` — Playwright browser verification (motion, portfolio, standalone site, axe, phone reflow).
 - Prefer querying by role/name. Polyfills live in `tests/setup.ts`; the axe
   helper is `tests/axe.ts`.
-
-## Theme Explorer
-
-- `src/explorer/` is a standalone Vite app (`npm run dev:explorer`), **not** a Storybook
-  story or addon. Its Vite config is `vite.config.explorer.ts`, named so
-  `@storybook/builder-vite` does not auto-load it.
-- It reads `tokens/*.mjs` directly — no second token list. A new token shows up
-  automatically; classify edibility from the raw value (literal / `var()` alias /
-  `color-mix` derived) in `src/explorer/theme/tokens.ts`, not by hand. The ten
-  brand anchors are excluded from editability (`IMMUTABLE_TOKENS` /
-  `isEditable`) and shown as fixed cards — a candidate may not name one.
-- Preview overrides are **scoped custom properties on the preview wrapper**, never
-  on `:root`. The wrapper also pins every theme-varying token to the value of the
-  selected Light/Dark mode (`previewStyle(overrides, mode)`), so the preview's
-  theme does not depend on `data-theme` cascading or the OS preference. React Aria
-  overlays inside a scoped theme (Select, Dialog, Tooltip) get the wrapper via
-  their optional `container` / `portalContainer` prop (default behaviour
-  unchanged).
-- The Light/Dark toggle is a **view**, not theme authoring: edits always target
-  the light base (D19), and the dark mapping of the same edits is what the toggle
-  shows. `resolveContrast(overrides, mode)` re-checks the promises against the
-  mapping on screen, and the review panel names it.
-- The browser never writes source. It exports a versioned candidate
-  (`nise.theme-candidate` v1); `npm run theme:apply -- <file> [--write]` promotes
-  it locally — dry-run by default, rebuilds + validates, rolls back on failure,
-  never commits. Keep `scripts/lib/promote.mjs` free of I/O side effects so it
-  stays unit-testable.
-- The parameter pane is a visual editor over the active foundation section
-  (Color / Type / Space / Shape / Motion), opened by the sidebar — there are no
-  tabs in the pane; the sidebar IS the section switcher. The preview is a
-  **sidebar-driven page system**: Foundations (each section — Color, Typography,
-  Space, Shape, Motion — drives the pane, plus a Token graph page), Components
-  (one page per family) and Patterns (composed combinations), each with a
-  Phone / Tablet / Desktop toggle. The preview wrapper class
-  (`.nise-explorer__preview`), the `data-nise-theme` marker, the labelled token
-  inputs and the `.nise-swatch-card--locked` cards are load-bearing for
-  `tests/explorer.test.tsx` — keep them.
-- **An anchor card names the roles it drives** (`.nise-color__drives`), a role
-  reading an anchor is marked (`.nise-pv__swatch-tag`, "· brand anchor"), and a
-  role's editor shows its **dark mapping** target beside the light one. Since
-  D22 the page, the panel, the body text, the neutral, the primary, the
-  secondary and the accent all read a brand anchor, so "immutable" has a
-  consequence worth showing. The anchor readership is the **light base** (D19) —
-  the dark mapping is a separate authored file, not a darkened copy.
 
 ## Docs
 
@@ -181,21 +140,17 @@ When you change something a doc describes, update the doc: `docs/tokens.md`,
 
 - Commit licensed font files.
 - Edit generated files (`src/tokens/tokens.css`, `tokens/dist/*`).
-- Write the token source from the browser — promotion is always `theme:apply`.
 - Add a dependency without a note in `docs/decisions.md` — most things are a
   native element or a token, not a library.
-- Import Tailwind, `src/components/ui/` or `@/lib/utils` from anywhere — the
-  vendored shadcn layer and the Tailwind toolchain were removed in D13 and must
-  not come back. Every component is plain CSS over tokens (D2).
 - Write a color outside the token set — raw hex, an off-scale `px`, or a family
   that is not in `palette.mjs`. The token boundary is enforced everywhere, with
-  no path exemptions (D13). The four status families in the palette are the
+  no path exemptions. The four status families in the palette are the
   complete status vocabulary; do not add a role or a fifth family beside them.
 
 ## Portfolio release and agent consumption
 
 - The portfolio entry is the standalone site in `src/site/` and `site/`. The
-  workspace, 30-family grid and Aria catalog have their own HTML routes. Keep
+  workspace and 30-family grid have their own HTML routes (`/` and `/components/`). Keep
   portfolio presentation out of Storybook; component documentation stays there.
 - Import shipped components from `src/index.ts`. Check props in component source
   and its story before use. Reuse components; do not invent props or duplicate
@@ -204,9 +159,6 @@ When you change something a doc describes, update the doc: `docs/tokens.md`,
   Use `docs-list` and `docs-show` when your agent client has this server configured.
   Without MCP, read the same source/stories directly; there is no custom MCP server.
 - Run `npm run verify`, then `npm run build:site` and `npm run build-storybook`, then `npm run test:browser`.
-  The last command requires `npx playwright install chromium` once locally.
 - Chromatic publishes the built Storybook and reviews visual changes. The repo
   needs `CHROMATIC_PROJECT_TOKEN` in Actions secrets; do not claim publication
   before a real Chromatic build returns a public URL.
-- Theme Explorer, promotion and OpenPencil export are retained experimental tools.
-  They are outside the portfolio release path. Do not expand them to finish a demo.

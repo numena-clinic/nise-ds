@@ -137,7 +137,7 @@ for (const id of [
   });
 }
 
-test("slider geometry and keyboard values follow React Aria", async ({
+test("slider geometry and keyboard values follow Base UI", async ({
   page,
 }) => {
   await page.goto(story("component-collection"));

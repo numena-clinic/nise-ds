@@ -26,22 +26,17 @@ test("the standalone site navigates, preserves theme and contains no Storybook r
         images.every((image) => (image as HTMLImageElement).naturalWidth > 0),
       ),
   ).toBe(true);
-  await navigation
-    .getByRole("link", { name: "React Aria", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/aria\/$/);
-  await expect(page.getByRole("region", { name: /recipe$/ })).toHaveCount(57);
   await expect(page.locator("iframe")).toHaveCount(0);
   expect(await page.locator('script[src*="storybook"]').count()).toBe(0);
 });
 
 for (const theme of ["light", "dark"]) {
-  test(`standalone Aria catalog and site navigation pass axe in ${theme} and reflow`, async ({
+  test(`standalone component gallery and site navigation pass axe in ${theme} and reflow`, async ({
     page,
   }) => {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
-    await page.goto(`/aria/?theme=${theme}`);
+    await page.goto(`/components/?theme=${theme}`);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const violations = await page.evaluate(async (source) => {
       const script = document.createElement("script");

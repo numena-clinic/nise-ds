@@ -2,25 +2,14 @@
    Storybook preview
    -----------------------------------------------------------------------------
    Pulls in the single app entry (src/styles/globals.css), which loads the
-   generated token layer and the font faces. Components never import tokens
-   themselves, so there is exactly one source of truth for token values.
-
-   Theme selection: the generated layer defines light on :root and dark under
-   [data-theme="dark"] / prefers-color-scheme (src/tokens/tokens.css). Without a
-   control the preview iframe simply followed the OS preference, so on a dark OS
-   light could not be seen. The toolbar below writes the SAME data-theme
-   attribute the app uses, onto the preview document root — no second theme
-   implementation. "System" removes the attribute so the media query decides.
+   generated token layer, Tailwind CSS v4 @theme, and the font faces.
    ============================================================================= */
 
 import "../src/styles/globals.css";
-// Repoints Storybook's own docs surfaces (white panels, tables, code blocks) at
-// the theme tokens, so the Docs pages follow the toolbar theme too.
 import "./preview.css";
 
 import type { Preview } from "@storybook/react-vite";
 
-/** The attribute the generated token layer keys themes off (docs/theme.md). */
 const THEME_ATTRIBUTE = "data-theme";
 
 const preview: Preview = {
@@ -28,8 +17,6 @@ const preview: Preview = {
     (story, context) => {
       const theme = context.globals.theme as string;
       const root = document.documentElement;
-      // "system" must leave prefers-color-scheme in charge, so the attribute is
-      // removed rather than set to a value the CSS would have to interpret.
       if (theme === "system") root.removeAttribute(THEME_ATTRIBUTE);
       else root.setAttribute(THEME_ATTRIBUTE, theme);
       return story();
@@ -55,9 +42,12 @@ const preview: Preview = {
   },
   parameters: {
     controls: { expanded: true },
-    options: { storySort: { order: ["Foundations", "Components", "React Aria", "Compositions"] } },
+    options: {
+      storySort: {
+        order: ["Foundations", "Foundational", "Product", "Compositions"],
+      },
+    },
     a11y: {
-      // 'error' turns every found violation into a failing check in the a11y panel.
       test: "error",
     },
   },
