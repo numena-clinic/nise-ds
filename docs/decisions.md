@@ -80,7 +80,7 @@ clinical surfaces. Content is explicitly marked as synthetic; no actual clinical
 ### Explorer & Tooling
 
 **D11 — Standalone Theme Explorer with local, safe promotion.**  
-The Theme Explorer is an isolated Vite app (`npm run dev`), separate from Storybook. It reads
+The Theme Explorer is an isolated Vite app (`npm run dev:explorer`), separate from Storybook. It reads
 `tokens/*.mjs` directly so there is no duplicate token list. Overrides are scoped to preview
 wrappers rather than `:root`. Browser exports produce versioned candidates, which are applied
 locally via `npm run theme:apply`. Promotion validates contrast promises and rolls back changes
@@ -217,7 +217,7 @@ Select, Slider, Tabs, Dialog and Tooltip move from Radix to React Aria Component
 Radix dependencies are removed. Wrapper tests verify the Nise API and integration;
 the native range input and button/listbox semantics are intentionally preserved.
 
-**D30 — Storybook is the portfolio release surface.**
+**D30 — Storybook is the portfolio release surface (superseded by D34).**
 The session workspace and 30-family gallery ship as light/dark stories. The
 experimental theme editor, promotion and OpenPencil exporter are retained but
 excluded from the release path. No component catalog expansion blocks the demo.
@@ -260,3 +260,53 @@ than component prop contexts, which trigger components can replace. This is
 the same Adobe foundation already installed transitively, not another headless
 library. Its upstream UNSAFE status and portal layout restrictions are explicit
 in the catalog guide; scoped overlay inheritance has a browser regression test.
+
+## D34 — Standalone portfolio webpage
+
+The showcase is a standalone Vite multi-page site, rather than a Storybook
+portfolio section. `/`, `/components/`, and `/aria/` reuse existing compositions.
+Each route builds a real HTML file for direct static hosting without a router
+or rewrite service. Storybook retains component documentation, Chromatic and
+MCP. The former Portfolio stories are removed; their browser regressions now
+run against the built webpage. `npm run dev` opens the site, and Theme Explorer
+moves to the explicit `dev:explorer` command. No dependency is added.
+
+## D35 — Native motion over the existing React Aria foundation
+
+Use CSS and React Aria's SelectionIndicator, measured disclosure height and
+overlay presence states for the requested micro-interactions. Existing tokens
+define all timing/easing. This adds no animation dependency, no custom layout
+measurement hook and no timers to product state. Motion/Animate UI are deferred
+until a concrete interaction needs them. Reduced-motion behavior is an explicit
+browser-tested contract. See `motion.md` for behavior and verification scope.
+
+## D36 — Tailwind CSS v4 + Base UI (`@base-ui/react`) and two-tier component hierarchy
+
+Nise migrates its styling and headless component layer to **Tailwind CSS v4**
+(`@tailwindcss/vite`, `@theme inline` in `src/styles/globals.css`) paired with
+`class-variance-authority` (`cva`), `clsx`, and `tailwind-merge` (`src/lib/cn.ts`),
+and **Base UI** (`@base-ui/react`), modeled after the clean two-tier architecture
+of `pascochen/tabular-ui` (superseding D2, D6, D13, D31, D33, and D35 where they
+specified plain per-component CSS or React Aria).
+
+- **Token authority remains unchanged:** `tokens/*.mjs` → `src/tokens/tokens.css`
+  is still the sole source of truth for all colors, typography, spacing, radii,
+  shadows, and motion. Tailwind's `@theme inline` in `src/styles/globals.css`
+  binds utility classes (`bg-primary`, `text-base-content`, `border-border-strong`,
+  etc.) directly to Nise's semantic and component CSS custom properties.
+- **Two-tier component organization:** The 30 shipped component families are
+  organized into `src/components/foundational/` (20 core UI primitives:
+  `Accordion`, `Button`, `Checkbox`, `Collapsible`, `Dialog`, `Kbd`, `Label`,
+  `Progress`, `Radio`, `Select`, `Separator`, `Skeleton`, `Slider`, `Switch`,
+  `Tabs`, `TextField`, `Textarea`, `Toggle`, `ToggleGroup`, `Tooltip`) and
+  `src/components/product/` (10 domain and layout blocks: `Alert`, `AspectRatio`,
+  `Avatar`, `Badge`, `Breadcrumb`, `Card`, `Empty`, `Pagination`, `Table`,
+  `Timeline`), all re-exported from `src/index.ts`.
+- **Headless primitives:** `@base-ui/react` backs the 9 complex interactive
+  families (`Accordion`, `Collapsible`, `Dialog`, `Select`, `Slider`, `Tabs`,
+  `Toggle`, `ToggleGroup`, `Tooltip`); the remaining 21 families use native HTML.
+- **Experimental bloat removed:** The 57-recipe `src/aria/` catalog, the
+  standalone `src/explorer/` Theme Explorer, `theme:apply`, and OpenPencil export
+  are removed to keep the repository focused on the core design system, Storybook
+  documentation, and standalone showcase site.
+

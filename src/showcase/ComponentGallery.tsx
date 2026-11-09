@@ -63,6 +63,7 @@ import {
 } from "../index";
 import { CheckIcon, InfoIcon } from "../icons";
 import "./showcase.css";
+import { numenaSymbol } from "./assets";
 
 function Tile({
   name,
@@ -100,7 +101,7 @@ export function ComponentGallery() {
             <span className="nise-workspace__brand">
               <img
                 className="nise-workspace__symbol"
-                src="./numena-symbol.svg"
+                src={numenaSymbol}
                 alt=""
               />
               nise
@@ -342,7 +343,7 @@ export function ComponentGallery() {
               <div className="nise-gallery__ratio">
                 <img
                   className="nise-workspace__symbol"
-                  src="./numena-symbol.svg"
+                  src={numenaSymbol}
                   alt=""
                 />
                 <span>Space for what matters.</span>

@@ -10,7 +10,8 @@
   "include": [
     "src/index.ts",
     "src/components/**/*",
-    "src/icons/**/*"
+    "src/icons/**/*",
+    "src/lib/**/*"
   ],
   "exclude": [
     "src/**/*.stories.tsx"

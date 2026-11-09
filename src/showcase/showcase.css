@@ -245,8 +245,29 @@
   gap: var(--space-2);
 }
 .nise-workspace__save-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
+}
+
+.nise-workspace__saved-check path {
+  stroke-dasharray: 24;
+  animation: nise-saved-check var(--duration-medium) var(--ease-entrance);
+}
+@keyframes nise-saved-check {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nise-workspace__saved-check path {
+    animation: none;
+  }
 }
 .nise-workspace__rail {
   padding: var(--space-8) var(--space-6);

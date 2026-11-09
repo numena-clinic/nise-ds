@@ -31,26 +31,27 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "playwright test",
-    "dev": "vite --config vite.config.explorer.ts",
+    "dev": "vite --config vite.config.site.ts",
     "build:lib": "vite build --config vite.config.lib.ts && tsc -p tsconfig.build.json",
-    "build:explorer": "vite build --config vite.config.explorer.ts",
-    "preview:explorer": "vite preview --config vite.config.explorer.ts",
-    "theme:apply": "node scripts/apply-theme.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "export:openpencil": "node scripts/export-openpencil.mjs",
-    "build": "npm run tokens:build && npm run build-storybook",
+    "build": "npm run tokens:build && npm run build:site && npm run build-storybook",
     "verify": "npm run tokens:validate && npm run check:usage && npm run lint && npm run typecheck && npm run test",
     "preview:storybook": "vite preview --outDir storybook-static --host 127.0.0.1 --port 6006 --strictPort",
-    "chromatic": "chromatic --storybook-build-dir storybook-static"
+    "chromatic": "chromatic --storybook-build-dir storybook-static",
+    "build:site": "vite build --config vite.config.site.ts",
+    "preview:site": "vite preview --config vite.config.site.ts --host 127.0.0.1 --port 5175 --strictPort"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "@fontsource/albert-sans": "^5.3.0",
-    "@internationalized/date": "^3.12.4",
+    "@tailwindcss/vite": "^4.3.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "react": "^19.3.1",
-    "react-aria": "^3.53.1",
-    "react-aria-components": "^1.22.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

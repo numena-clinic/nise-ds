@@ -1,4 +1,11 @@
+import { existsSync } from "node:fs";
 import { defineConfig } from "@playwright/test";
+
+const systemChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const executablePath =
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
+  (!process.env.CI && existsSync(systemChrome) ? systemChrome : undefined);
+
 export default defineConfig({
   testDir: "./tests/browser",
   fullyParallel: true,
@@ -9,9 +16,9 @@ export default defineConfig({
     viewport: { width: 1440, height: 1000 },
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
-    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+    launchOptions: executablePath
       ? {
-          executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+          executablePath,
           args: [
             "--no-sandbox",
             "--use-gl=angle",
@@ -21,9 +28,16 @@ export default defineConfig({
         }
       : {},
   },
-  webServer: {
-    command: "npm run preview:storybook",
-    url: "http://127.0.0.1:6006",
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: [
+    {
+      command: "npm run preview:storybook",
+      url: "http://127.0.0.1:6006",
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: "npm run preview:site",
+      url: "http://127.0.0.1:5175",
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
 });

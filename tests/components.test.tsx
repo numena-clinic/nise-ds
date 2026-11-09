@@ -7,11 +7,9 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "../src/components/Accordion";
-import { Alert } from "../src/components/Alert";
-import { AspectRatio } from "../src/components/AspectRatio";
-import { Avatar } from "../src/components/Avatar";
-import {
+  Alert,
+  AspectRatio,
+  Avatar,
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
@@ -19,54 +17,51 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "../src/components/Breadcrumb";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../src/components/Collapsible";
-import { Empty } from "../src/components/Empty";
-import { Kbd } from "../src/components/Kbd";
-import { Label } from "../src/components/Label";
-import {
+  Empty,
+  Kbd,
+  Label,
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "../src/components/Pagination";
-import { Progress } from "../src/components/Progress";
-import { Separator } from "../src/components/Separator";
-import { Skeleton } from "../src/components/Skeleton";
-import { Textarea } from "../src/components/Textarea";
-import { Timeline, TimelineItem } from "../src/components/Timeline";
-import { Toggle } from "../src/components/Toggle";
-import { ToggleGroup, ToggleGroupItem } from "../src/components/ToggleGroup";
-import { Badge } from "../src/components/Badge";
-import { Button } from "../src/components/Button";
-import { Card } from "../src/components/Card";
-import { Checkbox } from "../src/components/Checkbox";
-import {
+  Progress,
+  Separator,
+  Skeleton,
+  Textarea,
+  Timeline,
+  TimelineItem,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
+  Badge,
+  Button,
+  Card,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-} from "../src/components/Dialog";
-import { Radio } from "../src/components/Radio";
-import { Select } from "../src/components/Select";
-import { Slider } from "../src/components/Slider";
-import { Switch } from "../src/components/Switch";
-import { Table } from "../src/components/Table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../src/components/Tabs";
-import { TextField } from "../src/components/TextField";
-import {
+  Radio,
+  Select,
+  Slider,
+  Switch,
+  Table,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  TextField,
   TooltipContent,
   TooltipProvider,
   TooltipRoot,
   TooltipTrigger,
-} from "../src/components/Tooltip";
+} from "../src/index";
 
 describe("Button", () => {
   it("renders its label and fires onClick", async () => {

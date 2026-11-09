@@ -36,10 +36,15 @@ const scanRoots = [srcDir, resolve(root, ".storybook")];
 // The Theme Explorer renders the PRIMITIVE and semantic layers themselves (it is
 // the token editor), and the generated layer is a primitive artifact — both
 // legitimately name primitives. Everything else consumes semantic roles.
-const PRIMITIVE_EXEMPT = [/^src[/\\]tokens[/\\]tokens\.css$/, /^src[/\\]explorer[/\\]/];
+const PRIMITIVE_EXEMPT = [/^src[/\\]tokens[/\\]tokens\.css$/];
 
 const isKnownToken = (name) =>
-  name in allTokens || name.startsWith("--radix-") || name.startsWith("--nise-");
+  name in allTokens ||
+  name.startsWith("--radix-") ||
+  name.startsWith("--nise-") ||
+  name.startsWith("--active-tab-") ||
+  name === "--anchor-width" ||
+  name === "--transform-origin";
 
 function walk(dir) {
   const out = [];

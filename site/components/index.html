@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" data-page="components" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A live collection of Nise design system components." />
+    <title>Nise — Component collection</title>
+    <link rel="icon" href="/numena-symbol.svg" type="image/svg+xml" />
+    <script>
+      try {
+        const requested = new URLSearchParams(location.search).get("theme");
+        const saved = localStorage.getItem("nise-showcase-theme");
+        document.documentElement.dataset.theme = (requested ?? saved) === "dark" ? "dark" : "light";
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

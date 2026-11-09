@@ -11,3 +11,7 @@ owns focus containment, Escape, outside dismissal and trigger focus restoration.
 Nise Button that forwards its ref and native attributes. Use `onPress` on
 DialogClose for actions coupled to dismissal; the workspace demonstrates saving
 from a review dialog. Essential information should remain in the main interface.
+
+Entry/exit motion uses React Aria's presence states and Nise timing tokens. The
+dialog's centering transform is preserved; reduced motion removes the effects.
+Focus behavior remains owned by React Aria. See `../motion.md`.

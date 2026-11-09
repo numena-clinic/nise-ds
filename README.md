@@ -13,13 +13,17 @@ the original Nise components without changing their APIs. Toast is experimental.
 
 ```sh
 npm ci
-npm run storybook
+npm run dev
 ```
 
-Open **Portfolio → Session workspace** for the interactive product composition,
-or **Component collection** for all 30 shipped component families. Both have
-light and dark stories. The workspace uses fictional records and local browser
-memory: it has no backend, authentication or clinical decision logic.
+Open **http://localhost:5173** for the standalone interface demo. Visit
+`/components/` for the 30-family grid and `/aria/` for the full React Aria recipe
+catalog. The site has its own navigation and light/dark toggle. It does not use
+Storybook or an iframe. The workspace uses fictional records and local memory;
+it has no backend, authentication or clinical decision logic.
+
+Run `npm run storybook` separately at http://localhost:6006 for component
+documentation, accessibility inspection, Chromatic snapshots and MCP.
 
 The demo supports editing, saving/discarding a draft, switching sessions, tabs,
 source selection and a review dialog. Unsaved changes are discarded when switching
@@ -39,21 +43,28 @@ sessions. A reload resets all demo data.
 - **Agent integration** through the official Storybook MCP addon and component
   manifest, plus repository instructions and enforced token boundaries.
 
-This is a React 19 portfolio release. It does not implement the entire React
-Aria catalog. Date inputs, comboboxes, menus, advanced tables and drag-and-drop
-are future additions, rather than implied capabilities of this release.
+The separate `Aria` namespace exposes the upstream catalog, with 57 runnable
+recipes. This is framework integration, not 57 independently authored Nise
+components. See the catalog guide for tested behavior and limitations.
+
+## Motion
+
+Tabs, disclosures, dialogs and save confirmation use restrained motion over the
+existing React Aria foundation. No animation dependency is added. Timing comes
+from Nise tokens and reduced motion is respected. See [motion](docs/motion.md).
 
 ## Verification
 
 ```sh
 npm run verify             # tokens, token usage, lint, TypeScript, unit/axe tests
-npm run build-storybook    # builds the actual published surface
+npm run build:site         # builds the standalone webpage
+npm run build-storybook    # builds component documentation
 npx playwright install chromium  # once per local machine
 npm run test:browser       # interactions, themes, mobile reflow, slider geometry
 ```
 
 CI repeats those commands on a clean checkout. Browser tests serve the built
-Storybook and exercise real stories. Chromatic captures visual baselines and
+standalone site and the component Storybook. Chromatic captures visual baselines and
 requires review of changes; it does not replace interaction or accessibility
 checks. Automated checks do not establish complete WCAG conformance.
 
@@ -63,7 +74,8 @@ checks. Automated checks do not establish complete WCAG conformance.
 2. Add its project token as the repository Actions secret
    `CHROMATIC_PROJECT_TOKEN`.
 3. Run the **Chromatic** workflow. Review and accept the initial baseline in
-   Chromatic, then use its public Storybook URL in your portfolio.
+   Chromatic. Use the standalone site URL as the primary portfolio link,
+   with Storybook as supporting component documentation.
 
 The workflow never automatically accepts visual changes. If the token is
 missing it reports that no publication occurred. Do not commit tokens.
@@ -88,15 +100,16 @@ and [decisions](docs/decisions.md).
 | --- | --- |
 | `tokens/*.mjs` | Canonical token data, generation and validation |
 | `src/components/` | Components, plain CSS and individual stories |
-| `src/showcase/` | Portfolio workspace and full component gallery |
+| `src/showcase/` | Reusable workspace and component gallery compositions |
+| `src/site/`, `site/` | Standalone webpage shell and HTML routes |
 | `src/index.ts` | Public source API |
 | `tests/` | Behavior, accessibility and token checks |
-| `tests/browser/` | Playwright checks against built Storybook |
+| `tests/browser/` | Playwright checks against the built site and Storybook |
 | `.storybook/` | Documentation, theme toolbar and official MCP integration |
 
 ## Experimental tools
 
-The existing Theme Explorer (`npm run dev`), candidate promotion, OpenPencil
+The existing Theme Explorer (`npm run dev:explorer`), candidate promotion, OpenPencil
 export and local library build remain available for exploration. They are
 outside the portfolio release path. Publishing a registry package and supporting
 multiple React versions are deferred.
@@ -104,3 +117,12 @@ multiple React versions are deferred.
 Brand reference: [numena-clinic/numena-brand](https://github.com/numena-clinic/numena-brand).
 Albert Sans is bundled from its OFL-licensed package. Tiempos Text is not
 redistributed; the serif falls back to Georgia until a licensed consumer supplies it.
+
+## Publish the webpage
+
+Run `npm run build:site` and deploy `dist-site/` to a static web host. The
+output includes `index.html`, `components/index.html`, and `aria/index.html`,
+so these routes need no SPA fallback. For a host under a path prefix, build with
+`npm run build:site -- --base /nise-ds/`. Preview the result locally with
+`npm run preview:site` at http://localhost:5175. Storybook and the Theme Explorer
+are separate builds and do not need to be deployed with the webpage.
